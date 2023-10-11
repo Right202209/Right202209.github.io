@@ -1,134 +1,97 @@
-<!DOCTYPE html>
-<html>
 
+<!doctype html>
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8">
-    <title>MYHTML</title>
-    <style>
-        body {
-            background-image: url('https://static.runoob.com/images/mix/paper.gif');
-            background-color: #960909;
-        }
-    </style>
-
-    <link rel="icon" href="https://raw.githubusercontent.com/Right202209/Right202209.github.io/main/1.jpg" sizes="16x16">
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <title>世界地球日</title>
+   <link rel="stylesheet" href="CSS/style2.css">
 </head>
-
 <body>
-
-    <div id="container" style="width:device-width, initial-scale=0.01">
-
-        <div id="header" style="background-color:rgb(255, 249, 192);">
-            <h1 style="margin-top:0;text-align:center;">MY主页</h1>
-        </div>
-
-        <div id="content"
-            style="background-color:rgb(252, 239, 239);height:100px;width:device-width, initial-scale=0.01;">
-
-            <h4><b>Welcome you to come here</b></h4>
-        </div>
-
-        <div id="menu" style="background-color:pink;height:400px;width:device-width, initial-scale=0.01;">
-            <b>菜单</b>
-
-            <button aria-label="Open global navigation menu"
-                data-action="click:deferred-side-panel#loadPanel click:deferred-side-panel#panelOpened"
-                data-show-dialog-id="dialog-ba57e9de-089a-43c2-8176-b7b60206df0e"
-                id="dialog-show-dialog-ba57e9de-089a-43c2-8176-b7b60206df0e" type="button" data-view-component="true"
-                class="Button Button--iconOnly Button--secondary Button--medium AppHeader-button color-bg-transparent p-0 color-fg-muted">
-                <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16"
-                    data-view-component="true" class="octicon octicon-three-bars Button-visual">
-                    <path
-                        d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z">
-                    </path>
-                </svg>
-            </button><br>
-            <a href="https://right202209.github.io/">MY</a><br>
-            <a href="https://github.com">Github</a><br>
-            <a href="https://www.aigei.com/tool/audio/convert">音频转换</a><br>
-            <a
-                href="https://mail.qq.com/cgi-bin/frame_html?sid=Tdr7eXvF1A_kjzZS&r=cdf2af25c2d1ef4521170076bcb82263&lang=zh">QQ邮箱</a><br>
-            <a href="https://www.bilibili.com/">Bilibili</a><br>
-            <a
-                href="https://widget.codelife.cc/dino/index.html?sdk_from=itab&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MmYwNzU1YzgyOGIzZmE2MWYxMThjNTciLCJpYXQiOjE2ODc2MDY1MDgsImV4cCI6MTcxODcxMDUwOH0.TUWrWj3NfIwz7CXAtKZ_cGjk7FvKyrxxlxFCowfX5yw&theme=light">
-                恐龙快跑</a><br>
-            <a
-                href="https://widget.codelife.cc/2048/index.html?sdk_from=itab&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MmYwNzU1YzgyOGIzZmE2MWYxMThjNTciLCJpYXQiOjE2ODc2MDY1MDgsImV4cCI6MTcxODcxMDUwOH0.TUWrWj3NfIwz7CXAtKZ_cGjk7FvKyrxxlxFCowfX5yw&theme=light">
-                2048</a><br>
-            <a href="https://www.4399.com">4399</a><br>
-            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=3080697064&amp;site=qq&amp;menu=yes">talk with
-                me by QQ</a><br>
-            
-        </div>
-
-        <div id="overflowTest" text-align:center;>
-            <p>这里的文本内容是可以滚动的，滚动条方向是垂直方向。</p>
-            <p>这里的文本内容是可以滚动的，滚动条方向是垂直方向。</p>
-            <p>这里的文本内容是可以滚动的，滚动条方向是垂直方向。</p>
-            <p>这里的文本内容是可以滚动的，滚动条方向是垂直方向。</p>
-            <p>这里的文本内容是可以滚动的，滚动条方向是垂直方向。</p>
-            <p>这里的文本内容是可以滚动的，滚动条方向是垂直方向。</p>
-        </div>
-
-
-
-        <div id="footer" style="margin-top: 25px;text-align:center;">
-
-
-            <div><a href="https://right202209.github.io/">MY</a> © 2022-2023</div>
-            <div>FIRST MADE</div>
-            <div>
-                <div class="box"></div>
-                <script>
-                    function getTime() {
-                        var date = new Date();
-                        var year = date.getFullYear(); //获取年份
-                        var month = date.getMonth() + 1; //获取月份
-                        var day = date.getDate(); //获取日期
-                        var hour = date.getHours(); //获取小时
-                        hour = hour < 10 ? '0' + hour : hour;
-                        var minute = date.getMinutes(); // 获取分
-                        minute = minute < 10 ? '0' + minute : minute;
-                        var seconds = date.getSeconds(); //获取秒
-                        seconds = seconds < 10 ? '0' + seconds : seconds;
-                        return 'Time: ' + year + '.' + month + '.' + day + '&nbsp;' + hour + ':' + minute + ':' + seconds;
-                    }
-
-                    setInterval(function () {
-                        document.querySelector('.box').innerHTML = getTime();
-                    }, 1000)
-                </script>
-            </div>
-            <div style="margin-top: 25px;text-align:center;">
-                Supported by
-                <svg height="32" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="32"
-                    data-view-component="true" class="octicon octicon-mark-github v-align-middle color-fg-default">
-                    <path
-                        d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z">
-                    </path>
-                </svg>
-                <a data-hotkey="g d"
-                    data-analytics-event="{&quot;category&quot;:&quot;Global navigation&quot;,&quot;action&quot;:&quot;HOME&quot;,&quot;label&quot;:null}"
-                    id="item-4aae335a-dafa-47c0-a61d-12ecdeb2ed5f" href="1.html" data-view-component="true"
-                    class="ActionListContent ActionListContent--visual16">
-                    <span class="ActionListItem-visual ActionListItem-visual--leading">
-                        <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16"
-                            data-view-component="true" class="octicon octicon-home">
-                            <path
-                                d="M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z">
-                            </path>
-                        </svg>
-                    </span>
-
-                    <span data-view-component="true" class="ActionListItem-label">
-                        Home
-                    </span></a>
-            </div>
-
-        </div>
+<header class="flex">
+    <img src="/img/headerimg.jpg" alt=""height="300px">
+    <h1></h1>
+</header>
+<nav class="flex">
+    <!-- 导航菜单 -->
+    <div class="menu">
+        <ul>
+            <a href="#"><li>首页</li></a>
+            <a href="#"><li>目录</li></a>
+            <a href="#"><li>关于我们</li></a>
+            <a href="#"><li>联系我们</li></a>
+        </ul>
     </div>
+</nav>
+<main class="flex">
+    <article>
+        <h2>地球日</h2>
+        <section>
+            <div>
+                <p>
+                    每年的4月22日，是一个专为世界环境保护而设立的节日，旨在提高民众对于现有环境问题的意识，并动员民众参与到环保运动中，通过绿色低碳生活，改善地球的整体环境。地球日由盖洛德·尼尔森和丹尼斯·海斯于1970年发起。现今，地球日的庆祝活动已发展至全球192个国家，每年有超过10亿人参与其中，使其成为世界上最大的民间环保节日。中国从20世纪90年代起，每年都会在4月22日举办世界地球日活动。
+                </p>
+                <p>1970年4月22日的地球日活动，是人类有史以来第一次规模宏大的群众地球日，作为人类现代环保运动的开端，它推动了西方国家环境法规的建立。</p>
+            </div>
+        </section>
+        <table>
+            <tr><h3>历年世界地球日主题</h3><h3></tr>
+            <tr>
+                <td>2000</td>
+                <td>低碳环保</td>
+                <td>2001</td>
+                <td>从小事做起</td>
+            </tr>
+            <tr>
+                <td>2002</td>
+                <td>植树造林</td>
+                <td>2003</td>
+                <td>你一棵我一棵</td>
+            </tr>
+            <tr>
+                <td>2004</td>
+                <td>健康生活</td>
+                <td>2005</td>
+                <td>你我他</td>
+            </tr>
+            <tr>
+                <td>2006</td>
+                <td>地球家园</td>
+                <td>2007</td>
+                <td>我们一起守护她</td>
+            </tr>
+        </table>
+    </article>
 
+    <aside id="sidebar1">
+        <h3>目录</h3>
+        <ul>
+            
+           <a href="#"><li>活动影响</li></a> 
+           <a href="#"><li>创始人</li></a> 
+           <a href="#"><li>历年主题</li></a> 
+           <a href="#"><li>历年国内活动</li></a> 
+            
+        </ul>
+    </aside>
+
+    <aside id="sidebar2">
+        <h3>做什么</h3>
+        <ul>
+            <a href="#"><li>倡导低碳生活</li></a>
+            <a href="#"><li>从身边的小事做起</li></a> 
+            <a href="#"><li>从节约资源做起</li></a> 
+            <a href="#"><li>科学发展</li></a> 
+            <a href="#"><li>公众参与</li></a> 
+            <a href="#"><li>防治有毒化学品污染</li> </a>   
+        </ul>
+    </aside>
+</main>
+
+<footer class="flex">
+    <section id="footer-area">
+        <p>&copy;2018，我们的地球日</p>
+    </section>
+</footer>
 </body>
-
 </html>
+
