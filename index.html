@@ -100,20 +100,20 @@
 						<h2 id="signature" data-translate="signature">Code &amp; Input &amp; Output</h2>
 					</header>
 					<ul>
-						<li><a href="blog/" aria-label="Blog"><i class="icon icon-bokeyuan"></i><span
+						<li><a href="blog/" aria-label="Blog"><i class="icon icon-bokeyuan" aria-hidden="true"></i><span
 									data-translate="Blog">Blog</span></a></li>
-						<li><a href="Photo/" aria-label="Photo" target="_blank"><i class="icon icon-tupian"></i><span
+						<li><a href="Photo/" aria-label="Photo" target="_blank"><i class="icon icon-tupian" aria-hidden="true"></i><span
 									data-translate="Photo">Photo</span></a></li>
-						<li><a href="About/index.html" aria-label="About"><i class="icon icon-xiaolian"></i><span
+						<li><a href="About/index.html" aria-label="About"><i class="icon icon-xiaolian" aria-hidden="true"></i><span
 									data-translate="About">About</span></a></li>
 						<li><a href="mailto:tunhe38@gmail.com" aria-label="Email" target="_blank"><i
-									class="icon icon-email"></i><span data-translate="Email">Email</span></a></li>
+									class="icon icon-email" aria-hidden="true"></i><span data-translate="Email">Email</span></a></li>
 						<li><a href="https://github.com/Right202209" aria-label="Github" target="_blank"><i
-									class="icon icon-github"></i><span data-translate="Github">Github</span></a></li>
+									class="icon icon-github" aria-hidden="true"></i><span data-translate="Github">Github</span></a></li>
 						<li><a href="https://x.com/tunhe245960" aria-label="X" target="_blank"><i
-									class="icon icon-X"></i><span data-translate="X">X</span></a></li>
-						<li><a href="/" id="back-to-top" class="btn btn-primary btn-lg back-to-top" aria-label="xianxing_fasong">
-								<i class="icon icon-xianxing_fasong"></i><span data-translate="xianxing_fasong"></span> </a></li>
+									class="icon icon-X" aria-hidden="true"></i><span data-translate="X">X</span></a></li>
+						<li><a href="/" id="back-to-top" class="btn btn-primary btn-lg back-to-top" aria-label="Back to top">
+									<i class="icon icon-xianxing_fasong" aria-hidden="true"></i><span data-translate="xianxing_fasong"></span> </a></li>
 					</ul>
 				</div>
 				
@@ -127,16 +127,6 @@
 			const getOriginalContent = selector => $(selector).getAttribute("original-content")
 			window.subtitle = getOriginalContent(".content-subtitle")
 			window.signature = getOriginalContent("#signature")
-
-			document.addEventListener('DOMContentLoaded', () => {
-				const backToTop = $("#back-to-top");
-				if (backToTop) {
-					backToTop.addEventListener("click", (e) => {
-						e.preventDefault();
-						window.scrollTo({ top: 0, behavior: 'smooth' });
-					});
-				}
-			});
 
 			window.config = {
 				SIM_RESOLUTION: 128,
@@ -168,6 +158,12 @@
 		</script>
 		<script src="js/main.js"></script>
 		<script src="js/background.js"></script>
-		
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('/sw.js');
+				});
+			}
+		</script>
 	</main>
 </body>
