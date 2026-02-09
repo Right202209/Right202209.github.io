@@ -2,6 +2,7 @@ const CACHE_NAME = 'droit-v1';
 const ASSETS = [
   '/',
   '/index.html',
+  '/404.html',
   '/css/style.css',
   '/js/main.js',
   '/js/background.js',
