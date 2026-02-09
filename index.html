@@ -10,12 +10,16 @@
 	<meta name="theme-color" content="#222325">
 	<meta name="apple-mobile-web-app-status-bar-style" content="#222325">
 	<meta name="msapplication-navbutton-color" content="#222325">
+	<link rel="preconnect" href="https://cdn.jsdelivr.net">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Tomotoes/font/font.min.css">
 	<link rel="stylesheet" href="css/style.css">
 	<meta http-equiv="x-dns-prefetch-control" content="on">
 	<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 	<link rel="prefetch" href="https://cdn.jsdelivr.net/">
 	<meta name="description" content="Author:SimonMa,Category:Personal Blog">
+	<meta property="og:title" content="Droit - Personal Website">
+	<meta property="og:description" content="Code & Input & Output - Personal portfolio and links.">
+	<meta property="og:type" content="website">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 	
@@ -108,10 +112,9 @@
 									class="icon icon-github"></i><span data-translate="Github">Github</span></a></li>
 						<li><a href="https://x.com/tunhe245960" aria-label="X" target="_blank"><i
 									class="icon icon-X"></i><span data-translate="X">X</span></a></li>
-						
+						<li><a href="/" id="back-to-top" class="btn btn-primary btn-lg back-to-top" aria-label="xianxing_fasong">
+								<i class="icon icon-xianxing_fasong"></i><span data-translate="xianxing_fasong"></span> </a></li>
 					</ul>
-						<li><a href="/" id="back-to-top" class="btn btn-primary btn-lg back-to-top" aria-label="xianxing_fasong">  
-  						<i class="icon icon-xianxing_fasong"></i><spandata-translate="xianxing_fasong"></span> </a></li>  
 				</div>
 				
 			</div>
@@ -119,23 +122,22 @@
 		
 		
   
-		<script>  
-		  $(document).ready(function() {  
-		    // 点击事件绑定到按钮上  
-		    $("#back-to-top").click(function(e) {  
-		      // 阻止默认行为  
-		      e.preventDefault();  
-		      // 使用animate()方法滚动到页面顶部  
-		      $("html, body").animate({ scrollTop: 0 }, "slow");  
-		    });  
-		  });  
-		</script>
-		
 		<script src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
 		<script>window.$ = selector => document.querySelector(selector)
 			const getOriginalContent = selector => $(selector).getAttribute("original-content")
 			window.subtitle = getOriginalContent(".content-subtitle")
 			window.signature = getOriginalContent("#signature")
+
+			document.addEventListener('DOMContentLoaded', () => {
+				const backToTop = $("#back-to-top");
+				if (backToTop) {
+					backToTop.addEventListener("click", (e) => {
+						e.preventDefault();
+						window.scrollTo({ top: 0, behavior: 'smooth' });
+					});
+				}
+			});
+
 			window.config = {
 				SIM_RESOLUTION: 128,
 				DYE_RESOLUTION: 1024,

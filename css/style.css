@@ -4,7 +4,8 @@ html {
     --color-enter: #fff;
     --color-title: #fff;
     --color-content: #222325;
-    --font-alt: 200 6vw/1 "Comic Sans MS", "Helvetica Neue", "Microsoft Yahei", "Microsoft Yahei", -apple-system, sans-serif
+    --font-alt: 200 6vw/1 "Comic Sans MS", "Helvetica Neue", "Microsoft Yahei", "Microsoft Yahei", -apple-system, sans-serif;
+    scroll-behavior: smooth;
 }
 
 .fade {
