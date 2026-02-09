@@ -5,6 +5,7 @@ const ASSETS = [
   '/css/style.css',
   '/js/main.js',
   '/js/background.js',
+  '/js/mouse-trail.js',
   '/assets/droit.jpg',
   '/assets/background.png',
   'https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js',
