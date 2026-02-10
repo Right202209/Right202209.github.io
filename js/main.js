@@ -14,12 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
 (function() {
 	const originTitle = document.title;
 	let titleTime;
-	document.addEventListener('visibilitychange', function() {
-		if (document.hidden) {
+	document.addEventListener(window.visibilityChangeEvent, function() {
+		if (document[window.hiddenProperty]) {
 			document.title = '(つェ⊂) 记得回来看看~';
 			clearTimeout(titleTime);
 		} else {
 			document.title = '(*´∇｀*) 欢迎回来！';
+			clearTimeout(titleTime);
 			titleTime = setTimeout(function() {
 				document.title = originTitle;
 			}, 2000);
