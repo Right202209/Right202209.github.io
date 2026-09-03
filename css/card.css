@@ -1,0 +1,293 @@
+/* Business card (#card): glass panel, avatar ring, link tiles, pointer tilt hooks. */
+
+:root {
+    --card-accent: #ff963b;
+    --card-accent-2: #4f7cff;
+    --card-accent-soft: rgba(255, 150, 59, .35);
+    --card-border: rgba(255, 255, 255, .1);
+    --card-text: #e8e8ea;
+    --card-muted: #9a9ea6;
+    --card-radius: 28px;
+    --card-ease: cubic-bezier(.22, 1, .36, 1);
+    --card-reveal-delay: 350ms;
+    --card-reveal-step: 70ms;
+}
+
+#card {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--card-muted);
+    overflow: hidden;
+}
+
+/* Ambient orbs behind the glass */
+#card::before,
+#card::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .4;
+    pointer-events: none;
+}
+
+#card::before {
+    width: 40vmax;
+    height: 40vmax;
+    top: -12vmax;
+    left: -12vmax;
+    background: radial-gradient(circle, var(--card-accent), transparent 65%);
+    animation: card-orb-drift 18s ease-in-out infinite alternate;
+}
+
+#card::after {
+    width: 34vmax;
+    height: 34vmax;
+    right: -10vmax;
+    bottom: -14vmax;
+    background: radial-gradient(circle, var(--card-accent-2), transparent 65%);
+    animation: card-orb-drift 22s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes card-orb-drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(8vmax, 6vmax, 0) scale(1.15); }
+}
+
+@keyframes card-ring-spin {
+    to { transform: rotate(360deg); }
+}
+
+#card .card-inner {
+    width: min(92vw, 520px);
+    padding: 0;
+    border: 0;
+}
+
+/* Glass panel; --tilt-*, --shift-* and --mx/--my are set by js/card.js */
+.card-panel {
+    position: relative;
+    padding: 44px 36px 36px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    background: linear-gradient(160deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02));
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .12);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+    transform: perspective(1200px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition: transform .6s var(--card-ease), box-shadow .6s var(--card-ease);
+    will-change: transform;
+}
+
+.card-panel.is-hovered {
+    transition-duration: .12s;
+    box-shadow: 0 40px 80px -24px rgba(0, 0, 0, .7), 0 0 40px -10px var(--card-accent-soft), inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+
+/* Pointer spotlight (::before) and accent border glow (::after) */
+.card-panel::before,
+.card-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity .5s;
+    pointer-events: none;
+}
+
+.card-panel::before {
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .1), transparent 45%);
+}
+
+.card-panel::after {
+    inset: -1px;
+    padding: 1px;
+    background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), var(--card-accent), transparent 50%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+}
+
+.card-panel.is-hovered::before,
+.card-panel.is-hovered::after { opacity: 1; }
+
+.card-panel header {
+    position: relative;
+    margin: 0 0 30px;
+    padding-bottom: 28px;
+}
+
+.card-panel header::after {
+    content: "";
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .25), transparent);
+}
+
+/* Avatar with rotating gradient ring and soft glow */
+.card-avatar {
+    position: relative;
+    isolation: isolate;
+    width: 112px;
+    height: 112px;
+    margin: 0 auto;
+    padding: 4px;
+    border-radius: 50%;
+    transform: translate(calc(var(--shift-x, 0) * 8px), calc(var(--shift-y, 0) * 8px));
+    transition: transform .6s var(--card-ease);
+}
+
+.card-avatar::before,
+.card-avatar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+}
+
+.card-avatar::before {
+    background: conic-gradient(var(--card-accent), #fff, var(--card-accent-2), var(--card-accent));
+    animation: card-ring-spin 8s linear infinite;
+}
+
+.card-avatar::after {
+    inset: -8px;
+    z-index: -1;
+    background: radial-gradient(circle, var(--card-accent-soft), transparent 70%);
+    filter: blur(12px);
+}
+
+.card-avatar img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 3px solid #1b1c1e;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform .5s var(--card-ease);
+}
+
+.card-avatar:hover img { transform: scale(1.06) rotate(-3deg); }
+
+.card-panel h1 {
+    margin: 20px 0 8px;
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: .04em;
+    color: #fff;
+    background: linear-gradient(120deg, #fff 45%, var(--card-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card-panel h2 {
+    margin: 0;
+    font-size: .7rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--card-muted);
+}
+
+/* Link tiles with staggered reveal once .card-inner gets .in */
+.card-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.card-links li {
+    flex: 1 1 0;
+    min-width: 76px;
+    max-width: 128px;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .6s var(--card-ease), transform .6s var(--card-ease);
+    transition-delay: calc(var(--card-reveal-delay) + var(--i, 0) * var(--card-reveal-step));
+}
+
+.card-inner.in .card-links li { opacity: 1; transform: none; }
+
+.card-links a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    font-size: .7rem;
+    letter-spacing: .5px;
+    color: var(--card-text);
+    background: rgba(255, 255, 255, .03);
+    transition: transform .35s var(--card-ease), background-color .35s, border-color .35s, box-shadow .35s, color .35s;
+}
+
+.card-links a:hover,
+.card-links a:focus-visible {
+    color: #fff;
+    background: rgba(255, 150, 59, .1);
+    border-color: var(--card-accent-soft);
+    box-shadow: 0 12px 24px -12px var(--card-accent), inset 0 1px 0 rgba(255, 255, 255, .15);
+    transform: translateY(-4px);
+}
+
+.card-links a:focus-visible { outline: 2px solid var(--card-accent); outline-offset: 2px; }
+
+.card-links a:active { transform: translateY(-1px) scale(.97); }
+
+.card-links .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6em;
+    height: 1.6em;
+    margin: 0;
+    font-size: 1.1rem;
+    transition: transform .35s var(--card-ease), color .35s;
+}
+
+.card-links a:hover .icon,
+.card-links a:focus-visible .icon {
+    color: var(--card-accent);
+    transform: translateY(-2px) scale(1.12);
+}
+
+@media screen and (max-width: 480px) {
+    .card-panel { padding: 32px 20px 24px; border-radius: 22px; }
+    .card-avatar { width: 92px; height: 92px; }
+    .card-panel h1 { font-size: 1.5rem; }
+    .card-links li { flex: 0 0 calc(33.333% - 7px); max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #card::before,
+    #card::after,
+    .card-avatar::before { animation: none; }
+
+    .card-panel,
+    .card-avatar,
+    .card-avatar img,
+    .card-links li,
+    .card-links a,
+    .card-links .icon { transition: none; }
+
+    .card-links li { opacity: 1; transform: none; }
+}

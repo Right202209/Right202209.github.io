@@ -1,10 +1,12 @@
-const CACHE_NAME = 'droit-v1';
+const CACHE_NAME = 'droit-v2';
 const ASSETS = [
   '/',
   '/index.html',
   '/404.html',
   '/css/style.css',
+  '/css/card.css',
   '/js/main.js',
+  '/js/card.js',
   '/js/background.js',
   '/js/mouse-trail.js',
   '/assets/droit.jpg',
@@ -18,6 +20,14 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
     })
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+    )
   );
 });
 

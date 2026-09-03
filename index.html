@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Tomotoes/font/font.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/card.css">
     <meta http-equiv="x-dns-prefetch-control" content="on">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="prefetch" href="https://cdn.jsdelivr.net/">
@@ -24,8 +25,6 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
 </head>
-
-</html>
 
 <body>
     <main>
@@ -95,30 +94,33 @@
         <div class="content content-main">
             <div id="card">
                 <div class="card-inner fade">
-                    <header><img src="assets/droit.jpg" width="100" height="100" alt="avatar">
-                        <h1 data-translate="name">Droit</h1>
-                        <h2 id="signature" data-translate="signature">Code &amp; Input &amp; Output</h2>
-                    </header>
-                    <ul>
-                        <li><a href="blog/" aria-label="Blog"><i class="icon icon-bokeyuan" aria-hidden="true"></i><span
-                                    data-translate="Blog">Notes</span></a></li>
-                        <li><a href="Photo/" aria-label="Photo" target="_blank"><i class="icon icon-tupian"
-                                    aria-hidden="true"></i><span data-translate="Photo">Photo</span></a></li>
-                        <li><a href="About/index.html" aria-label="About"><i class="icon icon-xiaolian"
-                                    aria-hidden="true"></i><span data-translate="About">About</span></a></li>
-                        <li><a href="https://github.com/Right202209" aria-label="Github" target="_blank"><i
-                                    class="icon icon-github" aria-hidden="true"></i><span
-                                    data-translate="Github">Github</span></a></li>
-                        <li><a href="Contact/" aria-label="Contact" target="_blank"><i
-                                    class="icon icon-email" aria-hidden="true"></i><span
-                                    data-translate="Contact">Contact</span></a></li>
-                        <!-- <li><a href="/" id="back-to-top" class="btn btn-primary btn-lg back-to-top"
+                    <div class="card-panel">
+                        <header>
+                            <div class="card-avatar"><img src="assets/droit.jpg" width="104" height="104" alt="avatar">
+                            </div>
+                            <h1 data-translate="name">Droit</h1>
+                            <h2 id="signature" data-translate="signature">Code &amp; Input &amp; Output</h2>
+                        </header>
+                        <ul class="card-links">
+                            <li style="--i:0"><a href="blog/" aria-label="Blog"><i class="icon icon-bokeyuan"
+                                        aria-hidden="true"></i><span data-translate="Blog">Notes</span></a></li>
+                            <li style="--i:1"><a href="Photo/" aria-label="Photo"><i class="icon icon-tupian"
+                                        aria-hidden="true"></i><span data-translate="Photo">Photo</span></a></li>
+                            <li style="--i:2"><a href="About/index.html" aria-label="About"><i
+                                        class="icon icon-xiaolian" aria-hidden="true"></i><span
+                                        data-translate="About">About</span></a></li>
+                            <li style="--i:3"><a href="https://github.com/Right202209" aria-label="Github"
+                                    target="_blank" rel="noopener noreferrer"><i class="icon icon-github"
+                                        aria-hidden="true"></i><span data-translate="Github">Github</span></a></li>
+                            <li style="--i:4"><a href="Contact/" aria-label="Contact"><i class="icon icon-email"
+                                        aria-hidden="true"></i><span data-translate="Contact">Contact</span></a></li>
+                            <!-- <li><a href="/" id="back-to-top" class="btn btn-primary btn-lg back-to-top"
                                 aria-label="Back to top">
                                 <i class="icon icon-xianxing-_fasong" aria-hidden="true"></i><span
                                     data-translate="xianxing_fasong">Back</span> </a></li> -->
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
-
             </div>
         </div>
 
@@ -159,6 +161,7 @@
             }
         </script>
         <script src="js/main.js"></script>
+        <script src="js/card.js"></script>
         <script src="js/background.js"></script>
         <script src="js/mouse-trail.js"></script>
         <script>
@@ -170,3 +173,5 @@
         </script>
     </main>
 </body>
+
+</html>
