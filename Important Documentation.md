@@ -235,3 +235,43 @@ of it.
   literal inside a factory function; that is three function levels, at the edge of the nesting
   limit. Splitting the paw/burst drawing into top-level helpers would flatten it if it becomes
   a problem.
+
+## Change: trimmed the stage — toys removed, gradient dot grid
+
+Everything the previous section added on top of the dot grid was removed again: paw prints, the
+HUD clock, the yarn toy with its hint/counter, and the `window.oneko` chase API that only the yarn
+toy used. The parts of that section describing those features are now historical. What stays is
+the dot grid with the pointer/cat spotlights and the bottom-right "source / © year" corner.
+
+The base dot grid is now coloured by a gradient instead of flat white: the dot pattern is a
+`mask-image` cut out of `--stage-grid-gradient` (orange `--card-accent` → violet → blue
+`--card-accent-2`, diagonal), so the dots shift hue across the screen. The edge fade moved from
+`.stage-grid::before` to `.stage-grid` itself, so it now also applies to the spotlight layer.
+
+### Files touched
+
+| File | Change |
+| --- | --- |
+| `js/yarn.js` | Deleted. |
+| `js/stage.js` | Now only sets the spotlight variables (`--sx/--sy` from the pointer, `--cx/--cy` from `oneko:ready`/`oneko:step`) and writes the copyright year. Canvas, drawable registry, paw prints and the clock are gone. |
+| `js/oneko.js` | Removed `chase()`/`release()`/`position()`, `window.oneko`, `oneko:arrived`, `TARGET_REACH`, `CATCH_LINGER_FRAMES`; `frame()` is back to cursor-only. Still emits `oneko:ready` and `oneko:step`. |
+| `css/stage.css` | Gradient dot grid (`--stage-grid-gradient`, `--stage-dot-opacity`), edge-fade mask on `.stage-grid`; removed `.hud-tl`, `.hud-bl`, `.hud-dot`, `hud-pulse`. |
+| `index.html` | Removed `<canvas id="stage">`, the clock and cat-hint HUD paragraphs, and the `yarn.js` script tag. |
+| `sw.js` | Bumped cache to `droit-v5`, dropped `/js/yarn.js`. |
+
+### Configuration points
+
+- `--stage-grid-gradient` — any CSS gradient; it is painted behind the dot mask.
+- `--stage-dot-opacity` — overall strength of the base grid (`.4`; the old white grid was `.11`
+  but coloured dots need more to read).
+- `--stage-grid-gap`, `--stage-spot-radius`, `--stage-cat-radius` as before.
+
+### Items to verify manually
+
+1. Dots are visible and change colour from orange (top-left) through violet to blue (bottom-right),
+   fading toward the screen edges; the orange spotlight still follows the pointer and the cat.
+2. Safari: the base grid uses `-webkit-mask-size` / `-webkit-mask-position`; if the dots render as
+   a solid gradient sheet, the prefixed mask longhands are not being honoured.
+3. No `#hud-clock`, `#hud-cat` or `<canvas id="stage">` in the DOM; no console errors about
+   `window.stage`/`window.oneko`.
+4. Service worker: `droit-v5` present, `droit-v4` gone, no request for `js/yarn.js`.

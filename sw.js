@@ -1,4 +1,4 @@
-const CACHE_NAME = 'droit-v4';
+const CACHE_NAME = 'droit-v5';
 const ASSETS = [
   '/',
   '/index.html',
@@ -9,7 +9,6 @@ const ASSETS = [
   '/js/main.js',
   '/js/card.js',
   '/js/stage.js',
-  '/js/yarn.js',
   '/js/background.js',
   '/js/mouse-trail.js',
   '/js/oneko.js',

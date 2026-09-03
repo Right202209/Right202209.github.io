@@ -1,9 +1,10 @@
-/* Stage behind the business card (#card): background tone, dot grid with pointer/cat spotlights,
- * paw-print canvas, and the HUD corners. Spotlight positions (--sx/--sy, --cx/--cy) are set by js/stage.js. */
+/* Stage behind the business card (#card): background tone, gradient dot grid with pointer/cat spotlights,
+ * and the HUD corner. Spotlight positions (--sx/--sy, --cx/--cy) are set by js/stage.js. */
 
 :root {
     --stage-grid-gap: 28px;
-    --stage-dot: rgba(255, 255, 255, .11);
+    --stage-grid-gradient: linear-gradient(135deg, var(--card-accent) 0%, #b56cff 50%, var(--card-accent-2) 100%);
+    --stage-dot-opacity: .4;
     --stage-spot-radius: 240px;
     --stage-cat-radius: 110px;
     --hud-inset-x: 32px;
@@ -18,18 +19,17 @@
 #card::before,
 #card::after { opacity: .28; }
 
-.stage-grid,
-#stage {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-}
-
+/* Whole grid (base + spotlights) fades toward the screen edges */
 .stage-grid {
     --sx: -999px;
     --sy: -999px;
     --cx: -999px;
     --cy: -999px;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
+    mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
 }
 
 .stage-grid::before,
@@ -37,21 +37,25 @@
     content: "";
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, currentColor 1px, transparent 1.7px);
-    background-size: var(--stage-grid-gap) var(--stage-grid-gap);
-    background-position: calc(var(--stage-grid-gap) / 2) calc(var(--stage-grid-gap) / 2);
 }
 
-/* Base grid, faded toward the edges */
+/* Base grid: the dot pattern is a mask cut out of a colour gradient, so the dots shift hue across the screen */
 .stage-grid::before {
-    color: var(--stage-dot);
-    -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
-    mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
+    background: var(--stage-grid-gradient);
+    opacity: var(--stage-dot-opacity);
+    -webkit-mask-image: radial-gradient(circle, #000 1px, transparent 1.7px);
+    -webkit-mask-size: var(--stage-grid-gap) var(--stage-grid-gap);
+    -webkit-mask-position: calc(var(--stage-grid-gap) / 2) calc(var(--stage-grid-gap) / 2);
+    mask-image: radial-gradient(circle, #000 1px, transparent 1.7px);
+    mask-size: var(--stage-grid-gap) var(--stage-grid-gap);
+    mask-position: calc(var(--stage-grid-gap) / 2) calc(var(--stage-grid-gap) / 2);
 }
 
 /* Accent grid, revealed only around the pointer and around the cat */
 .stage-grid::after {
-    color: var(--card-accent);
+    background-image: radial-gradient(circle, var(--card-accent) 1px, transparent 1.7px);
+    background-size: var(--stage-grid-gap) var(--stage-grid-gap);
+    background-position: calc(var(--stage-grid-gap) / 2) calc(var(--stage-grid-gap) / 2);
     -webkit-mask-image:
         radial-gradient(var(--stage-spot-radius) circle at var(--sx) var(--sy), #000, transparent 70%),
         radial-gradient(var(--stage-cat-radius) circle at var(--cx) var(--cy), #000, transparent 70%);
@@ -65,7 +69,7 @@
     z-index: 1;
 }
 
-/* HUD corners fade in once the card has arrived (.card-inner.in is set by js/main.js) */
+/* HUD corner fades in once the card has arrived (.card-inner.in is set by js/main.js) */
 .hud {
     position: absolute;
     z-index: 2;
@@ -84,35 +88,11 @@
     transform: none;
 }
 
-.hud[hidden] { display: none; }
-
-.hud-tl {
-    top: var(--hud-inset-y);
-    left: var(--hud-inset-x);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.hud-bl {
-    left: var(--hud-inset-x);
-    bottom: var(--hud-inset-y);
-}
-
 .hud-br {
     right: var(--hud-inset-x);
     bottom: var(--hud-inset-y);
     display: flex;
     gap: 18px;
-}
-
-.hud-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--card-accent);
-    box-shadow: 0 0 10px var(--card-accent);
-    animation: hud-pulse 2.4s ease-in-out infinite;
 }
 
 .hud a {
@@ -127,11 +107,6 @@
     border-color: var(--card-accent-soft);
 }
 
-@keyframes hud-pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: .5; transform: scale(.7); }
-}
-
 @media screen and (max-width: 480px) {
     :root {
         --hud-inset-x: 18px;
@@ -143,5 +118,4 @@
 
 @media (prefers-reduced-motion: reduce) {
     .hud { transition: none; opacity: 1; transform: none; }
-    .hud-dot { animation: none; }
 }
