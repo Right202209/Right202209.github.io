@@ -141,3 +141,97 @@ whatever attribution it requires.
 11. **GitHub Pages paths** — this repo is a user page served from the domain root, so the relative
     `assets/oneko.gif` in `data-cat` and the absolute `/js/oneko.js` in `sw.js` both resolve. If
     the site is ever moved to a project page (`/repo/`), the `sw.js` absolute paths break first.
+
+## Change: stage behind the card + oneko toys (`js/stage.js`, `js/yarn.js`, `css/stage.css`)
+
+The main screen used to be a single centred card on a flat `radial-gradient(#313131, #0a0a0a)`
+with two blurred orbs, which read as empty and muddy. (Note: the WebGL fluid background only ever
+runs on the intro screen; `switchPage()` in `main.js` removes that canvas on enter, so the card
+screen never had it.) This change adds a "stage" layer behind the card and makes the oneko cat part
+of it.
+
+### What the visitor sees
+
+- A faint dot grid across the whole screen, faded toward the edges, on a deeper background tone.
+  The two ambient orbs from `card.css` are kept but dimmed to a tint.
+- The grid lights up orange in a soft circle around the mouse pointer and in a smaller circle
+  around the cat, so the cat "carries a lantern" as it walks.
+- The cat leaves small paw prints that fade out over ~2.6 s.
+- Clicking on any empty part of the screen tosses a ball of yarn there. The cat walks to it, bats
+  at it for ~1.2 s, the yarn bursts into orange/white particles, and the bottom-left HUD counts
+  "yarn caught ×n". Clicking again while a ball is out moves it.
+- HUD corners that fade in one second after the card: top-left a pulsing dot with the visitor's
+  local time and weekday; bottom-left the cat hint/counter (hidden entirely when there is no cat);
+  bottom-right a "source" link and "© <year> Droit".
+
+### Files touched
+
+| File | Change |
+| --- | --- |
+| `js/oneko.js` | Added a small public API and events so other scripts can drive the cat without reaching into its state: `window.oneko.chase(x, y)`, `window.oneko.release()`, `window.oneko.position()`; document events `oneko:ready`, `oneko:step` (`{x, y, dx, dy}` every walking frame) and `oneko:arrived` (`{x, y}`). A `chase()` target is reached at `TARGET_REACH` (22 px) rather than the 48 px cursor stop distance; on arrival the cat plays `scratchSelf` for `CATCH_LINGER_FRAMES` (12) before minding the cursor again. `window.oneko` only exists when the cat actually started (fine pointer, no reduced motion). |
+| `js/stage.js` (new) | Owns `<canvas id="stage">` (DPR-aware, only animates while something is on it), a tiny drawable registry (`window.stage.add({update(dt), draw(ctx)})`), the pointer/cat spotlight CSS variables on `.stage-grid`, paw prints (one every 3 cat steps, alternating sides), and the HUD clock/year. |
+| `js/yarn.js` (new) | Click handling on `#card` (ignores clicks on `a, button, .card-panel, .hud`), the yarn drawable (pop-in with overshoot, slow wobble), the burst particles, and the HUD hint text. |
+| `css/stage.css` (new) | Background tone, the two grid layers (base + masked accent), `z-index` ordering (`.card-inner` above the stage, HUD above both), HUD corner styling, responsive insets, reduced-motion rules. |
+| `index.html` | Linked `stage.css`; added `.stage-grid` and `#stage` before `.card-inner` and three `.hud` paragraphs after it (order matters, see below); loaded `stage.js` and `yarn.js` after `card.js` and before `oneko.js`. |
+| `sw.js` | Bumped cache to `droit-v4`, added `stage.css`, `stage.js`, `yarn.js`. |
+
+### Contracts that must keep holding
+
+- The three `.hud` elements must come **after** `.card-inner` inside `#card`: their fade-in is
+  `.card-inner.in ~ .hud`, piggybacking on the `.in` class that `main.js` sets 400 ms after enter.
+- `.stage-grid` and `#stage` must be inside `#card` (which is `100vw × 100vh`, `position: fixed`
+  via `.content-main`) so that canvas coordinates equal viewport coordinates — the cat reports
+  viewport coordinates.
+- `stage.js` and `yarn.js` must load before `oneko.js`, otherwise `oneko:ready` can fire before
+  its listeners exist. `yarn.js` also checks `window.oneko` at init as a fallback.
+- Yarn catch detection is entirely inside `oneko.js` (`TARGET_REACH`); `yarn.js` only reacts to
+  `oneko:arrived`.
+
+### Configuration points
+
+- Grid: `--stage-grid-gap`, `--stage-dot`, `--stage-spot-radius`, `--stage-cat-radius` in
+  `css/stage.css` `:root`.
+- Paw prints: `PAW_EVERY_N_STEPS`, `PAW_LIFE_MS`, `PAW_ALPHA` at the top of `js/stage.js`.
+- Yarn/burst look and hint strings: constants at the top of `js/yarn.js`.
+- HUD insets: `--hud-inset-x/-y` (18 px under 480 px wide).
+
+### Items to verify manually (not run here)
+
+1. **Stacking** — after enter: grid and paw prints are visible *behind* the glass panel (the
+   panel's `backdrop-filter` should blur the dots under it), the HUD text is above the orbs, and
+   the card links are still clickable. The orbs (`#card::after`) paint above the grid but below
+   the card by tree order; if that looks wrong give `.stage-grid`/`#stage` `z-index: 0`.
+2. **Spotlights** — moving the mouse reveals an orange dot circle ~240 px wide around the pointer;
+   a ~110 px circle follows the cat. Both must render in Safari (`-webkit-mask-image` is
+   included) and Firefox. If the accent layer shows everywhere, `mask-image` with two
+   comma-separated gradients is unsupported — check `mask-composite` defaults in that browser.
+3. **Paw prints** — walk the cat around: prints appear under its feet, alternate left/right,
+   point in the walking direction, and fade over ~2.6 s. Check that the canvas loop stops
+   (`requestAnimationFrame` idle in the Performance panel) once all prints have faded.
+4. **Yarn** — click empty space: the ball pops in with a small overshoot; the hint changes to
+   "the cat is on it…"; the cat walks over, plays the scratch animation, the ball bursts, and the
+   counter increments. Clicking on the panel, a link, or the HUD must *not* toss yarn. Clicking a
+   second time before the catch moves the ball and the cat retargets.
+5. **Yarn edge case** — toss yarn near the viewport edge, then shrink the window so the point is
+   off-screen: the cat clamps to 16 px from the edge and may never "arrive". Clicking anywhere
+   tosses a new ball and recovers; if this matters, call `window.oneko.release()` on `resize`.
+6. **Touch / reduced motion** — no cat means no `window.oneko`: the bottom-left hint must stay
+   `hidden`, clicks do nothing, no canvas loop starts. With reduced motion the HUD appears
+   without transition.
+7. **Clock** — the top-left time uses the visitor's locale (`Intl.DateTimeFormat`), e.g.
+   "09:04 PM · Wed" (en-US) or "21:04 · Mi." (de-DE); confirm the `<time datetime>` attribute
+   updates every second. `hud-year` is overwritten from `Date` on load.
+8. **HiDPI** — on a 2× display the paw prints and yarn must be crisp (canvas is scaled by
+   `devicePixelRatio` in `resize()`), and resizing the window must not leave stale drawings.
+9. **Performance** — three overlays now run on the card screen (particle trail, stage canvas,
+   cat). The stage canvas only redraws while prints/yarn exist; confirm CPU drops to idle a few
+   seconds after the cat stops.
+10. **Service worker** — `droit-v4` present, `droit-v3` gone, `stage.css`/`stage.js`/`yarn.js`
+    cached.
+
+### Known deviations from the code-quality limits
+
+- `js/stage.js` `makePaw().draw` and `js/yarn.js` `makeBurst()` nest a callback inside an object
+  literal inside a factory function; that is three function levels, at the edge of the nesting
+  limit. Splitting the paw/burst drawing into top-level helpers would flatten it if it becomes
+  a problem.

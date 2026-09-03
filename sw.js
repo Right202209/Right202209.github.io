@@ -1,12 +1,15 @@
-const CACHE_NAME = 'droit-v3';
+const CACHE_NAME = 'droit-v4';
 const ASSETS = [
   '/',
   '/index.html',
   '/404.html',
   '/css/style.css',
   '/css/card.css',
+  '/css/stage.css',
   '/js/main.js',
   '/js/card.js',
+  '/js/stage.js',
+  '/js/yarn.js',
   '/js/background.js',
   '/js/mouse-trail.js',
   '/js/oneko.js',

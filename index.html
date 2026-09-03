@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Tomotoes/font/font.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/card.css">
+    <link rel="stylesheet" href="css/stage.css">
     <meta http-equiv="x-dns-prefetch-control" content="on">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="prefetch" href="https://cdn.jsdelivr.net/">
@@ -93,6 +94,8 @@
         </div>
         <div class="content content-main">
             <div id="card">
+                <div class="stage-grid" aria-hidden="true"></div>
+                <canvas id="stage" aria-hidden="true"></canvas>
                 <div class="card-inner fade">
                     <div class="card-panel">
                         <header>
@@ -121,6 +124,12 @@
                         </ul>
                     </div>
                 </div>
+                <p class="hud hud-tl"><span class="hud-dot" aria-hidden="true"></span><time
+                        id="hud-clock">--:--</time></p>
+                <p class="hud hud-bl" id="hud-cat" hidden>click anywhere · toss the cat some yarn</p>
+                <p class="hud hud-br"><a href="https://github.com/Right202209/Right202209.github.io"
+                        target="_blank" rel="noopener noreferrer">source</a><span>&copy; <span
+                            id="hud-year">2026</span> Droit</span></p>
             </div>
         </div>
 
@@ -162,6 +171,8 @@
         </script>
         <script src="js/main.js"></script>
         <script src="js/card.js"></script>
+        <script src="js/stage.js"></script>
+        <script src="js/yarn.js"></script>
         <script src="js/background.js"></script>
         <script src="js/mouse-trail.js"></script>
         <script src="js/oneko.js" data-cat="assets/oneko.gif"></script>

@@ -1,6 +1,12 @@
 /* oneko: a pixel cat that chases the cursor.
  * Behaviour and sprite-sheet layout adapted from https://github.com/adryd325/oneko.js
  * Sprite sheet: 8x4 grid of 32px cells (assets/oneko.gif).
+ *
+ * Integration surface (used by js/stage.js and js/yarn.js):
+ *   window.oneko.chase(x, y)  — walk to a point instead of the cursor; fires "oneko:arrived"
+ *   window.oneko.release()    — drop the target and go back to following the cursor
+ *   window.oneko.position()   — { x, y } of the cat's centre in viewport pixels
+ *   document events: "oneko:ready", "oneko:step" ({x, y, dx, dy}), "oneko:arrived" ({x, y})
  */
 (function () {
     'use strict';
@@ -17,7 +23,9 @@
     const FRAME_INTERVAL_MS = 100;
     const START_POS = 32;
     const NEKO_SPEED = 10;              // px moved per frame while chasing
-    const CHASE_DISTANCE = 48;          // stops chasing once this close to the cursor
+    const CHASE_DISTANCE = 48;          // stops chasing the cursor once this close
+    const TARGET_REACH = 22;            // a chase() target counts as reached this close
+    const CATCH_LINGER_FRAMES = 12;     // frames spent playing with a caught target
     const AXIS_THRESHOLD = 0.5;         // share of the distance needed to add a compass letter
 
     const IDLE_TICKS_BEFORE_ANIMATION = 10;
@@ -55,6 +63,8 @@
     let nekoPosY = START_POS;
     let mousePosX = START_POS;          // starts on the cat, so it sits still until the mouse moves
     let mousePosY = START_POS;
+    let target = null;                  // { x, y } set by chase(), cleared on arrival/release
+    let lingerFrames = 0;
     let frameCount = 0;
     let idleTime = 0;
     let idleAnimation = null;
@@ -65,6 +75,10 @@
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
         return !reducedMotion && finePointer;
+    }
+
+    function emit(name, detail) {
+        document.dispatchEvent(new CustomEvent(name, { detail: detail }));
     }
 
     function setSprite(name, frame) {
@@ -125,7 +139,7 @@
         if (!playing) resetIdleAnimation();
     }
 
-    // Compass name of the sprite set to use; diffs point from the cursor back to the cat.
+    // Compass name of the sprite set to use; diffs point from the goal back to the cat.
     function directionFor(diffX, diffY, distance) {
         const shareX = diffX / distance;
         const shareY = diffY / distance;
@@ -136,13 +150,40 @@
         return name;
     }
 
+    // The cat bats at whatever it caught for a moment before minding the cursor again.
+    function arrive() {
+        const reached = target;
+        target = null;
+        lingerFrames = CATCH_LINGER_FRAMES;
+        idleAnimation = 'scratchSelf';
+        idleAnimationFrame = 0;
+        emit('oneko:arrived', reached);
+    }
+
+    function walk(diffX, diffY, distance) {
+        const dx = -diffX / distance;
+        const dy = -diffY / distance;
+        setSprite(directionFor(diffX, diffY, distance), frameCount);
+        moveTo(nekoPosX + dx * NEKO_SPEED, nekoPosY + dy * NEKO_SPEED);
+        emit('oneko:step', { x: nekoPosX, y: nekoPosY, dx: dx, dy: dy });
+    }
+
     function frame() {
         frameCount += 1;
-        const diffX = nekoPosX - mousePosX;
-        const diffY = nekoPosY - mousePosY;
+        if (lingerFrames > 0) {
+            lingerFrames -= 1;
+            idle();
+            return;
+        }
+        const goalX = target ? target.x : mousePosX;
+        const goalY = target ? target.y : mousePosY;
+        const stopAt = target ? TARGET_REACH : CHASE_DISTANCE;
+        const diffX = nekoPosX - goalX;
+        const diffY = nekoPosY - goalY;
         const distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
-        if (distance < CHASE_DISTANCE || distance < NEKO_SPEED) {
+        if (distance < stopAt || distance < NEKO_SPEED) {
+            if (target) arrive();
             idle();
             return;
         }
@@ -152,8 +193,7 @@
             idleTime = Math.min(idleTime, ALERT_IDLE_CAP) - 1;
             return;
         }
-        setSprite(directionFor(diffX, diffY, distance), frameCount);
-        moveTo(nekoPosX - (diffX / distance) * NEKO_SPEED, nekoPosY - (diffY / distance) * NEKO_SPEED);
+        walk(diffX, diffY, distance);
     }
 
     function onAnimationFrame(timestamp) {
@@ -181,6 +221,14 @@
         mousePosY = event.clientY;
     }
 
+    function publishApi() {
+        window.oneko = {
+            chase: function (x, y) { target = { x: x, y: y }; lingerFrames = 0; },
+            release: function () { target = null; },
+            position: function () { return { x: nekoPosX, y: nekoPosY }; }
+        };
+    }
+
     function start(spriteUrl) {
         nekoEl.id = 'oneko';
         nekoEl.setAttribute('aria-hidden', 'true');
@@ -188,7 +236,9 @@
         moveTo(nekoPosX, nekoPosY);
         document.body.appendChild(nekoEl);
         document.addEventListener('mousemove', onMouseMove, { passive: true });
+        publishApi();
         window.requestAnimationFrame(onAnimationFrame);
+        emit('oneko:ready', { x: nekoPosX, y: nekoPosY });
     }
 
     // Only a plain URL is accepted, so nothing can break out of the CSS url("...") wrapper.
