@@ -1,29 +1,171 @@
-"use strict";function _toConsumableArray(e){return _arrayWithoutHoles(e)||_iterableToArray(e)||_unsupportedIterableToArray(e)||_nonIterableSpread()}function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}function _unsupportedIterableToArray(e,t){if(e){if("string"==typeof e)return _arrayLikeToArray(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);return"Object"===n&&e.constructor&&(n=e.constructor.name),"Map"===n||"Set"===n?Array.from(e):"Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)?_arrayLikeToArray(e,t):void 0}}function _iterableToArray(e){if("undefined"!=typeof Symbol&&Symbol.iterator in Object(e))return Array.from(e)}function _arrayWithoutHoles(e){if(Array.isArray(e))return _arrayLikeToArray(e)}function _arrayLikeToArray(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,a=new Array(t);n<t;n++)a[n]=e[n];return a}function getMoveDirection(e,t,n,a){if(isPhone){var r=n-e,o=a-t;if(Math.abs(r)<2&&Math.abs(o)<2)return DIRECTIONS.UNDIRECTED;var i,d,s=(i=r,d=o,180*Math.atan2(d,i)/Math.PI);return-135<=s&&s<=-45?DIRECTIONS.UP:45<s&&s<135?DIRECTIONS.DOWN:135<=s&&s<=180||-180<=s&&s<-135?DIRECTIONS.LEFT:-45<=s&&s<=45?DIRECTIONS.RIGHT:DIRECTIONS.UNDIRECTED}}function loadIntro(){document[hiddenProperty]||loadIntro.loaded||(setTimeout(function(){$(".wrap").classList.add("in"),setTimeout(function(){$(".content-subtitle").innerHTML="<span>".concat(_toConsumableArray(subtitle).join("</span><span>"),"</span>")},270)},0),loadIntro.loaded=!0)}function switchPage(){if(!switchPage.switched){var e={intro:$(".content-intro"),path:$(".shape-wrap path"),shape:$("svg.shape")};e.shape.style.transformOrigin="50% 0%",anime({targets:e.intro,duration:1100,easing:"easeInOutSine",translateY:"-200vh"}),anime({targets:e.shape,scaleY:[{value:[.8,1.8],duration:550,easing:"easeInQuad"},{value:1,duration:550,easing:"easeOutQuad"}]}),anime({targets:e.path,duration:1100,easing:"easeOutQuad",d:e.path.getAttribute("pathdata:id"),complete:function(e){canvas&&(cancelAnimationFrame(animationID),canvas.parentElement.removeChild(canvas),canvas=null)}}),switchPage.switched=!0}}function loadMain(){loadMain.loaded||(setTimeout(function(){$(".card-inner").classList.add("in")},400),loadMain.loaded=!0)}function loadAll(){loadAll.loaded||(switchPage(),loadMain(),loadAll.loaded=!0)}window.hiddenProperty="hidden"in document?"hidden":"webkitHidden"in document?"webkitHidden":"mozHidden"in document?"mozHidden":null,window.DIRECTIONS={UP:"UP",DOWN:"DOWN",LEFT:"LEFT",RIGHT:"RIGHT",UNDIRECTED:"UNDIRECTED"},window.isPhone=/Mobile|Android|iOS|iPhone|iPad|iPod|Windows Phone|KFAPWI/i.test(navigator.userAgent),window.visibilityChangeEvent=hiddenProperty.replace(/hidden/i,"visibilitychange"),window.addEventListener(visibilityChangeEvent,loadIntro),window.addEventListener("DOMContentLoaded",loadIntro);var enterEl=$(".enter");enterEl.addEventListener("click",loadAll),enterEl.addEventListener("touchenter",loadAll),document.body.addEventListener("mousewheel",loadAll,{passive:!0}),$(".arrow").addEventListener("mouseenter",loadAll),isPhone&&(document.addEventListener("touchstart",function(e){window.startx=e.touches[0].pageX,window.starty=e.touches[0].pageY},{passive:!0}),document.addEventListener("touchend",function(e){var t,n;t=e.changedTouches[0].pageX,n=e.changedTouches[0].pageY,getMoveDirection(startx,starty,t,n)===DIRECTIONS.UP&&loadAll()},{passive:!0}));
+"use strict";
 
-document.addEventListener('DOMContentLoaded', () => {
-	const backToTop = document.querySelector("#back-to-top");
-	if (backToTop) {
-		backToTop.addEventListener("click", (e) => {
-			e.preventDefault();
-			window.scrollTo({ top: 0, behavior: 'smooth' });
-		});
-	}
+window.hiddenProperty = "hidden" in document ? "hidden" :
+    "webkitHidden" in document ? "webkitHidden" : "mozHidden";
+window.visibilityChangeEvent = hiddenProperty.replace(/hidden/i, "visibilitychange");
+
+const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+const introSection = document.querySelector(".content-intro");
+const mainSection = document.querySelector(".content-main");
+mainSection.inert = true;
+
+function loadIntro() {
+    if (document[hiddenProperty] || loadIntro.loaded) return;
+    loadIntro.loaded = true;
+    document.querySelector(".wrap").classList.add("in");
+
+    const subtitleElement = document.querySelector(".content-subtitle");
+    if (motionPreference.matches) {
+        requestAnimationFrame(() => {
+            if (typeof window.animationID === "number") cancelAnimationFrame(window.animationID);
+        });
+        return;
+    }
+
+    subtitleElement.replaceChildren(...Array.from(window.subtitle, (letter, index) => {
+        const span = document.createElement("span");
+        span.textContent = letter;
+        span.style.setProperty("--letter-index", index);
+        return span;
+    }));
+}
+
+function finishIntro(focusMain) {
+    if (typeof window.animationID === "number") {
+        cancelAnimationFrame(window.animationID);
+    }
+    if (window.canvas) {
+        window.canvas.remove();
+        window.canvas = null;
+    }
+
+    introSection.hidden = true;
+    introSection.setAttribute("aria-hidden", "true");
+    mainSection.inert = false;
+    document.documentElement.classList.add("intro-complete");
+
+    if (focusMain) mainSection.focus({ preventScroll: true });
+}
+
+function switchPage(focusMain = false) {
+    if (switchPage.switched) return;
+    switchPage.switched = true;
+    introSection.inert = true;
+    document.documentElement.classList.add("main-active");
+
+    const shape = document.querySelector("svg.shape");
+    const path = document.querySelector(".shape-wrap path");
+
+    // The page remains usable if the animation CDN is unavailable.
+    if (motionPreference.matches || typeof window.anime !== "function") {
+        finishIntro(focusMain);
+        return;
+    }
+
+    shape.style.transformOrigin = "50% 0%";
+    anime({
+        targets: introSection,
+        duration: 1100,
+        easing: "easeInOutSine",
+        translateY: -introSection.offsetHeight,
+        complete: () => finishIntro(focusMain)
+    });
+    anime({
+        targets: shape,
+        scaleY: [
+            { value: [.8, 1.8], duration: 550, easing: "easeInQuad" },
+            { value: 1, duration: 550, easing: "easeOutQuad" }
+        ]
+    });
+    anime({
+        targets: path,
+        duration: 1100,
+        easing: "easeOutQuad",
+        d: path.getAttribute("pathdata:id")
+    });
+}
+
+function loadMain() {
+    if (loadMain.loaded) return;
+    loadMain.loaded = true;
+    const delay = motionPreference.matches || typeof window.anime !== "function" ? 0 : 350;
+    setTimeout(() => document.querySelector(".main-shell").classList.add("in"), delay);
+}
+
+function loadAll(focusMain = false) {
+    if (loadAll.loaded) return;
+    loadAll.loaded = true;
+    switchPage(focusMain);
+    loadMain();
+}
+
+document.addEventListener(visibilityChangeEvent, loadIntro);
+document.addEventListener("DOMContentLoaded", loadIntro);
+
+document.querySelectorAll(".enter, .skip-link").forEach(link => {
+    link.addEventListener("click", event => {
+        event.preventDefault();
+        if (switchPage.switched) {
+            mainSection.focus({ preventScroll: true });
+            mainSection.scrollIntoView({ behavior: motionPreference.matches ? "auto" : "smooth" });
+            return;
+        }
+        loadAll(true);
+    });
 });
 
-// Dynamic Tab Title (Emotional Design)
-(function() {
-	const originTitle = document.title;
-	let titleTime;
-	document.addEventListener(window.visibilityChangeEvent, function() {
-		if (document[window.hiddenProperty]) {
-			document.title = '(つェ⊂) 记得回来看看~';
-			clearTimeout(titleTime);
-		} else {
-			document.title = '(*´∇｀*) 欢迎回来！';
-			clearTimeout(titleTime);
-			titleTime = setTimeout(function() {
-				document.title = originTitle;
-			}, 2000);
-		}
-	});
-})();
+window.addEventListener("wheel", event => {
+    if (!event.ctrlKey && event.deltaY > 0) loadAll();
+}, { passive: true });
+
+document.querySelectorAll(".arrow").forEach(arrow => {
+    arrow.addEventListener("mouseenter", () => loadAll());
+});
+
+document.addEventListener("keydown", event => {
+    if (switchPage.switched || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.target.closest("a, button, input, textarea, select, [contenteditable]")) return;
+    if (["ArrowDown", "PageDown", " ", "End"].includes(event.key)) {
+        event.preventDefault();
+        loadAll(true);
+    }
+});
+
+let touchStart = null;
+document.addEventListener("touchstart", event => {
+    touchStart = event.touches.length === 1
+        ? { x: event.touches[0].clientX, y: event.touches[0].clientY }
+        : null;
+}, { passive: true });
+document.addEventListener("touchend", event => {
+    if (!touchStart || !event.changedTouches.length) return;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStart.x;
+    const deltaY = touch.clientY - touchStart.y;
+    touchStart = null;
+    if (deltaY < -30 && Math.abs(deltaY) > Math.abs(deltaX)) loadAll();
+}, { passive: true });
+document.addEventListener("touchcancel", () => { touchStart = null; }, { passive: true });
+
+// Preserve the existing tab-title interaction.
+const originalTitle = document.title;
+let titleTimer;
+document.addEventListener(visibilityChangeEvent, () => {
+    clearTimeout(titleTimer);
+    if (document[hiddenProperty]) {
+        document.title = "(つェ⊂) 记得回来看看~";
+    } else {
+        document.title = "(*´∇｀*) 欢迎回来！";
+        titleTimer = setTimeout(() => { document.title = originalTitle; }, 2000);
+    }
+});
+
+motionPreference.addEventListener("change", () => {
+    if (switchPage.switched || !window.canvas || typeof window.update !== "function") return;
+    cancelAnimationFrame(window.animationID);
+    if (!motionPreference.matches) window.update();
+});
+
+if (location.hash === "#main-content") {
+    document.addEventListener("DOMContentLoaded", () => setTimeout(() => loadAll(true), 0));
+}

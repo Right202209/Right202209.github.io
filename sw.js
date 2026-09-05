@@ -1,4 +1,4 @@
-const CACHE_NAME = 'droit-v1';
+const CACHE_NAME = 'droit-v2';
 const ASSETS = [
   '/',
   '/index.html',
@@ -17,7 +17,16 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
-    })
+    }).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => Promise.all(
+      keys.filter((key) => key.startsWith('droit-') && key !== CACHE_NAME)
+        .map((key) => caches.delete(key))
+    )).then(() => self.clients.claim())
   );
 });
 

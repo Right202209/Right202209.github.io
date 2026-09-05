@@ -1,6 +1,11 @@
 (function() {
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motionPreference.matches || !window.matchMedia('(pointer: fine)').matches) return;
+
     const canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     canvas.style.position = 'fixed';
     canvas.style.top = '0';
     canvas.style.left = '0';
@@ -62,7 +67,7 @@
     // Only show trail when the main content is visible
     window.addEventListener('mousemove', (e) => {
         // Check if the main content is active (switched state in main.js)
-        if (window.switchPage && window.switchPage.switched) {
+        if (!motionPreference.matches && window.switchPage && window.switchPage.switched) {
             for (let i = 0; i < 2; i++) {
                 particles.push(new Particle(e.clientX, e.clientY));
             }
