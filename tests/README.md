@@ -22,8 +22,9 @@ and a working font configuration with sans-serif and monospace fonts installed.
 The suite checks that text actually renders, so a fontless runtime cannot silently
 pass the layout checks.
 
-The checks cover flat panel styling, avatar proportions, keyboard entry and
-selection, existing link destinations, responsive layout at 320–1440px, and
-no-JavaScript access. External CDN requests and the service worker are disabled
+The checks cover flat, opaque, borderless tiles, the full-bleed avatar tile,
+monochrome keyboard-focus and hover highlights, existing link destinations,
+tile stacking at 320–1440px (including the 560/561 and 760/768 breakpoints),
+and no-JavaScript access. External CDN requests and the service worker are disabled
 in these tests so the checks are deterministic and exercise the site's fallback.
 The live animation and service-worker update should also be checked manually.

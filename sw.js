@@ -1,9 +1,12 @@
-const CACHE_NAME = 'droit-v3';
+const CACHE_NAME = 'droit-v4';
 const ASSETS = [
   '/',
   '/index.html',
   '/404.html',
   '/css/style.css',
+  '/css/intro.css',
+  '/css/main.css',
+  '/css/responsive.css',
   '/js/main.js',
   '/js/background.js',
   '/js/mouse-trail.js',

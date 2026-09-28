@@ -1,0 +1,196 @@
+/* Intro screen: fluid background, title and morphing reveal. */
+.content-intro {
+    z-index: 100;
+}
+
+.js .content-intro {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 200vh;
+    height: 200svh;
+}
+
+.content-inner,
+.wrap {
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+}
+
+.content-inner {
+    position: relative;
+    isolation: isolate;
+    background: var(--color-content);
+    user-select: none;
+}
+
+.wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--page-gutter);
+    text-align: center;
+}
+
+.shape-wrap {
+    display: none;
+    position: relative;
+    z-index: 10;
+    margin-top: -2px;
+}
+
+.js .shape-wrap {
+    display: block;
+}
+
+.shape {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    fill: var(--color-content);
+}
+
+.content-title {
+    margin: .8em 0 .3em;
+    color: var(--color-title);
+    font: 200 clamp(3.1rem, 6.6vw, 4.7rem)/1 var(--font-display);
+    animation: whiteShadow 1.5s ease-in-out infinite alternate;
+}
+
+.content-subtitle {
+    min-height: 1.5em;
+    margin: 1em 0 2em;
+    color: var(--color-title);
+    font: 200 clamp(.8rem, 1.7vw, 1.2rem)/1.5 var(--font-display);
+    text-shadow: 0 0 4px rgba(255, 255, 255, .6);
+}
+
+.content-subtitle span {
+    animation: letter-glow .7s both;
+    animation-delay: calc(var(--letter-index) * 50ms);
+}
+
+.enter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    min-height: 44px;
+    color: var(--color-enter);
+    font-size: .8rem;
+    letter-spacing: 3px;
+    text-underline-offset: 8px;
+}
+
+.enter:hover,
+.enter:focus-visible {
+    text-decoration: underline;
+}
+
+.github-corner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+}
+
+.github-corner:focus-visible {
+    outline-offset: -8px;
+}
+
+.github-corner:hover .octo-arm {
+    animation: octocat-wave 560ms ease-in-out;
+}
+
+.arrow {
+    position: absolute;
+    left: 50%;
+    top: 94%;
+    width: 28px;
+    height: 24px;
+    transform: translateX(-50%);
+    animation: arrow-movement 2s ease-in-out infinite;
+}
+
+.arrow-2 {
+    animation-delay: 1s;
+}
+
+.arrow::before,
+.arrow::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 14px;
+    height: 2px;
+    background: var(--color-title);
+}
+
+.arrow::before {
+    left: 2px;
+    transform: rotate(45deg);
+}
+
+.arrow::after {
+    right: 2px;
+    transform: rotate(-45deg);
+}
+
+@keyframes letter-glow {
+    from {
+        opacity: 0;
+        text-shadow: 0 0 1px rgba(255, 255, 255, .1);
+    }
+    66% {
+        opacity: 1;
+        text-shadow: 0 0 20px rgba(255, 255, 255, .9);
+    }
+    to {
+        opacity: .85;
+        text-shadow: 0 0 10px rgba(255, 255, 255, .2);
+    }
+}
+
+@keyframes arrow-movement {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -14px);
+    }
+    70% {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, 0);
+    }
+}
+
+@keyframes octocat-wave {
+    0%, 100% { transform: rotate(0); }
+    20%, 60% { transform: rotate(-25deg); }
+    40%, 80% { transform: rotate(10deg); }
+}
+
+@media (max-height: 540px) and (orientation: landscape) {
+    .content-title {
+        margin-top: 0;
+        font-size: 3rem;
+    }
+
+    .content-subtitle {
+        margin-block: .6em;
+    }
+
+    .arrow {
+        top: 92%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .arrow-2 {
+        display: none;
+    }
+}

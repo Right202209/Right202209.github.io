@@ -1,0 +1,92 @@
+/* Breakpoints for the main tile grid: 1023px, 1000px, 760px, 560px, 380px. */
+@media (max-width: 1023px) {
+    .profile {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tile-avatar,
+    .tile-identity {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 1000px) {
+    .main-footer .keyboard-hint {
+        display: none;
+    }
+}
+
+/* Tiles stack into a single column; links become compact rows. */
+@media (max-width: 760px) {
+    :root {
+        --page-gutter: clamp(16px, 4vw, 28px);
+        --page-inset: 24px;
+        --grid-gap: 8px;
+        --tile-pad: 20px;
+    }
+
+    .top-bar .eyebrow {
+        gap: 8px;
+        font-size: .5rem;
+        letter-spacing: .08em;
+    }
+
+    .profile h1 {
+        margin-bottom: 12px;
+        font-size: clamp(2.4rem, 9vw, 3.2rem);
+    }
+
+    .site-links {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .site-links li,
+    .site-links li:nth-child(n + 4) {
+        grid-column: auto;
+    }
+
+    .site-link {
+        grid-template: "num copy arrow" auto / 24px minmax(0, 1fr) 20px;
+        align-items: center;
+        column-gap: 14px;
+        min-height: 88px;
+        padding-block: 16px;
+    }
+
+    .link-number {
+        align-self: start;
+        padding-top: 6px;
+    }
+
+    .link-copy {
+        align-self: center;
+    }
+
+    .link-title {
+        font-size: 1.4rem;
+    }
+
+    .main-footer p,
+    .source-link {
+        font-size: .5rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .profile {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 380px) {
+    .site-link {
+        grid-template-columns: 18px minmax(0, 1fr) 18px;
+        column-gap: 10px;
+        padding-inline: 16px;
+    }
+
+    .link-arrow {
+        width: 18px;
+        height: 18px;
+    }
+}

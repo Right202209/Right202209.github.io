@@ -7,6 +7,21 @@ const EXPECTED_LINKS = [
     'blog/', 'Photo/', 'About/index.html',
     'https://github.com/Right202209', 'Contact/'
 ];
+const DESKTOP_VIEWPORT = { width: 1440, height: 900 };
+const VIEWPORT_HEIGHT = 900;
+const TEST_WIDTHS = [320, 390, 560, 561, 760, 768, 1024, 1440];
+const LINKS_STACK_MAX_WIDTH = 760;
+const PROFILE_STACK_MAX_WIDTH = 560;
+const FIRST_ROW_LINK_COUNT = 3;
+const MIN_TOUCH_TARGET = 44;
+const MIN_DESKTOP_AVATAR = 240;
+const PIXEL_TOLERANCE = 1;
+const HIGHLIGHT = 'rgb(245, 243, 239)';
+const ON_HIGHLIGHT = 'rgb(30, 31, 33)';
+const RETIRED_ORANGE = 'rgb(255, 150, 59)';
+const FRAME_SELECTORS = ['.main-shell', '.profile', '.site-nav'];
+const TILE_SELECTORS = ['.tile-avatar', '.tile-identity', '.site-link'];
+const OPAQUE_RGB = /^rgb\(\d+, \d+, \d+\)$/;
 let browser;
 
 before(async () => {
@@ -22,7 +37,7 @@ after(async () => {
 
 async function openPage(options = {}) {
     const context = await browser.newContext({
-        viewport: { width: 1440, height: 900 },
+        viewport: DESKTOP_VIEWPORT,
         reducedMotion: 'reduce',
         serviceWorkers: 'block',
         ...options
@@ -47,7 +62,64 @@ async function assertNoOverflow(page) {
     assert.ok(dimensions.document <= dimensions.viewport, JSON.stringify(dimensions));
 }
 
-test('main panels use flat, opaque frames and an uncropped avatar', async () => {
+function readSurface(element) {
+    const css = getComputedStyle(element);
+    return {
+        border: css.borderLeftWidth,
+        background: css.backgroundColor,
+        blur: css.backdropFilter,
+        filter: css.filter,
+        shadow: css.boxShadow,
+        opacity: css.opacity
+    };
+}
+
+async function assertFlatSurfaces(page) {
+    for (const selector of FRAME_SELECTORS) {
+        const style = await page.locator(selector).evaluate(readSurface);
+        assert.equal(style.border, '0px', `${selector} must not draw a frame`);
+        assert.equal(style.blur, 'none');
+    }
+    for (const selector of TILE_SELECTORS) {
+        for (const tile of await page.locator(selector).all()) {
+            const style = await tile.evaluate(readSurface);
+            assert.equal(style.border, '0px', `${selector} must be borderless`);
+            assert.match(style.background, OPAQUE_RGB, `${selector} must be opaque`);
+            assert.notEqual(style.background, RETIRED_ORANGE);
+            assert.deepEqual([style.blur, style.filter, style.shadow, style.opacity], ['none', 'none', 'none', '1']);
+        }
+    }
+    assert.equal(await page.locator('.panel-label, .nav-heading').count(), 0, 'Embedded labels are retired');
+}
+
+async function assertBleedAvatar(page) {
+    const avatar = await page.locator('.profile-avatar').evaluate(image => ({
+        loaded: image.complete && image.naturalWidth > 0,
+        fit: getComputedStyle(image).objectFit,
+        image: image.getBoundingClientRect().toJSON(),
+        tile: image.parentElement.getBoundingClientRect().toJSON()
+    }));
+    assert.ok(avatar.loaded);
+    assert.equal(avatar.fit, 'cover');
+    for (const side of ['x', 'y', 'width', 'height']) {
+        assert.ok(Math.abs(avatar.image[side] - avatar.tile[side]) <= PIXEL_TOLERANCE, `Avatar must fill its tile (${side})`);
+    }
+    assert.ok(avatar.tile.width >= MIN_DESKTOP_AVATAR);
+    assert.ok(Math.abs(avatar.tile.width - avatar.tile.height) <= PIXEL_TOLERANCE, 'Avatar tile must be square');
+}
+
+function readHighlight(link) {
+    const css = getComputedStyle(link);
+    return {
+        focused: link === document.activeElement,
+        background: css.backgroundColor,
+        title: getComputedStyle(link.querySelector('.link-title')).color,
+        outline: css.outlineStyle,
+        outlineColor: css.outlineColor
+    };
+}
+
+test('main tiles are flat, opaque and borderless with a full-bleed avatar', async () => {
     const { context, page } = await openPage();
     try {
         await enterPage(page);
@@ -57,37 +129,14 @@ test('main panels use flat, opaque frames and an uncropped avatar', async () => 
             return range.getBoundingClientRect().height;
         });
         assert.ok(textHeight > 0, 'Browser runtime must have fonts to validate the layout');
-        for (const selector of ['.main-shell', '.profile', '.site-nav']) {
-            const style = await page.locator(selector).evaluate(element => {
-                const css = getComputedStyle(element);
-                return {
-                    border: css.borderLeftWidth,
-                    background: css.backgroundColor,
-                    blur: css.backdropFilter,
-                    shadow: css.boxShadow
-                };
-            });
-            assert.equal(style.border, '1px', `${selector} needs a fine frame`);
-            assert.equal(style.background, 'rgb(30, 31, 33)');
-            assert.equal(style.blur, 'none');
-            assert.equal(style.shadow, 'none');
-        }
-        const avatar = await page.locator('.profile-avatar').evaluate(image => ({
-            loaded: image.complete && image.naturalWidth > 0,
-            width: image.clientWidth,
-            height: image.clientHeight,
-            fit: getComputedStyle(image).objectFit
-        }));
-        assert.ok(avatar.loaded);
-        assert.ok(avatar.width >= 88);
-        assert.equal(avatar.width, avatar.height);
-        assert.equal(avatar.fit, 'contain');
+        await assertFlatSurfaces(page);
+        await assertBleedAvatar(page);
     } finally {
         await context.close();
     }
 });
 
-test('keyboard entry, navigation destinations and solid selection work', async () => {
+test('keyboard entry, destinations and monochrome highlights work', async () => {
     const { context, page } = await openPage();
     try {
         assert.equal(await page.locator('#main-content').evaluate(element => element.inert), true);
@@ -99,48 +148,75 @@ test('keyboard entry, navigation destinations and solid selection work', async (
         assert.deepEqual(await page.locator('.site-link').evaluateAll(links =>
             links.map(link => link.getAttribute('href'))), EXPECTED_LINKS);
         await page.keyboard.press('Tab');
-        const selected = await page.locator('.site-link').first().evaluate(link => {
-            const css = getComputedStyle(link);
-            return {
-                focused: link === document.activeElement,
-                background: css.backgroundColor,
-                title: getComputedStyle(link.querySelector('.link-title')).color,
-                outline: css.outlineStyle
-            };
+        const focused = await page.locator('.site-link').first().evaluate(readHighlight);
+        assert.deepEqual(focused, {
+            focused: true, background: HIGHLIGHT, title: ON_HIGHLIGHT,
+            outline: 'solid', outlineColor: HIGHLIGHT
         });
-        assert.ok(selected.focused);
-        assert.equal(selected.background, 'rgb(255, 150, 59)');
-        assert.equal(selected.title, 'rgb(30, 31, 33)');
-        assert.equal(selected.outline, 'solid');
         await page.keyboard.press('Tab');
         assert.equal(await page.locator('.site-link').nth(1).evaluate(link => link === document.activeElement), true);
+        const lastLink = page.locator('.site-link').last();
+        await lastLink.hover();
+        const hovered = await lastLink.evaluate(readHighlight);
+        assert.equal(hovered.background, HIGHLIGHT);
+        assert.equal(hovered.title, ON_HIGHLIGHT);
     } finally {
         await context.close();
     }
 });
 
-for (const width of [320, 390, 760, 768, 1024, 1440]) {
-    test(`panels fit and links remain reachable at ${width}px`, async () => {
-        const { context, page } = await openPage({ viewport: { width, height: 900 } });
+async function readLayoutBoxes(page) {
+    return {
+        avatar: await page.locator('.tile-avatar').boundingBox(),
+        identity: await page.locator('.tile-identity').boundingBox(),
+        name: await page.locator('#profile-name').boundingBox(),
+        profile: await page.locator('.profile').boundingBox(),
+        nav: await page.locator('.site-nav').boundingBox(),
+        links: await Promise.all((await page.locator('.site-link').all()).map(link => link.boundingBox()))
+    };
+}
+
+function assertProfileLayout(width, boxes) {
+    const { avatar, identity, name, profile, nav } = boxes;
+    assert.ok(nav.y >= profile.y + profile.height - PIXEL_TOLERANCE, 'Links sit below the profile');
+    if (width <= PROFILE_STACK_MAX_WIDTH) {
+        assert.ok(identity.y >= avatar.y + avatar.height - PIXEL_TOLERANCE, 'Identity stacks under the avatar');
+        return;
+    }
+    assert.ok(identity.x >= avatar.x + avatar.width - PIXEL_TOLERANCE, 'Identity sits beside the avatar');
+    assert.ok(name.x >= avatar.x + avatar.width, 'Name must not overlap the avatar');
+}
+
+function assertLinkLayout(width, links) {
+    if (width <= LINKS_STACK_MAX_WIDTH) {
+        links.slice(1).forEach((link, index) => {
+            const previous = links[index];
+            assert.ok(Math.abs(link.x - previous.x) <= PIXEL_TOLERANCE, 'Stacked links share a column');
+            assert.ok(link.y >= previous.y + previous.height, 'Stacked links do not overlap');
+        });
+        return;
+    }
+    const firstRow = links.slice(0, FIRST_ROW_LINK_COUNT);
+    firstRow.slice(1).forEach((link, index) => {
+        assert.ok(Math.abs(link.y - firstRow[index].y) <= PIXEL_TOLERANCE, 'First row tiles align');
+        assert.ok(link.x >= firstRow[index].x + firstRow[index].width, 'First row tiles do not overlap');
+    });
+    const secondRow = links.slice(FIRST_ROW_LINK_COUNT);
+    assert.ok(secondRow.every(link => link.y >= firstRow[0].y + firstRow[0].height), 'Remaining tiles form a second row');
+}
+
+for (const width of TEST_WIDTHS) {
+    test(`tiles fit and links remain reachable at ${width}px`, async () => {
+        const { context, page } = await openPage({ viewport: { width, height: VIEWPORT_HEIGHT } });
         try {
             await enterPage(page);
             await assertNoOverflow(page);
-            const profile = await page.locator('.profile').boundingBox();
-            const nav = await page.locator('.site-nav').boundingBox();
-            if (width <= 760) {
-                assert.ok(nav.y >= profile.y + profile.height);
-                const name = await page.locator('#profile-name').boundingBox();
-                const avatar = await page.locator('.profile-avatar').boundingBox();
-                assert.ok(name.x + name.width <= avatar.x, 'Name must not overlap the avatar');
-            } else {
-                assert.ok(nav.x >= profile.x + profile.width);
-            }
-            for (const link of await page.locator('.site-link').all()) {
-                await link.scrollIntoViewIfNeeded();
-                assert.ok(await link.isVisible());
-                assert.ok((await link.boundingBox()).height >= 44);
-            }
+            const boxes = await readLayoutBoxes(page);
+            assertProfileLayout(width, boxes);
+            assertLinkLayout(width, boxes.links);
+            assert.ok(boxes.links.every(link => link.height >= MIN_TOUCH_TARGET));
             await page.locator('.source-link').scrollIntoViewIfNeeded();
+            assert.ok(await page.locator('.site-link').last().isVisible());
             await assertNoOverflow(page);
         } finally {
             await context.close();
@@ -153,7 +229,7 @@ test('main content remains usable without JavaScript', async () => {
     try {
         await page.locator('.enter').click();
         assert.ok(await page.locator('.profile-avatar').isVisible());
-        assert.equal(await page.locator('.site-link').count(), 5);
+        assert.equal(await page.locator('.site-link').count(), EXPECTED_LINKS.length);
         await assertNoOverflow(page);
     } finally {
         await context.close();

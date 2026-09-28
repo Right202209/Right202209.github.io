@@ -14,6 +14,9 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Tomotoes/font/font.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/intro.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/responsive.css">
     <meta http-equiv="x-dns-prefetch-control" content="on">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="prefetch" href="https://cdn.jsdelivr.net/">
@@ -61,27 +64,27 @@
         </div>
         <section class="content content-main" id="main-content" aria-labelledby="profile-name" tabindex="-1">
             <div class="main-shell fade">
-                <div class="section-heading">
+                <div class="top-bar">
                     <p class="eyebrow"><span class="accent-line" aria-hidden="true"></span> A personal space</p>
                     <span class="section-marker" aria-hidden="true">D /</span>
                 </div>
 
                 <div class="main-layout">
                     <header class="profile">
-                        <p class="eyebrow panel-label">Profile</p>
-                        <img class="profile-avatar" src="assets/droit.jpg" width="104" height="104"
-                            alt="Droit's illustrated avatar" decoding="async">
-                        <p class="profile-greeting">Hello, I'm</p>
-                        <h1 id="profile-name" data-translate="name">Droit<span class="name-period" aria-hidden="true">.</span></h1>
-                        <p id="signature" data-translate="signature">Code <span>&amp;</span> Input <span>&amp;</span> Output</p>
-                        <p class="profile-note">An Ignorant Learner</p>
+                        <div class="tile-avatar">
+                            <img class="profile-avatar" src="assets/droit.jpg" width="940" height="940"
+                                alt="Droit's illustrated avatar" decoding="async">
+                        </div>
+                        <div class="tile-identity">
+                            <p class="profile-greeting">Hello, I'm</p>
+                            <h1 id="profile-name" data-translate="name">Droit<span class="name-period" aria-hidden="true">.</span></h1>
+                            <p id="signature" data-translate="signature">Code <span>&amp;</span> Input <span>&amp;</span> Output</p>
+                            <p class="profile-note">An Ignorant Learner</p>
+                        </div>
                     </header>
 
                     <nav class="site-nav" aria-labelledby="explore-title">
-                        <div class="nav-heading">
-                            <h2 class="eyebrow" id="explore-title">Explore</h2>
-                            <span class="nav-count" aria-hidden="true">01 — 05</span>
-                        </div>
+                        <h2 class="visually-hidden" id="explore-title">Explore</h2>
                         <ol class="site-links">
                             <li>
                                 <a class="site-link" href="blog/" aria-label="Notes — Blog">

@@ -2,6 +2,9 @@
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (motionPreference.matches || !window.matchMedia('(pointer: fine)').matches) return;
 
+    // Matches --color-highlight in css/style.css.
+    const PARTICLE_RGB = '245, 243, 239';
+
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     const ctx = canvas.getContext('2d');
@@ -33,7 +36,7 @@
             this.size = Math.random() * 3 + 1;
             this.speedX = Math.random() * 2 - 1;
             this.speedY = Math.random() * 2 - 1;
-            this.color = `rgba(255, 150, 59, ${Math.random() * 0.5 + 0.5})`; // Matching --color-link-hover
+            this.color = `rgba(${PARTICLE_RGB}, ${Math.random() * 0.5 + 0.5})`;
             this.life = 1;
         }
 

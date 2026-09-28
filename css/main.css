@@ -1,0 +1,291 @@
+/* Main page: a flat grid of opaque, borderless tiles. */
+:root {
+    --page-width: 1120px;
+    --page-inset: clamp(28px, 5.5vh, 64px);
+    --grid-gap: clamp(8px, 1vw, 12px);
+    --tile-pad: clamp(20px, 2.4vw, 32px);
+    --tile-min-height: 184px;
+    --tile-1: #26272b;
+    --tile-2: #303136;
+    --tile-3: #393a3f;
+}
+
+.content-main {
+    padding: var(--page-inset) var(--page-gutter);
+    background: var(--color-content);
+    font-family: var(--font-body);
+}
+
+.content-main:focus {
+    outline: none;
+}
+
+.js:not(.main-active) .content-main {
+    visibility: hidden;
+}
+
+.main-shell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-gap);
+    width: 100%;
+    max-width: var(--page-width);
+    min-height: calc(100vh - var(--page-inset) * 2);
+    min-height: calc(100svh - var(--page-inset) * 2);
+    margin-inline: auto;
+}
+
+.top-bar,
+.main-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 44px;
+    color: var(--color-muted);
+}
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font: 400 .55rem/1.5 var(--font-mono);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.accent-line {
+    width: 16px;
+    height: 2px;
+    background: var(--color-title);
+}
+
+.section-marker {
+    color: var(--color-title);
+    font: 400 .7rem/1 var(--font-mono);
+}
+
+.main-layout {
+    display: grid;
+    gap: var(--grid-gap);
+    margin-block: auto;
+}
+
+.profile,
+.site-links {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--grid-gap);
+}
+
+/* The image is taken out of flow so the tile's square ratio sets the row height;
+   explicit stretch stops aspect-ratio items defaulting to start alignment. */
+.tile-avatar {
+    position: relative;
+    grid-column: span 2;
+    align-self: stretch;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--tile-3);
+}
+
+.profile-avatar {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+}
+
+.tile-identity {
+    display: flex;
+    flex-direction: column;
+    grid-column: span 4;
+    min-width: 0;
+    padding: var(--tile-pad);
+    background: var(--tile-2);
+}
+
+.profile-greeting {
+    margin: 0 0 auto;
+    padding-bottom: 20px;
+    color: var(--color-muted);
+    font: 400 .65rem/1.6 var(--font-mono);
+}
+
+.profile h1 {
+    margin: 0 0 16px -3px;
+    color: var(--color-title);
+    font: 200 clamp(3rem, 6vw, 4.5rem)/1.05 var(--font-display);
+    letter-spacing: -.055em;
+}
+
+.name-period {
+    color: var(--color-muted);
+}
+
+#signature {
+    max-width: 24em;
+    margin: 0;
+    color: var(--color-text);
+    font: 300 clamp(.85rem, 1.5vw, 1.05rem)/1.65 var(--font-display);
+}
+
+#signature span {
+    color: var(--color-muted);
+}
+
+.profile-note {
+    margin: 16px 0 0;
+    color: var(--color-muted);
+    font: 400 .6rem/1.8 var(--font-mono);
+}
+
+.site-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-links li {
+    display: flex;
+    grid-column: span 2;
+}
+
+.site-links li:nth-child(n + 4) {
+    grid-column: span 3;
+}
+
+.site-link {
+    display: grid;
+    flex: 1;
+    grid-template: "num arrow" auto "copy copy" 1fr / minmax(0, 1fr) auto;
+    row-gap: 24px;
+    min-height: var(--tile-min-height);
+    padding: var(--tile-pad);
+    background: var(--tile-1);
+    transition: background-color .2s ease;
+}
+
+.site-links li:nth-child(3n + 2) .site-link {
+    background: var(--tile-2);
+}
+
+.site-links li:nth-child(3n) .site-link {
+    background: var(--tile-3);
+}
+
+.site-link:focus-visible {
+    outline-offset: 3px;
+}
+
+.link-number {
+    grid-area: num;
+    color: var(--color-muted);
+    font: 400 .55rem/1.5 var(--font-mono);
+    transition: color .2s ease;
+}
+
+.link-copy {
+    display: flex;
+    flex-direction: column;
+    grid-area: copy;
+    align-self: end;
+    gap: 5px;
+    min-width: 0;
+}
+
+.link-title {
+    color: var(--color-title);
+    font: 300 1.5rem/1.15 var(--font-display);
+    letter-spacing: -.025em;
+    transition: color .2s ease;
+}
+
+.link-description {
+    color: var(--color-muted);
+    font-size: .65rem;
+    line-height: 1.55;
+    transition: color .2s ease;
+}
+
+.link-arrow,
+.source-link svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.link-arrow {
+    grid-area: arrow;
+    width: 20px;
+    height: 20px;
+    color: var(--color-muted);
+    transition: color .2s ease, transform .2s ease;
+}
+
+.site-links li .site-link:hover,
+.site-links li .site-link:focus-visible {
+    background: var(--color-highlight);
+}
+
+.site-link:hover :is(.link-title, .link-description, .link-number, .link-arrow),
+.site-link:focus-visible :is(.link-title, .link-description, .link-number, .link-arrow) {
+    color: var(--color-on-highlight);
+}
+
+.site-link:hover .link-arrow,
+.site-link:focus-visible .link-arrow {
+    transform: translateX(3px);
+}
+
+.main-footer p {
+    margin: 0;
+    font: 400 .6rem/1.5 var(--font-mono);
+}
+
+.main-footer .keyboard-hint {
+    font-size: .5rem;
+}
+
+.keyboard-hint kbd {
+    color: var(--color-text);
+    font: inherit;
+}
+
+.keyboard-hint span {
+    margin-inline: 6px;
+}
+
+.source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: var(--color-muted);
+    font: 400 .55rem/1.5 var(--font-mono);
+    text-underline-offset: 4px;
+}
+
+.source-link svg {
+    width: 14px;
+    height: 14px;
+}
+
+.source-link:hover,
+.source-link:focus-visible {
+    color: var(--color-title);
+    text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-link:hover .link-arrow,
+    .site-link:focus-visible .link-arrow {
+        transform: none;
+    }
+}
