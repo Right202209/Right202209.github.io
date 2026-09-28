@@ -7,7 +7,9 @@
     --color-link: #dededb;
     --color-link-hover: #ff963b;
     --color-enter: #fff;
-    --color-rule: rgba(245, 243, 239, .14);
+    --color-rule: #454648;
+    --color-frame: #77716b;
+    --frame-inset: clamp(16px, 3vw, 40px);
     --font-display: "Comic Sans MS", "Helvetica Neue", "Microsoft Yahei", sans-serif;
     --font-body: "Helvetica Neue", Arial, "Microsoft Yahei", sans-serif;
     --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -258,7 +260,7 @@ main {
     transform: rotate(-45deg);
 }
 
-/* An open typographic layout: one surface, shared alignment and fine rules. */
+/* Flat terminal-inspired frames, with labels cut into the rules. */
 .content-main {
     padding: var(--page-inset) var(--page-gutter);
     background: var(--color-content);
@@ -281,6 +283,9 @@ main {
     min-height: calc(100vh - var(--page-inset) * 2);
     min-height: calc(100svh - var(--page-inset) * 2);
     margin-inline: auto;
+    padding-inline: var(--frame-inset);
+    border: 1px solid var(--color-frame);
+    background: var(--color-content);
 }
 
 .section-heading,
@@ -293,8 +298,16 @@ main {
 }
 
 .section-heading {
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--color-rule);
+    min-height: 20px;
+    margin-top: -10px;
+}
+
+.section-heading > *,
+.nav-heading > *,
+.panel-label,
+.main-footer > * {
+    padding-inline: 10px;
+    background: var(--color-content);
 }
 
 .eyebrow,
@@ -308,50 +321,75 @@ main {
 .eyebrow {
     display: flex;
     align-items: center;
-    gap: 14px;
-    letter-spacing: .16em;
+    gap: 12px;
+    letter-spacing: .12em;
     text-transform: uppercase;
 }
 
 .accent-line {
-    width: 22px;
-    height: 1px;
+    width: 16px;
+    height: 2px;
     background: var(--color-link-hover);
 }
 
 .section-marker {
-    color: var(--color-muted);
-    font: 300 .85rem/1 var(--font-display);
+    color: var(--color-link-hover);
+    font: 400 .7rem/1 var(--font-mono);
 }
 
 .main-layout {
     display: grid;
     grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
-    align-items: center;
-    column-gap: clamp(56px, 8vw, 120px);
+    align-items: stretch;
+    gap: 24px;
     margin-block: auto;
-    padding-block: clamp(48px, 8vh, 96px);
+    padding-block: clamp(36px, 6vh, 64px);
+}
+
+.profile,
+.site-nav {
+    position: relative;
+    min-width: 0;
+    border: 1px solid var(--color-rule);
+    background: var(--color-content);
+}
+
+.profile {
+    padding: clamp(24px, 3vw, 40px);
+}
+
+.panel-label,
+.nav-heading {
+    position: absolute;
+    top: 0;
+    left: 18px;
+    transform: translateY(-50%);
+}
+
+.panel-label,
+.nav-heading .eyebrow {
+    color: var(--color-link-hover);
 }
 
 .profile-avatar {
     display: block;
-    width: 88px;
-    height: 88px;
-    object-fit: cover;
+    width: 104px;
+    height: 104px;
+    padding: 6px;
+    border: 1px solid var(--color-frame);
+    object-fit: contain;
 }
 
 .profile-greeting {
     margin: 32px 0 8px;
     color: var(--color-muted);
-    font-size: .75rem;
-    line-height: 1.6;
-    letter-spacing: .025em;
+    font: 400 .65rem/1.6 var(--font-mono);
 }
 
 .profile h1 {
-    margin: 0 0 22px -5px;
+    margin: 0 0 22px -3px;
     color: var(--color-title);
-    font: 200 clamp(4rem, 8vw, 6rem)/1.05 var(--font-display);
+    font: 200 clamp(3rem, 6vw, 4.5rem)/1.05 var(--font-display);
     letter-spacing: -.055em;
 }
 
@@ -363,7 +401,7 @@ main {
     max-width: 24em;
     margin: 0;
     color: var(--color-text);
-    font: 300 clamp(.95rem, 1.6vw, 1.15rem)/1.65 var(--font-display);
+    font: 300 clamp(.85rem, 1.5vw, 1.05rem)/1.65 var(--font-display);
 }
 
 #signature span {
@@ -371,15 +409,19 @@ main {
 }
 
 .profile-note {
-    margin: 12px 0 0;
+    margin: 24px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-rule);
     color: var(--color-muted);
-    font-size: .7rem;
-    line-height: 1.8;
-    letter-spacing: .02em;
+    font: 400 .6rem/1.8 var(--font-mono);
+}
+
+.site-nav {
+    padding: 20px 16px;
 }
 
 .nav-heading {
-    margin-bottom: 12px;
+    right: 18px;
 }
 
 .nav-count {
@@ -398,43 +440,49 @@ main {
 
 .site-link {
     display: grid;
-    grid-template-columns: 28px minmax(0, 1fr) 24px;
+    grid-template-columns: 24px minmax(0, 1fr) 20px;
     align-items: center;
-    column-gap: 20px;
-    min-height: 98px;
-    padding-block: 16px;
+    column-gap: 16px;
+    min-height: 88px;
+    padding: 14px 16px;
+    transition: background-color .2s ease;
+}
+
+.site-link:focus-visible {
+    outline-offset: 3px;
 }
 
 .link-number {
     align-self: start;
-    padding-top: 9px;
-    transition: color .25s ease;
+    padding-top: 7px;
+    transition: color .2s ease;
 }
 
 .link-copy {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
     min-width: 0;
 }
 
 .link-title {
     color: var(--color-title);
-    font: 300 1.75rem/1.15 var(--font-display);
+    font: 300 1.5rem/1.15 var(--font-display);
     letter-spacing: -.025em;
-    transition: color .25s ease, transform .25s ease;
+    transition: color .2s ease;
 }
 
 .link-description {
     color: var(--color-muted);
-    font-size: .7rem;
+    font-size: .65rem;
     line-height: 1.55;
+    transition: color .2s ease;
 }
 
 .link-arrow,
 .source-link svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     fill: none;
     stroke: currentColor;
     stroke-width: 1.2;
@@ -444,21 +492,23 @@ main {
 
 .link-arrow {
     color: var(--color-muted);
-    transition: color .25s ease, transform .25s ease;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.site-link:hover,
+.site-link:focus-visible {
+    background: var(--color-link-hover);
 }
 
 .site-link:hover .link-title,
 .site-link:focus-visible .link-title,
+.site-link:hover .link-description,
+.site-link:focus-visible .link-description,
 .site-link:hover .link-number,
 .site-link:focus-visible .link-number,
 .site-link:hover .link-arrow,
 .site-link:focus-visible .link-arrow {
-    color: var(--color-link-hover);
-}
-
-.site-link:hover .link-title,
-.site-link:focus-visible .link-title {
-    transform: translateX(4px);
+    color: var(--color-content);
 }
 
 .site-link:hover .link-arrow,
@@ -467,28 +517,42 @@ main {
 }
 
 .main-footer {
-    padding-top: 20px;
-    border-top: 1px solid var(--color-rule);
+    min-height: 44px;
+    margin-bottom: -22px;
     color: var(--color-muted);
 }
 
 .main-footer p {
     margin: 0;
-    font: 300 .85rem/1.5 var(--font-display);
+    font: 400 .6rem/1.5 var(--font-mono);
 }
 
 .footer-period {
     color: var(--color-link-hover);
 }
 
+.main-footer .keyboard-hint {
+    color: var(--color-muted);
+    font-size: .5rem;
+}
+
+.keyboard-hint kbd {
+    color: var(--color-text);
+    font: inherit;
+}
+
+.keyboard-hint span {
+    margin-inline: 6px;
+    color: var(--color-frame);
+}
+
 .source-link {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-height: 44px;
     color: var(--color-muted);
-    font-size: .6rem;
-    line-height: 1.5;
+    font: 400 .55rem/1.5 var(--font-mono);
     transition: color .25s ease;
 }
 
@@ -546,41 +610,49 @@ main {
     40%, 80% { transform: rotate(10deg); }
 }
 
-@media (min-width: 1500px) {
-    .main-layout {
-        column-gap: 144px;
+@media (max-width: 1000px) {
+    .main-footer .keyboard-hint {
+        display: none;
     }
 }
 
 @media (max-width: 760px) {
     :root {
-        --page-gutter: clamp(24px, 6vw, 40px);
-        --page-inset: 28px;
+        --page-gutter: clamp(16px, 4vw, 28px);
+        --page-inset: 32px;
+        --frame-inset: 16px;
     }
 
     .section-heading {
-        padding-bottom: 20px;
+        gap: 8px;
+    }
+
+    .section-heading .eyebrow {
+        gap: 8px;
+        font-size: .5rem;
+        letter-spacing: .08em;
     }
 
     .main-layout {
         grid-template-columns: minmax(0, 1fr);
-        row-gap: 56px;
-        padding-block: 48px;
+        row-gap: 32px;
+        padding-block: 32px;
     }
 
     .profile {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        column-gap: 24px;
+        column-gap: 16px;
         align-items: start;
+        padding: 28px 20px 24px;
     }
 
     .profile-avatar {
         grid-column: 2;
-        grid-row: 1 / span 3;
+        grid-row: 1 / span 2;
         width: 72px;
         height: 72px;
-        margin-top: 7px;
+        padding: 4px;
     }
 
     .profile-greeting {
@@ -592,7 +664,7 @@ main {
     .profile h1 {
         grid-column: 1;
         margin-bottom: 18px;
-        font-size: clamp(3.8rem, 14vw, 5rem);
+        font-size: clamp(2.8rem, 12vw, 3.8rem);
     }
 
     #signature,
@@ -601,40 +673,54 @@ main {
     }
 
     .profile-note {
-        margin-top: 8px;
+        margin-top: 20px;
+        padding-top: 14px;
+    }
+
+    .site-nav {
+        padding: 16px 10px;
     }
 
     .site-link {
-        min-height: 96px;
+        min-height: 88px;
+        padding-inline: 10px;
+        column-gap: 12px;
     }
 
     .link-title {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 
     .main-footer {
-        padding-top: 14px;
+        gap: 8px;
+    }
+
+    .main-footer p,
+    .source-link {
+        font-size: .5rem;
     }
 }
 
 @media (max-width: 380px) {
     .profile {
-        column-gap: 16px;
+        column-gap: 12px;
+        padding-inline: 16px;
     }
 
     .profile-avatar {
-        width: 60px;
-        height: 60px;
+        width: 56px;
+        height: 56px;
     }
 
     .site-link {
-        grid-template-columns: 22px minmax(0, 1fr) 20px;
-        column-gap: 12px;
+        grid-template-columns: 18px minmax(0, 1fr) 18px;
+        column-gap: 10px;
+        padding-inline: 8px;
     }
 
     .link-arrow {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
     }
 }
 
@@ -666,8 +752,6 @@ main {
     }
 
     .js .fade,
-    .site-link:hover .link-title,
-    .site-link:focus-visible .link-title,
     .site-link:hover .link-arrow,
     .site-link:focus-visible .link-arrow {
         transform: none;

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'droit-v2';
+const CACHE_NAME = 'droit-v3';
 const ASSETS = [
   '/',
   '/index.html',
