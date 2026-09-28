@@ -1,17 +1,21 @@
-/* Main page: a flat grid of opaque, borderless tiles. */
+/* Main page: giant link titles painted with the intro's frozen fluid. */
 :root {
-    --page-width: 1120px;
-    --page-inset: clamp(28px, 5.5vh, 64px);
-    --grid-gap: clamp(8px, 1vw, 12px);
-    --tile-pad: clamp(20px, 2.4vw, 32px);
-    --tile-min-height: 184px;
-    --tile-1: #26272b;
-    --tile-2: #303136;
-    --tile-3: #393a3f;
+    --page-inset: clamp(20px, 4vh, 48px);
+    --row-pad: clamp(10px, 1.6vh, 18px);
+    --paint-floor: #8a8b8e;
+    --paint-drift: 12px;
 }
 
 .content-main {
-    padding: var(--page-inset) var(--page-gutter);
+    /* Opaque stand-in until js/paint.js swaps in the visitor's own fluid frame. */
+    --paint:
+        radial-gradient(circle at 16% 30%, #ff5fd2 0, transparent 30%),
+        radial-gradient(circle at 42% 72%, #43d6ff 0, transparent 34%),
+        radial-gradient(circle at 70% 24%, #ffb347 0, transparent 28%),
+        radial-gradient(circle at 88% 78%, #9a7bff 0, transparent 32%),
+        radial-gradient(circle at 56% 46%, #5cf2a4 0, transparent 22%),
+        linear-gradient(var(--paint-floor), var(--paint-floor));
+    padding-block: var(--page-inset);
     background: var(--color-content);
     font-family: var(--font-body);
 }
@@ -27,121 +31,52 @@
 .main-shell {
     display: flex;
     flex-direction: column;
-    gap: var(--grid-gap);
-    width: 100%;
-    max-width: var(--page-width);
+    gap: clamp(16px, 3vh, 32px);
     min-height: calc(100vh - var(--page-inset) * 2);
     min-height: calc(100svh - var(--page-inset) * 2);
-    margin-inline: auto;
 }
 
 .top-bar,
 .main-footer {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 8px 24px;
     min-height: 44px;
+    padding-inline: var(--page-gutter);
     color: var(--color-muted);
 }
 
+.wordmark {
+    margin: 0;
+    color: var(--color-title);
+    font: 700 1.2rem/1 var(--font-display);
+    letter-spacing: -.02em;
+}
+
 .eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     margin: 0;
     font: 400 .55rem/1.5 var(--font-mono);
     letter-spacing: .12em;
     text-transform: uppercase;
 }
 
-.accent-line {
-    width: 16px;
-    height: 2px;
-    background: var(--color-title);
+/* Letters are windows onto one image pinned to the viewport, where the fluid was. */
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+    .painted {
+        background-image: var(--paint);
+        background-size: calc(100% + var(--paint-drift) * 2) calc(100% + var(--paint-drift) * 2);
+        background-position: calc(50% + var(--paint-x, 0px)) calc(50% + var(--paint-y, 0px));
+        background-attachment: fixed;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
-.section-marker {
-    color: var(--color-title);
-    font: 400 .7rem/1 var(--font-mono);
-}
-
-.main-layout {
-    display: grid;
-    gap: var(--grid-gap);
+.site-nav {
     margin-block: auto;
-}
-
-.profile,
-.site-links {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: var(--grid-gap);
-}
-
-/* The image is taken out of flow so the tile's square ratio sets the row height;
-   explicit stretch stops aspect-ratio items defaulting to start alignment. */
-.tile-avatar {
-    position: relative;
-    grid-column: span 2;
-    align-self: stretch;
-    aspect-ratio: 1;
-    overflow: hidden;
-    background: var(--tile-3);
-}
-
-.profile-avatar {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 30%;
-}
-
-.tile-identity {
-    display: flex;
-    flex-direction: column;
-    grid-column: span 4;
-    min-width: 0;
-    padding: var(--tile-pad);
-    background: var(--tile-2);
-}
-
-.profile-greeting {
-    margin: 0 0 auto;
-    padding-bottom: 20px;
-    color: var(--color-muted);
-    font: 400 .65rem/1.6 var(--font-mono);
-}
-
-.profile h1 {
-    margin: 0 0 16px -3px;
-    color: var(--color-title);
-    font: 200 clamp(3rem, 6vw, 4.5rem)/1.05 var(--font-display);
-    letter-spacing: -.055em;
-}
-
-.name-period {
-    color: var(--color-muted);
-}
-
-#signature {
-    max-width: 24em;
-    margin: 0;
-    color: var(--color-text);
-    font: 300 clamp(.85rem, 1.5vw, 1.05rem)/1.65 var(--font-display);
-}
-
-#signature span {
-    color: var(--color-muted);
-}
-
-.profile-note {
-    margin: 16px 0 0;
-    color: var(--color-muted);
-    font: 400 .6rem/1.8 var(--font-mono);
 }
 
 .site-links {
@@ -150,66 +85,52 @@
     list-style: none;
 }
 
-.site-links li {
-    display: flex;
-    grid-column: span 2;
+.js .site-links li {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2, .65, .3, 1);
 }
 
-.site-links li:nth-child(n + 4) {
-    grid-column: span 3;
+.js .main-shell.in .site-links li {
+    opacity: 1;
+    transform: none;
 }
+
+.site-links li:nth-child(2) { transition-delay: 70ms; }
+.site-links li:nth-child(3) { transition-delay: 140ms; }
+.site-links li:nth-child(4) { transition-delay: 210ms; }
+.site-links li:nth-child(5) { transition-delay: 280ms; }
 
 .site-link {
     display: grid;
-    flex: 1;
-    grid-template: "num arrow" auto "copy copy" 1fr / minmax(0, 1fr) auto;
-    row-gap: 24px;
-    min-height: var(--tile-min-height);
-    padding: var(--tile-pad);
-    background: var(--tile-1);
+    grid-template: "num title desc arrow" auto / 2.5rem minmax(0, 1fr) minmax(0, 12rem) 28px;
+    align-items: center;
+    column-gap: clamp(16px, 2vw, 32px);
+    min-height: 44px;
+    padding: var(--row-pad) var(--page-gutter);
     transition: background-color .2s ease;
-}
-
-.site-links li:nth-child(3n + 2) .site-link {
-    background: var(--tile-2);
-}
-
-.site-links li:nth-child(3n) .site-link {
-    background: var(--tile-3);
-}
-
-.site-link:focus-visible {
-    outline-offset: 3px;
 }
 
 .link-number {
     grid-area: num;
     color: var(--color-muted);
     font: 400 .55rem/1.5 var(--font-mono);
-    transition: color .2s ease;
-}
-
-.link-copy {
-    display: flex;
-    flex-direction: column;
-    grid-area: copy;
-    align-self: end;
-    gap: 5px;
-    min-width: 0;
 }
 
 .link-title {
+    grid-area: title;
+    min-width: 0;
     color: var(--color-title);
-    font: 300 1.5rem/1.15 var(--font-display);
-    letter-spacing: -.025em;
-    transition: color .2s ease;
+    font: 700 clamp(2.4rem, 7.5vw, 6.4rem)/.95 var(--font-display);
+    letter-spacing: -.04em;
+    overflow-wrap: anywhere;
 }
 
 .link-description {
+    grid-area: desc;
     color: var(--color-muted);
     font-size: .65rem;
     line-height: 1.55;
-    transition: color .2s ease;
 }
 
 .link-arrow,
@@ -223,30 +144,37 @@
 
 .link-arrow {
     grid-area: arrow;
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     color: var(--color-muted);
-    transition: color .2s ease, transform .2s ease;
+    transition: transform .2s ease;
 }
 
-.site-links li .site-link:hover,
-.site-links li .site-link:focus-visible {
+/* Hover and focus: the row becomes a solid off-white band with dark letters. */
+.site-link:hover,
+.site-link:focus-visible {
     background: var(--color-highlight);
 }
 
-.site-link:hover :is(.link-title, .link-description, .link-number, .link-arrow),
-.site-link:focus-visible :is(.link-title, .link-description, .link-number, .link-arrow) {
+.site-link:hover :is(.link-number, .link-title, .link-description, .link-arrow),
+.site-link:focus-visible :is(.link-number, .link-title, .link-description, .link-arrow) {
     color: var(--color-on-highlight);
+    -webkit-text-fill-color: var(--color-on-highlight);
+}
+
+.site-link:focus-visible {
+    outline: 2px solid var(--color-on-highlight);
+    outline-offset: -8px;
 }
 
 .site-link:hover .link-arrow,
 .site-link:focus-visible .link-arrow {
-    transform: translateX(3px);
+    transform: translateX(4px);
 }
 
 .main-footer p {
     margin: 0;
-    font: 400 .6rem/1.5 var(--font-mono);
+    font: 400 .55rem/1.5 var(--font-mono);
 }
 
 .main-footer .keyboard-hint {
@@ -284,6 +212,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .js .site-links li,
     .site-link:hover .link-arrow,
     .site-link:focus-visible .link-arrow {
         transform: none;

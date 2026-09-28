@@ -1,62 +1,81 @@
 # Important Documentation
 
-## Main page redesign: solid block grid (monochrome)
+## Main page: letters painted with the intro's fluid
 
-The previous main page (fine 1px frames, labels cut into the frame lines, a small
-framed avatar, solid orange hover/focus fills) has been replaced by a flat grid of
-opaque, borderless tiles. No glass, blur, shadows or semi-transparent surfaces.
+The intro's WebGL fluid is no longer thrown away when the visitor enters. At the
+moment of entering, `js/paint.js` freezes the current frame into an image, and the
+main page's letters become windows onto it. The image is pinned to the viewport
+(`background-attachment: fixed`), so colours sit exactly where the fluid was on
+screen. Every visit paints the page differently.
 
-### Files
+The avatar, name block, signature ("Code & Input & Output") and note ("An Ignorant
+Learner") were removed. The intro's "Droit" title carries over as a small painted
+wordmark, which is also the page's `<h1>`. No glass, blur, shadows or cards: rows
+have no surface until hovered or focused.
 
-| File | Purpose |
-| --- | --- |
-| `css/style.css` | Shared tokens, base rules, `whiteShadow` keyframe, reduced motion. Also loaded by `404.html`. |
-| `css/intro.css` | Intro screen (title, subtitle, enter link, arrows, SVG reveal). |
-| `css/main.css` | Tile grid, avatar tile, identity tile, link tiles, footer. |
-| `css/responsive.css` | Breakpoints for the tile grid. |
-| `index.html` | Main markup restructured into `.tile-avatar`, `.tile-identity` and link tiles; loads all four stylesheets. |
-| `sw.js` | Cache bumped to `droit-v4`; new stylesheets added to the precache list. |
-| `js/mouse-trail.js` | Particle colour changed from orange to the monochrome highlight. |
+### How it works
 
-`style.css` was split because the old file (763 lines) exceeded the 300-line limit.
+1. `main.js` → `switchPage()` calls `window.captureIntroPaint()` before the intro
+   slides away (the canvas is removed afterwards in `finishIntro()`).
+2. `paint.js` calls the fluid sim's global `render(null)` and copies the canvas into
+   a 2D canvas in the same task. This is required because the WebGL context uses
+   `preserveDrawingBuffer: false`.
+3. The copy is drawn over a solid `#8a8b8e` base with `lighten` compositing. Every
+   channel is lifted to at least that grey, so letters keep ≥ 4.75:1 contrast on
+   `#1e1f21`, however dark the fluid was.
+4. The result becomes a blob URL set as `--paint` on `.content-main`, and the footer
+   shows "Letters painted with the fluid you stirred · HH:MM".
+5. With a fine pointer and no reduced-motion preference, the paint drifts ±12px
+   with the cursor (rAF-throttled), echoing the fluid's pointer interaction.
+
+**Fallbacks:** no JS, no WebGL, or a failed read-back all keep the opaque
+multi-colour gradient defined in `css/main.css`, and the paint note stays hidden.
+Browsers without `background-clip: text` show solid off-white titles.
 
 ### Layout
 
-- **≥ 1024px**: 6-column grid. Avatar tile spans 2 columns (square, image fills it
-  with `object-fit: cover`), identity tile spans 4. Links: three tiles, then two.
-- **761–1023px**: profile becomes two equal columns; links stay 3 + 2.
-- **≤ 760px**: links stack into one column of compact rows (≥ 88px tall).
-- **≤ 560px**: avatar and identity tiles stack; the avatar becomes a full-width square.
+- Five full-width rows: number · giant title · description · arrow.
+- **≤ 1023px:** the description moves under the title; the keyboard hint hides.
+- **≤ 760px:** smaller gutters; titles scale `clamp(2rem, 11vw, 3.4rem)`.
+- Hover: the row becomes a solid `#f5f3ef` band with dark letters (monochrome, as
+  decided earlier). Keyboard focus adds a dark 2px ring inset 8px inside the band.
+- Rows fade up in a 70ms stagger after the intro sweep (skipped under reduced motion).
 
-Tiles use solid greys `#26272b`, `#303136`, `#393a3f` on the `#1e1f21` page.
-Hover and keyboard focus invert a link tile to `#f5f3ef` with `#1e1f21` text; focus
-adds a 2px solid `#f5f3ef` outline offset 3px into the tile gap. Orange is removed
-from the site (selection, focus rings, enter link, source link, cursor trail).
+### Files
+
+| File | Change |
+| --- | --- |
+| `index.html` | New main markup; `window.signature` line removed (its element is gone); loads `js/paint.js`. |
+| `js/paint.js` | New. Capture, contrast floor, paint application, pointer drift. |
+| `js/main.js` | One line: calls `captureIntroPaint()` at the start of `switchPage()`. |
+| `css/main.css`, `css/responsive.css` | Rewritten for the painted list. |
+| `css/style.css`, `css/intro.css` | Shared base and intro (split earlier from the 763-line `style.css`). |
+| `sw.js` | Cache `droit-v4`; precaches the split stylesheets and `js/paint.js`. |
+| `js/mouse-trail.js` | Particles are off-white instead of orange. |
 
 ## Items that need testing / verification
 
-These were not run (per project rules). Verify in a browser:
+None of this was run (per project rules). Verify in a browser:
 
-1. **Automated suite** — `tests/layout.test.cjs` was rewritten for the new design.
-   Run it as described in `tests/README.md`. It checks: borderless opaque tiles,
-   no embedded labels, full-bleed square avatar at 1440px, monochrome focus/hover,
-   link destinations, stacking at 320/390/560/561/760/768/1024/1440px, no-JS access.
-2. **Avatar squareness at mid widths** — the avatar tile is square only while the
-   identity tile's content is no taller than the avatar is wide. If the fallback font
-   renders much larger than expected (e.g. near 561px or 1024px), the row grows and the
-   avatar is cropped slightly (`object-position: 50% 30%` keeps the face). Check visually.
-3. **Contrast** — muted text `#a4a5a7` on the lightest tile `#393a3f` is ~4.6:1
-   (calculated, not measured). Confirm with a contrast checker.
-4. **Focus ring visibility** — the outline sits in the 8–12px gap between tiles;
-   confirm it isn't clipped at the page edges on mobile.
-5. **Service worker** — on a browser that already has `droit-v3`, reload and confirm
-   the new CSS is served (cache-first strategy; the version bump should evict v3).
-6. **404 page** — still loads `css/style.css`; confirm the title glow still animates
-   and nothing else changed visually.
-7. **Intro → main transition** — the anime.js reveal and `.fade` entry on `.main-shell`
-   are unchanged but should be checked with the CDN available.
+1. **Capture works:** enter the site after stirring the fluid. The titles should show
+   those colours in the same screen positions, and the footer note should appear.
+   Check Chrome, Firefox and Safari. If the letters are grey only, the read-back
+   returned a blank buffer; report the browser.
+2. **`background-attachment: fixed` + `background-clip: text`:** iOS Safari ignores
+   `fixed`. There, each title shows the whole image scaled to its own box. This is
+   acceptable, but check it looks intentional.
+3. **Reduced motion:** the fluid stops after its first frame, so the captured paint
+   is whatever that frame held. Check it isn't just flat grey.
+4. **Titles fit on one line** at 320px ("Contact" and "Github" are the longest).
+   The test suite asserts this, but it depends on the installed display font.
+5. **Scroll performance:** fixed backgrounds on text repaint on scroll. Check for jank
+   on a low-end phone.
+6. **Automated suite:** `tests/layout.test.cjs`; see `tests/README.md`.
+7. **Service worker:** a browser with the old `droit-v3` cache should receive the new
+   files after one reload.
+8. **404 page:** unchanged, still loads `css/style.css`. Confirm the title glow.
 
 ## Dependencies (not installed)
 
-Only needed for the optional test suite: `playwright` and its Chromium build
-(see `tests/README.md`). The site itself has no build step or dependencies.
+Only the optional test suite needs `playwright` and its Chromium build. The site
+has no build step.

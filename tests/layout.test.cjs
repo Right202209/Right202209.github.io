@@ -9,19 +9,17 @@ const EXPECTED_LINKS = [
 ];
 const DESKTOP_VIEWPORT = { width: 1440, height: 900 };
 const VIEWPORT_HEIGHT = 900;
-const TEST_WIDTHS = [320, 390, 560, 561, 760, 768, 1024, 1440];
-const LINKS_STACK_MAX_WIDTH = 760;
-const PROFILE_STACK_MAX_WIDTH = 560;
-const FIRST_ROW_LINK_COUNT = 3;
+const TEST_WIDTHS = [320, 390, 760, 768, 1023, 1024, 1440];
+const DESCRIPTION_BELOW_MAX_WIDTH = 1023;
 const MIN_TOUCH_TARGET = 44;
-const MIN_DESKTOP_AVATAR = 240;
+const CAPTURE_WAIT_MS = 2000;
 const PIXEL_TOLERANCE = 1;
 const HIGHLIGHT = 'rgb(245, 243, 239)';
 const ON_HIGHLIGHT = 'rgb(30, 31, 33)';
-const RETIRED_ORANGE = 'rgb(255, 150, 59)';
-const FRAME_SELECTORS = ['.main-shell', '.profile', '.site-nav'];
-const TILE_SELECTORS = ['.tile-avatar', '.tile-identity', '.site-link'];
-const OPAQUE_RGB = /^rgb\(\d+, \d+, \d+\)$/;
+const CLEAR = 'rgba(0, 0, 0, 0)';
+const PAINT_SOURCE = /url\("blob:|radial-gradient/;
+const PAINTED_SELECTORS = ['.wordmark', '.link-title'];
+const RETIRED_SELECTORS = '.profile-avatar, #signature, .profile-note, .panel-label, .tile-identity';
 let browser;
 
 before(async () => {
@@ -62,81 +60,88 @@ async function assertNoOverflow(page) {
     assert.ok(dimensions.document <= dimensions.viewport, JSON.stringify(dimensions));
 }
 
-function readSurface(element) {
+function readPaint(element) {
     const css = getComputedStyle(element);
     return {
-        border: css.borderLeftWidth,
-        background: css.backgroundColor,
-        blur: css.backdropFilter,
-        filter: css.filter,
-        shadow: css.boxShadow,
-        opacity: css.opacity
+        clip: css.backgroundClip,
+        fill: css.webkitTextFillColor,
+        image: css.backgroundImage,
+        attachment: css.backgroundAttachment
     };
 }
 
-async function assertFlatSurfaces(page) {
-    for (const selector of FRAME_SELECTORS) {
-        const style = await page.locator(selector).evaluate(readSurface);
-        assert.equal(style.border, '0px', `${selector} must not draw a frame`);
-        assert.equal(style.blur, 'none');
-    }
-    for (const selector of TILE_SELECTORS) {
-        for (const tile of await page.locator(selector).all()) {
-            const style = await tile.evaluate(readSurface);
-            assert.equal(style.border, '0px', `${selector} must be borderless`);
-            assert.match(style.background, OPAQUE_RGB, `${selector} must be opaque`);
-            assert.notEqual(style.background, RETIRED_ORANGE);
-            assert.deepEqual([style.blur, style.filter, style.shadow, style.opacity], ['none', 'none', 'none', '1']);
-        }
-    }
-    assert.equal(await page.locator('.panel-label, .nav-heading').count(), 0, 'Embedded labels are retired');
-}
-
-async function assertBleedAvatar(page) {
-    const avatar = await page.locator('.profile-avatar').evaluate(image => ({
-        loaded: image.complete && image.naturalWidth > 0,
-        fit: getComputedStyle(image).objectFit,
-        image: image.getBoundingClientRect().toJSON(),
-        tile: image.parentElement.getBoundingClientRect().toJSON()
-    }));
-    assert.ok(avatar.loaded);
-    assert.equal(avatar.fit, 'cover');
-    for (const side of ['x', 'y', 'width', 'height']) {
-        assert.ok(Math.abs(avatar.image[side] - avatar.tile[side]) <= PIXEL_TOLERANCE, `Avatar must fill its tile (${side})`);
-    }
-    assert.ok(avatar.tile.width >= MIN_DESKTOP_AVATAR);
-    assert.ok(Math.abs(avatar.tile.width - avatar.tile.height) <= PIXEL_TOLERANCE, 'Avatar tile must be square');
-}
-
-function readHighlight(link) {
+function readRow(link) {
     const css = getComputedStyle(link);
     return {
         focused: link === document.activeElement,
         background: css.backgroundColor,
-        title: getComputedStyle(link.querySelector('.link-title')).color,
+        title: getComputedStyle(link.querySelector('.link-title')).webkitTextFillColor,
         outline: css.outlineStyle,
-        outlineColor: css.outlineColor
+        outlineColor: css.outlineColor,
+        border: css.borderLeftWidth,
+        shadow: css.boxShadow,
+        blur: css.backdropFilter
     };
 }
 
-test('main tiles are flat, opaque and borderless with a full-bleed avatar', async () => {
+async function assertPainted(page) {
+    for (const selector of PAINTED_SELECTORS) {
+        for (const element of await page.locator(selector).all()) {
+            const paint = await element.evaluate(readPaint);
+            assert.equal(paint.clip, 'text', `${selector} letters must be clipped to the paint`);
+            assert.equal(paint.fill, CLEAR);
+            assert.equal(paint.attachment, 'fixed', 'Paint is pinned to the viewport like the fluid');
+            assert.match(paint.image, PAINT_SOURCE);
+        }
+    }
+}
+
+test('the main page is a painted link list without cards or retired identity blocks', async () => {
     const { context, page } = await openPage();
     try {
         await enterPage(page);
-        const textHeight = await page.locator('#profile-name').evaluate(heading => {
+        const textHeight = await page.locator('.link-title').first().evaluate(title => {
             const range = document.createRange();
-            range.selectNodeContents(heading);
+            range.selectNodeContents(title);
             return range.getBoundingClientRect().height;
         });
         assert.ok(textHeight > 0, 'Browser runtime must have fonts to validate the layout');
-        await assertFlatSurfaces(page);
-        await assertBleedAvatar(page);
+        assert.equal(await page.locator(RETIRED_SELECTORS).count(), 0);
+        await assertPainted(page);
+        for (const link of await page.locator('.site-link').all()) {
+            const row = await link.evaluate(readRow);
+            assert.deepEqual([row.background, row.border, row.shadow, row.blur], [CLEAR, '0px', 'none', 'none']);
+        }
     } finally {
         await context.close();
     }
 });
 
-test('keyboard entry, destinations and monochrome highlights work', async () => {
+test('the paint note appears only when the intro frame was captured', async () => {
+    const { context, page } = await openPage();
+    try {
+        await enterPage(page);
+        // Capture needs WebGL; headless runs may lack it, so either outcome is valid if consistent.
+        await page.waitForFunction(() => !document.querySelector('.paint-note').hidden, null,
+            { timeout: CAPTURE_WAIT_MS }).catch(() => {});
+        const state = await page.evaluate(() => ({
+            noteVisible: !document.querySelector('.paint-note').hidden,
+            inlinePaint: document.querySelector('.content-main').style.getPropertyValue('--paint'),
+            titleImage: getComputedStyle(document.querySelector('.link-title')).backgroundImage
+        }));
+        if (state.noteVisible) {
+            assert.match(state.inlinePaint, /^url\("blob:/);
+            assert.match(state.titleImage, /^url\("blob:/);
+        } else {
+            assert.equal(state.inlinePaint, '');
+            assert.match(state.titleImage, /radial-gradient/);
+        }
+    } finally {
+        await context.close();
+    }
+});
+
+test('keyboard entry, destinations and monochrome row highlights work', async () => {
     const { context, page } = await openPage();
     try {
         assert.equal(await page.locator('#main-content').evaluate(element => element.inert), true);
@@ -148,16 +153,14 @@ test('keyboard entry, destinations and monochrome highlights work', async () => 
         assert.deepEqual(await page.locator('.site-link').evaluateAll(links =>
             links.map(link => link.getAttribute('href'))), EXPECTED_LINKS);
         await page.keyboard.press('Tab');
-        const focused = await page.locator('.site-link').first().evaluate(readHighlight);
-        assert.deepEqual(focused, {
-            focused: true, background: HIGHLIGHT, title: ON_HIGHLIGHT,
-            outline: 'solid', outlineColor: HIGHLIGHT
-        });
-        await page.keyboard.press('Tab');
-        assert.equal(await page.locator('.site-link').nth(1).evaluate(link => link === document.activeElement), true);
+        const focused = await page.locator('.site-link').first().evaluate(readRow);
+        assert.deepEqual(
+            [focused.focused, focused.background, focused.title, focused.outline, focused.outlineColor],
+            [true, HIGHLIGHT, ON_HIGHLIGHT, 'solid', ON_HIGHLIGHT]
+        );
         const lastLink = page.locator('.site-link').last();
         await lastLink.hover();
-        const hovered = await lastLink.evaluate(readHighlight);
+        const hovered = await lastLink.evaluate(readRow);
         assert.equal(hovered.background, HIGHLIGHT);
         assert.equal(hovered.title, ON_HIGHLIGHT);
     } finally {
@@ -165,56 +168,43 @@ test('keyboard entry, destinations and monochrome highlights work', async () => 
     }
 });
 
-async function readLayoutBoxes(page) {
+function readRowGeometry(link) {
+    const box = element => element.getBoundingClientRect().toJSON();
+    const title = link.querySelector('.link-title');
+    const range = document.createRange();
+    range.selectNodeContents(title);
     return {
-        avatar: await page.locator('.tile-avatar').boundingBox(),
-        identity: await page.locator('.tile-identity').boundingBox(),
-        name: await page.locator('#profile-name').boundingBox(),
-        profile: await page.locator('.profile').boundingBox(),
-        nav: await page.locator('.site-nav').boundingBox(),
-        links: await Promise.all((await page.locator('.site-link').all()).map(link => link.boundingBox()))
+        link: box(link),
+        title: box(title),
+        description: box(link.querySelector('.link-description')),
+        titleLines: new Set(Array.from(range.getClientRects(), rect => Math.round(rect.top))).size
     };
 }
 
-function assertProfileLayout(width, boxes) {
-    const { avatar, identity, name, profile, nav } = boxes;
-    assert.ok(nav.y >= profile.y + profile.height - PIXEL_TOLERANCE, 'Links sit below the profile');
-    if (width <= PROFILE_STACK_MAX_WIDTH) {
-        assert.ok(identity.y >= avatar.y + avatar.height - PIXEL_TOLERANCE, 'Identity stacks under the avatar');
-        return;
-    }
-    assert.ok(identity.x >= avatar.x + avatar.width - PIXEL_TOLERANCE, 'Identity sits beside the avatar');
-    assert.ok(name.x >= avatar.x + avatar.width, 'Name must not overlap the avatar');
-}
-
-function assertLinkLayout(width, links) {
-    if (width <= LINKS_STACK_MAX_WIDTH) {
-        links.slice(1).forEach((link, index) => {
-            const previous = links[index];
-            assert.ok(Math.abs(link.x - previous.x) <= PIXEL_TOLERANCE, 'Stacked links share a column');
-            assert.ok(link.y >= previous.y + previous.height, 'Stacked links do not overlap');
-        });
-        return;
-    }
-    const firstRow = links.slice(0, FIRST_ROW_LINK_COUNT);
-    firstRow.slice(1).forEach((link, index) => {
-        assert.ok(Math.abs(link.y - firstRow[index].y) <= PIXEL_TOLERANCE, 'First row tiles align');
-        assert.ok(link.x >= firstRow[index].x + firstRow[index].width, 'First row tiles do not overlap');
+function assertRowLayout(width, rows) {
+    rows.forEach((row, index) => {
+        assert.ok(row.link.height >= MIN_TOUCH_TARGET);
+        assert.equal(row.titleLines, 1, 'Titles must stay on one line');
+        if (index > 0) assert.ok(row.link.y >= rows[index - 1].link.y + rows[index - 1].link.height - PIXEL_TOLERANCE);
+        if (width <= DESCRIPTION_BELOW_MAX_WIDTH) {
+            assert.ok(row.description.y >= row.title.y + row.title.height - PIXEL_TOLERANCE, 'Description sits under the title');
+        } else {
+            assert.ok(row.description.x >= row.title.x + row.title.width, 'Description sits beside the title');
+        }
     });
-    const secondRow = links.slice(FIRST_ROW_LINK_COUNT);
-    assert.ok(secondRow.every(link => link.y >= firstRow[0].y + firstRow[0].height), 'Remaining tiles form a second row');
 }
 
 for (const width of TEST_WIDTHS) {
-    test(`tiles fit and links remain reachable at ${width}px`, async () => {
+    test(`painted rows fit and stay reachable at ${width}px`, async () => {
         const { context, page } = await openPage({ viewport: { width, height: VIEWPORT_HEIGHT } });
         try {
             await enterPage(page);
             await assertNoOverflow(page);
-            const boxes = await readLayoutBoxes(page);
-            assertProfileLayout(width, boxes);
-            assertLinkLayout(width, boxes.links);
-            assert.ok(boxes.links.every(link => link.height >= MIN_TOUCH_TARGET));
+            const rows = [];
+            for (const link of await page.locator('.site-link').all()) {
+                rows.push(await link.evaluate(readRowGeometry));
+            }
+            assertRowLayout(width, rows);
             await page.locator('.source-link').scrollIntoViewIfNeeded();
             assert.ok(await page.locator('.site-link').last().isVisible());
             await assertNoOverflow(page);
@@ -224,12 +214,15 @@ for (const width of TEST_WIDTHS) {
     });
 }
 
-test('main content remains usable without JavaScript', async () => {
+test('main content remains usable and painted without JavaScript', async () => {
     const { context, page } = await openPage({ javaScriptEnabled: false });
     try {
         await page.locator('.enter').click();
-        assert.ok(await page.locator('.profile-avatar').isVisible());
         assert.equal(await page.locator('.site-link').count(), EXPECTED_LINKS.length);
+        assert.ok(await page.locator('.site-link').first().isVisible());
+        assert.match(await page.locator('.link-title').first().evaluate(title =>
+            getComputedStyle(title).backgroundImage), /radial-gradient/);
+        assert.equal(await page.locator('.paint-note').isVisible(), false);
         await assertNoOverflow(page);
     } finally {
         await context.close();

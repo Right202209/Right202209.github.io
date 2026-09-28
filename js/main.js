@@ -50,6 +50,7 @@ function finishIntro(focusMain) {
 function switchPage(focusMain = false) {
     if (switchPage.switched) return;
     switchPage.switched = true;
+    if (typeof window.captureIntroPaint === "function") window.captureIntroPaint();
     introSection.inert = true;
     document.documentElement.classList.add("main-active");
 

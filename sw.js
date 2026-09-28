@@ -7,6 +7,7 @@ const ASSETS = [
   '/css/intro.css',
   '/css/main.css',
   '/css/responsive.css',
+  '/js/paint.js',
   '/js/main.js',
   '/js/background.js',
   '/js/mouse-trail.js',
