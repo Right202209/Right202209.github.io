@@ -2,15 +2,16 @@
 ref: reading
 layout: page
 title: 值得一读
-description: 别人的思考，值得借来一用。
+description: 借来的灯，照自己的路。
 ---
-<div class="cards">
-  {% include lang.html %}
-  {% for r in site.data.reading[L] %}
-  <a class="card" href="{{ r.url }}">
-    <span class="by">{{ r.author }}</span>
-    <h3>{{ r.title }}</h3>
-    <p>{{ r.note }}</p>
-  </a>
+{% include lang.html %}
+{% assign items = site.reading | where: "lang", L | sort: "date" | reverse %}
+{% assign years = items | group_by_exp: "r", "r.date | date: '%Y'" %}
+{% for y in years %}
+<h2 class="year">{{ y.name }}</h2>
+<ul class="rows">
+  {% for r in y.items %}
+  <li><time>{{ r.date | date: t.date_month }}</time><a href="{{ r.url | relative_url }}">{{ r.title }}<span class="note">{{ r.author }}{% if r.description %} · {{ r.description }}{% endif %}</span></a></li>
   {% endfor %}
-</div>
+</ul>
+{% endfor %}

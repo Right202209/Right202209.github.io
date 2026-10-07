@@ -1,0 +1,41 @@
+# Social links, shown on the Social page in this order.
+# icon: a slug from https://simpleicons.org (e.g. instagram, github, x, xiaohongshu, bilibili, zhihu, weibo, wechat, telegram, linkedin, youtube, mastodon, threads, douban, spotify, strava, rss, gmail)
+# url:  a full link; links starting with "/" stay on this site; "mailto:" works too
+# note: one short line per language (optional)
+# Delete an entry, or set `hidden: true`, to hide it.
+
+- name: Email
+  icon: gmail
+  handle: right202601@gmail.com
+  url: mailto:right202601@gmail.com
+  note: { zh-CN: 最慢，也最真。, en: Slowest, and most sincere. }
+
+- name: GitHub
+  icon: github
+  handle: Right202209
+  url: https://github.com/Right202209
+  note: { zh-CN: 写给机器的那部分。, en: The part written for machines. }
+
+- name: X
+  icon: x
+  handle: "@your-x"
+  url: https://x.com/your-x
+  note: { zh-CN: 偶尔的碎念。, en: Occasional fragments. }
+
+- name: Instagram
+  icon: instagram
+  handle: "@your-ins"
+  url: https://instagram.com/your-ins
+  note: { zh-CN: 看见过的光。, en: Light, as I found it. }
+
+- name: 小红书
+  icon: xiaohongshu
+  handle: your-id
+  url: https://www.xiaohongshu.com/user/profile/your-id
+  hidden: true
+
+- name: RSS
+  icon: rss
+  handle: feed.xml
+  url: /feed.xml
+  note: { zh-CN: 不打扰的订阅。, en: Subscribe without being disturbed. }
