@@ -1,4 +1,5 @@
 ---
+oneko: true
 layout: page
 title: 生活
 ref: life

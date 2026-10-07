@@ -9,5 +9,6 @@
     {% include footer.html %}
     {% include search.html %}
     <script src="{{ '/assets/js/main.js' | relative_url }}" defer></script>
+    {% if page.oneko %}<script src="{{ '/assets/js/oneko.js' | relative_url }}" data-cat="{{ '/assets/img/oneko.png' | relative_url }}" data-persist-position="false"></script>{% endif %}
   </body>
 </html>

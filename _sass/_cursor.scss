@@ -1,0 +1,13 @@
+// 光标美化：default.cur / pointer.cur 放在 assets/css/ 下（与 main.css 同目录）
+:root {
+  --cursor-default: url("default.cur"), auto;
+  --cursor-pointer: url("pointer.cur"), pointer;
+}
+html, body { cursor: var(--cursor-default); }
+a, button, summary, label, select,
+[role="button"], [onclick], .icon-btn,
+input[type="submit"], input[type="button"], input[type="checkbox"], input[type="radio"] {
+  cursor: var(--cursor-pointer);
+}
+input:not([type]), input[type="text"], input[type="search"], input[type="email"], textarea,
+[contenteditable="true"] { cursor: text; }
