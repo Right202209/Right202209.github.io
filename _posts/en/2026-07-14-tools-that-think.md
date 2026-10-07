@@ -1,21 +1,21 @@
 ---
 ref: tools
-title: Tools that think
-description: When the hammer has opinions.
+title: When tools begin to think
+description: After the hammer grows opinions.
 tags: [ai]
 ---
 
-A tool used to extend the hand. Now it extends the mind, and sometimes answers back.
+Tools once extended the hand. Now they extend the mind, and now and then they talk back.
 
-The question is no longer *can it do the work*. It is *what remains ours once it does*.
+The question is no longer *can it do the work*, but *what is still ours once it has*.
 
 ## What remains
 
-Taste. Judgment. The choice of which problem deserves a life.
+Taste. Judgment. And, out of all the problems in the world, choosing the one worth a lifetime.
 
 ```python
 def what_matters(tasks):
     return [t for t in tasks if t.needs_a_human]
 ```
 
-Perhaps the list is shorter than we hoped. Perhaps it was always this short.
+The list may be shorter than we hoped. Perhaps it was always this short.

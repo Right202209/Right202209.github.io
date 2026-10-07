@@ -48,8 +48,15 @@ main.wrap { padding-top: 72px; padding-bottom: 96px; min-height: 70vh; }
 .card .by { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
 
 .site-footer { border-top: 1px solid var(--line); padding: 40px 0 56px; font-size: .88rem; color: var(--muted); }
-.social { display: flex; gap: 1.4rem; margin-bottom: .6rem; }
-.social a { text-decoration: none; }
+.social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.social-item { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; text-decoration: none; transition: border-color .2s, transform .25s; }
+.social-item:hover { border-color: var(--accent); transform: translateY(-2px); color: inherit; }
+.social-icon { flex: none; width: 22px; height: 22px; background: currentColor; -webkit-mask: var(--icon) center / contain no-repeat; mask: var(--icon) center / contain no-repeat; }
+.social-item:hover .social-icon { background: var(--accent); }
+.social-text { display: flex; flex-direction: column; min-width: 0; }
+.social-text strong { font: 500 1.05rem var(--serif); }
+.social-text span { color: var(--muted); font-size: .85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.source-link { display: inline-block; margin-top: 2.4em; font-size: .9rem; text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; }
 .fine { margin: 0; }
 
 .search { position: fixed; inset: 0; z-index: 50; background: color-mix(in srgb, var(--ink) 30%, transparent); display: flex; justify-content: center; padding-top: 14vh; }

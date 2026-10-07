@@ -1,14 +1,14 @@
 ---
 ref: slowness
 title: The speed of slowness
-description: Running is not the same as arriving.
+description: Running is not arriving.
 tags: [life]
 ---
 
-For years I ran, afraid that stopping meant falling behind.
+For years I ran, afraid that if I stopped I would fall behind.
 
-Then I stood still on a mountain and noticed the world had been there the whole time, waiting without hurry.
+Then one day I stood still on a summit, and saw that the world had been there all along, waiting without hurry.
 
 ---
 
-Slowness is not laziness. It is attention, paid in full.
+Slowness is not idleness. It is attention, paid in full.

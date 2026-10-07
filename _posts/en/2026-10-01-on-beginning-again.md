@@ -1,14 +1,14 @@
 ---
 ref: beginning
 title: On beginning again
-description: Every start is a small act of forgetting.
+description: Every beginning is a small act of forgetting.
 tags: [notes]
 ---
 
-To begin again, you must forget a little. Not everything. Just enough to be curious.
+To begin again, you have to forget a little. Not everything. Just enough to be curious again.
 
 The old blog ended without a goodbye. This one begins without a plan.
 
-> We do not write because we have something to say. We write to discover whether we do.
+> We do not write because we have something to say. We write to find out whether we do.
 
-That is enough reason to try.
+That is reason enough.

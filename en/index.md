@@ -4,10 +4,10 @@ layout: home
 title: About
 ---
 
-I am a person who reads more than he writes, and writes mostly to understand what he has read.
+I read more than I write, and when I write, it is mostly to understand what I have read.
 
-The work is building things. The rest is learning that a life is not only the work.
+I also like to coding somethings . The rest of my time goes to find out: the happiness of life.
 
-This is a notebook kept in public. It does not promise to be useful. It only promises to be honest, and a little slow.
+This is a notebook left open. It may not be useful. But it's still a record of myself, even if I may write slowly.
 
-If a thought here stays with you, [write to me](mailto:you@example.com).
+If a thought here lingers with you, [write to me](mailto:right202601@gmail.com).

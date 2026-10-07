@@ -1,8 +1,9 @@
 ---
 layout: null
 ---
+{% assign docs = site.posts | concat: site.reading %}
 [
-{% for post in site.posts %}
+{% for post in docs %}
   {"title": {{ post.title | jsonify }}, "url": {{ post.url | relative_url | jsonify }}, "date": {{ post.date | date: "%Y-%m-%d" | jsonify }}, "lang": {{ post.lang | jsonify }}, "text": {{ post.content | strip_html | strip_newlines | truncatewords: 60 | jsonify }}}{% unless forloop.last %},{% endunless %}
 {% endfor %}
 ]

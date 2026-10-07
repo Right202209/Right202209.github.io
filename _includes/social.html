@@ -1,0 +1,14 @@
+{% include lang.html %}
+<div class="social-grid">
+  {% for s in site.data.social %}{% unless s.hidden %}
+  {% assign first = s.url | slice: 0 %}
+  {% if first == "/" %}{% assign href = s.url | relative_url %}{% else %}{% assign href = s.url %}{% endif %}
+  <a class="social-item" href="{{ href }}"{% unless first == "/" or s.url contains "mailto:" %} target="_blank" rel="me noopener"{% endunless %}>
+    <span class="social-icon" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13/icons/{{ s.icon | default: 'rss' }}.svg')" aria-hidden="true"></span>
+    <span class="social-text">
+      <strong>{{ s.name }}</strong>
+      <span>{{ s.note[L] | default: s.handle }}</span>
+    </span>
+  </a>
+  {% endunless %}{% endfor %}
+</div>

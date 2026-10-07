@@ -16,7 +16,8 @@ Open http://localhost:4000
 - `index.md` — the about text on the home page
 - `_posts/` — writing, as `YYYY-MM-DD-title.md`
 - `_data/news.yml` — short notes on the home page
-- `_data/reading.yml` — the Reading page
+- `_reading/` — Reading, one Markdown file per piece (English in `_reading/en/`); front matter: title, author, date, description, source, ref
+- `_data/social.yml` — the Social page; add any platform (Instagram, 小红书, Bilibili…) with an icon slug from simpleicons.org
 - `life/index.md` — the Life page
 - `assets/img/avatar.svg` — replace with your photo, then update `avatar` in `_config.yml`
 - `_sass/_variables.scss` — colors and fonts
@@ -27,7 +28,8 @@ Open http://localhost:4000
 - 界面文字、导航和日期格式都在 `_data/i18n.yml` 里配置。
 - 中文文章放在 `_posts/`，英文文章放在 `_posts/en/`。英文文章会自动设为 `lang: en`，链接是 `/en/blog/...`。
 - 两种语言的同一篇文章或页面，写上相同的 `ref:`，导航栏的切换按钮就会直接跳到对应的那一篇。找不到对应时，跳到另一种语言的首页。
-- 首页随记和"值得一读"的数据，都放在 `_data/news.yml` 和 `_data/reading.yml` 里，按语言分组。
+- 首页随记在 `_data/news.yml`，按语言分组。"值得一读"像文章一样写：中文放 `_reading/`，英文放 `_reading/en/`，同一篇用相同的 `ref:`。
+- 社交链接在 `_data/social.yml`，不分语言；`note` 可按语言写，`hidden: true` 可隐藏。
 
 ## Deploy
 

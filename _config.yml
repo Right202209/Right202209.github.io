@@ -15,17 +15,17 @@ timezone: Asia/Shanghai
 
 avatar: /assets/img/avatar.svg
 
-social:
-  github: your-github
-  x: your-x
-  email: right202601@gmail.com
-  rss: true
-
 home:
   news_limit: 3
   posts_limit: 5
 
 permalink: /blog/:year/:title/
+
+# "Reading" works like posts: one Markdown file per piece in _reading/ (English in _reading/en/).
+collections:
+  reading:
+    output: true
+    permalink: /reading/:name/
 
 # Posts in _posts/en/ are English and live under /en/blog/.
 defaults:
@@ -33,6 +33,10 @@ defaults:
     values: { lang: zh-CN }
   - scope: { path: "_posts/en" }
     values: { lang: en, permalink: "/en/blog/:year/:title/" }
+  - scope: { path: "_reading", type: reading }
+    values: { layout: reading }
+  - scope: { path: "_reading/en", type: reading }
+    values: { lang: en, permalink: "/en/reading/:name/" }
   - scope: { path: "en" }
     values: { lang: en }
 markdown: kramdown

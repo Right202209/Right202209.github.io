@@ -1,0 +1,18 @@
+---
+layout: default
+---
+{% include lang.html %}
+<article class="post">
+  <header class="page-head">
+    <p class="meta">
+      <span class="tag">{{ page.author }}</span>
+      {% if page.date %}· <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: t.date_long }}</time>{% endif %}
+    </p>
+    <h1 class="display">{{ page.title }}</h1>
+    {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
+  </header>
+  <div class="prose">
+    {{ content }}
+    {% if page.source %}<a class="source-link" href="{{ page.source }}" target="_blank" rel="noopener">{{ t.read_original }} →</a>{% endif %}
+  </div>
+</article>
