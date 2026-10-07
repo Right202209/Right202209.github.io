@@ -1,0 +1,8 @@
+{% include lang.html %}
+<div class="search" id="search" hidden>
+  <div class="search-panel" role="dialog" aria-label="Search">
+    <input id="search-input" type="search" placeholder="{{ t.search_placeholder }}" autocomplete="off">
+    <ul id="search-results"></ul>
+  </div>
+</div>
+<script>window.SEARCH_INDEX = "{{ '/search.json' | relative_url }}"; window.SEARCH_EMPTY = {{ t.search_empty | jsonify }};</script>

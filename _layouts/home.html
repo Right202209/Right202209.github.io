@@ -1,0 +1,41 @@
+---
+layout: default
+---
+{% include lang.html %}
+<section class="intro">
+  <div class="intro-text">
+    <h1 class="display">{{ site.title }}</h1>
+    {% if t.alias %}<p class="alias">{{ t.alias }}</p>{% endif %}
+    <div class="prose">{{ content }}</div>
+  </div>
+  {% if site.avatar %}
+  <figure class="intro-figure">
+    <img src="{{ site.avatar | relative_url }}" alt="{{ site.author }}">
+    {% if t.avatar_caption %}<figcaption>{{ t.avatar_caption }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+</section>
+
+{% assign news = site.data.news[L] %}
+{% if news %}
+<section class="block">
+  <h2 class="eyebrow">{{ t.notes }}</h2>
+  <ul class="rows">
+    {% for item in news limit: site.home.news_limit %}
+    <li><time>{{ item.date | date: t.date_short }}</time><span>{{ item.text | markdownify | remove: '<p>' | remove: '</p>' }}</span></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="block">
+  <h2 class="eyebrow"><a href="{{ t.nav[1].url | relative_url }}">{{ t.latest }}</a></h2>
+  <ul class="rows">
+    {% assign posts = site.posts | where: "lang", L %}
+    {% for post in posts limit: site.home.posts_limit %}
+    <li><time>{{ post.date | date: t.date_short }}</time><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+
+<blockquote class="epigraph">{{ t.tagline }}</blockquote>

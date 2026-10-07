@@ -1,0 +1,16 @@
+---
+ref: blog
+layout: page
+title: 文章
+description: 思想的草稿，按时间排列。
+---
+{% include lang.html %}
+{% assign years = site.posts | where: "lang", L | group_by_exp: "p", "p.date | date: '%Y'" %}
+{% for y in years %}
+<h2 class="year">{{ y.name }}</h2>
+<ul class="rows">
+  {% for post in y.items %}
+  <li><time>{{ post.date | date: t.date_month }}</time><a href="{{ post.url | relative_url }}">{{ post.title }}{% if post.description %}<span class="note">{{ post.description }}</span>{% endif %}</a></li>
+  {% endfor %}
+</ul>
+{% endfor %}

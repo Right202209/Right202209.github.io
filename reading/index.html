@@ -1,0 +1,16 @@
+---
+ref: reading
+layout: page
+title: 值得一读
+description: 别人的思考，值得借来一用。
+---
+<div class="cards">
+  {% include lang.html %}
+  {% for r in site.data.reading[L] %}
+  <a class="card" href="{{ r.url }}">
+    <span class="by">{{ r.author }}</span>
+    <h3>{{ r.title }}</h3>
+    <p>{{ r.note }}</p>
+  </a>
+  {% endfor %}
+</div>
