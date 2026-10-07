@@ -60,3 +60,4 @@ exclude:
   - Gemfile.lock
   - vendor
   - LICENSE
+  - docs
