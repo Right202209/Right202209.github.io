@@ -3,6 +3,8 @@
 A quiet Jekyll theme for people who think in public.
 Warm paper, serif type, a single clay accent. Dark mode. ⌘K search. Nothing else.
 
+📖 **Docs / Tutorial**：[English](docs/en/README.md) · [中文](docs/zh-CN/README.md)  
+
 ## Run
 
     bundle install
@@ -33,8 +35,8 @@ Open http://localhost:4000
 
 ## Deploy
 
-Push to GitHub and use a GitHub Actions Jekyll workflow (the theme uses Jekyll 4),
-or build locally and upload `_site/` anywhere.
+Set **Settings → Pages → Source** to **GitHub Actions**, then push. `.github/workflows/pages.yml` builds with Jekyll 4 and deploys.
+Or build locally and upload `_site/` anywhere.
 
 ## Cursors and the Cat
 
@@ -48,16 +50,8 @@ Thank you for leaving the door open.
 
 - [al-folio](https://github.com/alshedivat/al-folio): A model for academic homepages. The skeleton for the About, Posts, and News sections was all learned from here.
 - [ifuryst.com](https://www.ifuryst.com/): Showed me that a personal blog can be both a body of work and a life.
-
 - [Jekyll](https://jekyllrb.com/): Lets words just be words.
 - [Simple Icons](https://simpleicons.org/)、[Newsreader](https://fonts.google.com/specimen/Newsreader)、[Inter](https://rsms.me/inter/)、[JetBrains Mono](https://www.jetbrains.com/lp/mono/)、[Unsplash](https://unsplash.com/)：The invisible things that hold everything up.
-
-
-- s
-
-
-
-
 
 ## LICENSE
  MIT licensed. Say less, mean more.
