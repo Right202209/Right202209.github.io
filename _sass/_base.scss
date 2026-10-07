@@ -1,0 +1,35 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 17px/1.7 var(--sans);
+  transition: background .3s, color .3s;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration-color: var(--line); text-underline-offset: 3px; transition: color .2s, text-decoration-color .2s; }
+a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+img { max-width: 100%; height: auto; }
+::selection { background: var(--accent); color: var(--bg); }
+
+.display { font: 400 clamp(2.2rem, 5vw, 3.4rem)/1.1 var(--serif); letter-spacing: -0.02em; margin: 0 0 .4em; }
+.eyebrow { font: 500 .75rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 1.2rem; }
+.eyebrow a { text-decoration: none; }
+.lede { font: italic 400 1.25rem/1.5 var(--serif); color: var(--muted); margin: 0; }
+
+.prose { max-width: var(--measure); }
+.prose h2, .prose h3 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.01em; line-height: 1.25; margin: 2.2em 0 .6em; }
+.prose h2 { font-size: 1.7rem; } .prose h3 { font-size: 1.3rem; }
+.prose p, .prose ul, .prose ol { margin: 0 0 1.2em; }
+.prose blockquote {
+  margin: 2em 0; padding: 0 0 0 1.2em; border-left: 2px solid var(--accent);
+  font: italic 1.25rem/1.55 var(--serif); color: var(--ink);
+}
+.prose code { font: .88em var(--mono); background: var(--surface); padding: .12em .35em; border-radius: 4px; }
+.prose pre { background: var(--surface); padding: 1.1em 1.3em; border-radius: 10px; overflow-x: auto; font-size: .88rem; line-height: 1.6; }
+.prose pre code { background: none; padding: 0; }
+.prose hr { border: 0; text-align: center; margin: 3em 0; }
+.prose hr::after { content: "· · ·"; color: var(--muted); letter-spacing: .6em; }
+.prose img { border-radius: 10px; }
+.prose table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.prose th, .prose td { text-align: left; padding: .5em .6em; border-bottom: 1px solid var(--line); }
+kbd { font: 500 .7rem var(--mono); border: 1px solid var(--line); border-radius: 5px; padding: .15em .45em; color: var(--muted); }
