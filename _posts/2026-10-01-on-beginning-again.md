@@ -1,13 +1,14 @@
 ---
-title: On beginning again
-description: Every start is a small act of forgetting.
-tags: [notes]
+title: 关于重新开始
+ref: beginning
+description: 每一次开始，都是一次小小的遗忘。
+tags: [随笔]
 ---
 
-To begin again, you must forget a little. Not everything. Just enough to be curious.
+要重新开始，就得忘掉一点。不必全部，只要足够让自己重新好奇。
 
-The old blog ended without a goodbye. This one begins without a plan.
+旧的博客没有道别就结束了。这一个，也没有计划就开始了。
 
-> We do not write because we have something to say. We write to discover whether we do.
+> 我们写作，不是因为有话要说，而是想知道自己是否有话可说。
 
-That is enough reason to try.
+这就足够了。

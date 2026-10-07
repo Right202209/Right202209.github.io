@@ -1,13 +1,14 @@
 ---
-title: The speed of slowness
-description: Running is not the same as arriving.
-tags: [life]
+title: 慢的速度
+ref: slowness
+description: 奔跑，不等于抵达。
+tags: [生活]
 ---
 
-For years I ran, afraid that stopping meant falling behind.
+很多年里我一直在跑，害怕一停下就会落后。
 
-Then I stood still on a mountain and noticed the world had been there the whole time, waiting without hurry.
+后来我在一座山上站定，才发现世界一直都在那里，不慌不忙地等着。
 
 ---
 
-Slowness is not laziness. It is attention, paid in full.
+慢不是懒惰。慢是专注，而且是全额支付。

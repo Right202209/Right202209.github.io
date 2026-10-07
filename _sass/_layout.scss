@@ -10,6 +10,8 @@ main.wrap { padding-top: 72px; padding-bottom: 96px; min-height: 70vh; }
 .nav a.active, .nav a:hover { color: var(--ink); }
 .icon-btn { background: none; border: 0; padding: 0; cursor: pointer; color: var(--muted); display: flex; }
 .icon-btn:hover { color: var(--accent); }
+.nav a.lang-switch { font-size: .78rem; letter-spacing: .06em; border: 1px solid var(--line); border-radius: 999px; padding: .15em .7em; }
+.nav a.lang-switch:hover { border-color: var(--accent); color: var(--accent); }
 
 .intro { display: grid; grid-template-columns: 1fr 240px; gap: 56px; align-items: start; margin-bottom: 88px; }
 .alias { color: var(--muted); margin: -.4em 0 1.6em; }
