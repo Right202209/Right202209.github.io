@@ -8,15 +8,15 @@ zh-CN:
     - { title: 文章, url: /blog/ }
     - { title: 值得一读, url: /reading/ }
     - { title: 生活, url: /life/ }
-  alias: "也可以叫我 —"
-  tagline: "写作不是为了被阅读，而是为了弄清自己在想什么。"
+  alias: "也可以叫我 — Right"
+  tagline: "为文非为人读，乃为自知所思。"
   avatar_caption: "在地图与疆域之间。"
   notes: 随记
   latest: 最近的文字
   minutes: 分钟
   search_placeholder: "寻找一个念头…"
-  search_empty: "还没有。也许这就是答案。"
-  footer: "这里的一切，都只是暂时的。"
+  search_empty: "还没。也许这就是答案。"
+  footer: "此间万物，不过暂寄。"
   date_long: "%Y年%m月%d日"
   date_short: "%Y-%m-%d"
   date_month: "%m-%d"
@@ -29,7 +29,7 @@ en:
     - { title: Writing, url: /en/blog/ }
     - { title: Reading, url: /en/reading/ }
     - { title: Life, url: /en/life/ }
-  alias: "Also known as —"
+  alias: "Also known as — Right"
   tagline: "We write not to be read, but to find out what we think."
   avatar_caption: "Somewhere between the map and the territory."
   notes: Notes
