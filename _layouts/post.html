@@ -1,0 +1,25 @@
+---
+layout: default
+---
+{% include lang.html %}
+<article class="post">
+  <header class="page-head">
+    <p class="meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: t.date_long }}</time>
+      · {{ content | number_of_words | divided_by: 220 | plus: 1 }} {{ t.minutes }}
+      {% for tag in page.tags %}· <span class="tag">{{ tag }}</span>{% endfor %}
+    </p>
+    <h1 class="display">{{ page.title }}</h1>
+    {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
+  </header>
+  <div class="prose">{{ content }}</div>
+  <nav class="pager">
+    {% assign same = site.posts | where: "lang", L %}
+    {% assign newer = nil %}{% assign older = nil %}
+    {% for p in same %}{% if p.url == page.url %}{% assign i = forloop.index0 %}{% endif %}{% endfor %}
+    {% if i > 0 %}{% assign j = i | minus: 1 %}{% assign newer = same[j] %}{% endif %}
+    {% assign k = i | plus: 1 %}{% assign older = same[k] %}
+    {% if older %}<a href="{{ older.url | relative_url }}">← {{ older.title }}</a>{% else %}<span></span>{% endif %}
+    {% if newer %}<a href="{{ newer.url | relative_url }}">{{ newer.title }} →</a>{% endif %}
+  </nav>
+</article>

@@ -1,0 +1,43 @@
+# One block per language. `home` is that language's root URL.
+zh-CN:
+  label: 中
+  switch_label: 中文
+  home: /
+  nav:
+    - { title: 关于, url: / }
+    - { title: 文章, url: /blog/ }
+    - { title: 值得一读, url: /reading/ }
+    - { title: 生活, url: /life/ }
+  alias: "也可以叫我 —"
+  tagline: "写作不是为了被阅读，而是为了弄清自己在想什么。"
+  avatar_caption: "在地图与疆域之间。"
+  notes: 随记
+  latest: 最近的文字
+  minutes: 分钟
+  search_placeholder: "寻找一个念头…"
+  search_empty: "还没有。也许这就是答案。"
+  footer: "这里的一切，都只是暂时的。"
+  date_long: "%Y年%m月%d日"
+  date_short: "%Y-%m-%d"
+  date_month: "%m-%d"
+en:
+  label: EN
+  switch_label: EN
+  home: /en/
+  nav:
+    - { title: About, url: /en/ }
+    - { title: Writing, url: /en/blog/ }
+    - { title: Reading, url: /en/reading/ }
+    - { title: Life, url: /en/life/ }
+  alias: "Also known as —"
+  tagline: "We write not to be read, but to find out what we think."
+  avatar_caption: "Somewhere between the map and the territory."
+  notes: Notes
+  latest: Latest writing
+  minutes: min
+  search_placeholder: "Search for a thought…"
+  search_empty: "Nothing yet. Perhaps that is the answer."
+  footer: "Everything here is provisional."
+  date_long: "%B %d, %Y"
+  date_short: "%b %d, %Y"
+  date_month: "%b %d"

@@ -1,0 +1,22 @@
+{% include lang.html %}
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="{{ t.home | relative_url }}">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L22 22 H2 Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="15" r="2.2" fill="currentColor"/></svg>
+      {{ site.title }}
+    </a>
+    <nav class="nav">
+      {% for item in t.nav %}
+        {% assign active = false %}
+        {% if item.url == t.home %}{% if page.url == t.home or page.url == '/index.html' %}{% assign active = true %}{% endif %}
+        {% elsif page.url contains item.url %}{% assign active = true %}{% endif %}
+        <a href="{{ item.url | relative_url }}"{% if active %} class="active"{% endif %}>{{ item.title }}</a>
+      {% endfor %}
+      <button class="icon-btn" id="search-open" aria-label="Search"><kbd>⌘K</kbd></button>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="1.6"/></svg>
+      </button>
+      <a class="lang-switch" href="{{ alt_url | relative_url }}" hreflang="{{ alt }}" lang="{{ alt }}" data-lang="{{ alt }}">{{ alt_t.switch_label }}</a>
+    </nav>
+  </div>
+</header>

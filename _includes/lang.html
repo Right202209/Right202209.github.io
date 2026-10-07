@@ -1,0 +1,11 @@
+{%- comment -%} Sets L (current language), t (its strings), alt (the other language) and alt_url (this page in it). {%- endcomment -%}
+{%- assign L = page.lang | default: site.lang -%}
+{%- assign t = site.data.i18n[L] | default: site.data.i18n[site.lang] -%}
+{%- assign alt = site.languages | where_exp: "l", "l != L" | first -%}
+{%- assign alt_t = site.data.i18n[alt] -%}
+{%- assign alt_url = alt_t.home -%}
+{%- if page.ref -%}
+  {%- assign twin = site.pages | where: "ref", page.ref | where: "lang", alt | first -%}
+  {%- unless twin -%}{%- assign twin = site.posts | where: "ref", page.ref | where: "lang", alt | first -%}{%- endunless -%}
+  {%- if twin -%}{%- assign alt_url = twin.url -%}{%- endif -%}
+{%- endif -%}

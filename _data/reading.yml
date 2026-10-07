@@ -1,0 +1,34 @@
+zh-CN:
+- title: 沉思录
+  author: Marcus Aurelius
+  note: 写给自己的笔记，从未打算给我们看。
+  url: https://en.wikipedia.org/wiki/Meditations
+- title: 苦涩的教训
+  author: Rich Sutton
+  note: 通用方法终将胜出，我们的聪明常常碍事。
+  url: http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+- title: 慈爱的机器
+  author: Dario Amodei
+  note: 认真对待“如果一切顺利”。
+  url: https://www.darioamodei.com/essay/machines-of-loving-grace
+- title: 瓦尔登湖
+  author: Henry David Thoreau
+  note: 关于审慎地生活，以及其他一切的代价。
+  url: https://en.wikipedia.org/wiki/Walden
+en:
+- title: Meditations
+  author: Marcus Aurelius
+  note: Notes a man wrote to himself, never meant for us.
+  url: https://en.wikipedia.org/wiki/Meditations
+- title: The Bitter Lesson
+  author: Rich Sutton
+  note: General methods win. Our cleverness is usually in the way.
+  url: http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+- title: Machines of Loving Grace
+  author: Dario Amodei
+  note: What could go right, taken seriously.
+  url: https://www.darioamodei.com/essay/machines-of-loving-grace
+- title: Walden
+  author: Henry David Thoreau
+  note: On living deliberately, and the cost of everything else.
+  url: https://en.wikipedia.org/wiki/Walden

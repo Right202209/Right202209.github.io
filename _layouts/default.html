@@ -1,0 +1,13 @@
+{% include lang.html %}<!doctype html>
+<html lang="{{ L }}" data-theme="light">
+  {% include head.html %}
+  <body>
+    {% include header.html %}
+    <main class="wrap" id="main">
+      {{ content }}
+    </main>
+    {% include footer.html %}
+    {% include search.html %}
+    <script src="{{ '/assets/js/main.js' | relative_url }}" defer></script>
+  </body>
+</html>

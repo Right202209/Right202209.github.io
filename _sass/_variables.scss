@@ -1,0 +1,20 @@
+:root {
+  --bg: #faf9f5;
+  --surface: #f0eee6;
+  --ink: #141413;
+  --muted: #6b6a64;
+  --line: #e3dfd3;
+  --accent: #d97757;
+  --serif: "Newsreader", "Iowan Old Style", Georgia, "Songti SC", serif;
+  --sans: "Inter", -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --measure: 680px;
+}
+[data-theme="dark"] {
+  --bg: #1a1916;
+  --surface: #24231f;
+  --ink: #ece9e0;
+  --muted: #9a978d;
+  --line: #34322c;
+  --accent: #e08a6b;
+}
