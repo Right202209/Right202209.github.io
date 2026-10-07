@@ -1,0 +1,19 @@
+---
+layout: default
+---
+<article class="post">
+  <header class="page-head">
+    <p class="meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+      · {{ content | number_of_words | divided_by: 220 | plus: 1 }} min
+      {% for tag in page.tags %}· <span class="tag">{{ tag }}</span>{% endfor %}
+    </p>
+    <h1 class="display">{{ page.title }}</h1>
+    {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
+  </header>
+  <div class="prose">{{ content }}</div>
+  <nav class="pager">
+    {% if page.previous %}<a href="{{ page.previous.url | relative_url }}">← {{ page.previous.title }}</a>{% else %}<span></span>{% endif %}
+    {% if page.next %}<a href="{{ page.next.url | relative_url }}">{{ page.next.title }} →</a>{% endif %}
+  </nav>
+</article>

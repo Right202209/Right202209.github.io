@@ -1,0 +1,14 @@
+---
+layout: page
+title: Writing
+description: Drafts of a mind, in chronological order.
+---
+{% assign years = site.posts | group_by_exp: "p", "p.date | date: '%Y'" %}
+{% for y in years %}
+<h2 class="year">{{ y.name }}</h2>
+<ul class="rows">
+  {% for post in y.items %}
+  <li><time>{{ post.date | date: "%b %d" }}</time><a href="{{ post.url | relative_url }}">{{ post.title }}{% if post.description %}<span class="note">{{ post.description }}</span>{% endif %}</a></li>
+  {% endfor %}
+</ul>
+{% endfor %}

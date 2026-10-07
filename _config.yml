@@ -1,0 +1,59 @@
+# ------------------------------------------------------------
+#  Stoa — a quiet Jekyll theme for people who think in public.
+# ------------------------------------------------------------
+title: Stoa
+author: Droit
+alias: "Also known as — Right"
+email: right202601@gmail.com
+description: "A small place to think slowly."
+tagline: "We write not to be read, but to find out what we think."
+url: ""          # e.g. https://example.com
+baseurl: ""      # e.g. /blog
+lang: zh_CN
+timezone: Asia/Shanghai
+
+avatar: /assets/img/avatar.svg
+avatar_caption: "Somewhere between the map and the territory."
+
+nav:
+  - title: About
+    url: /
+  - title: Writing
+    url: /blog/
+  - title: Reading
+    url: /reading/
+  - title: Life
+    url: /life/
+
+social:
+  github: your-github
+  x: your-x
+  email: you@example.com
+  rss: true
+
+home:
+  news_limit: 3
+  posts_limit: 5
+
+permalink: /blog/:year/:title/
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter_opts:
+    disable: false
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+sass:
+  style: compressed
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - LICENSE
