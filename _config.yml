@@ -31,6 +31,8 @@ collections:
 defaults:
   - scope: { path: "" }
     values: { lang: zh-CN }
+  - scope: { path: "", type: posts }
+    values: { layout: post }
   - scope: { path: "_posts/en" }
     values: { lang: en, permalink: "/en/blog/:year/:title/" }
   - scope: { path: "_reading", type: reading }
@@ -61,3 +63,4 @@ exclude:
   - vendor
   - LICENSE
   - docs
+  - scripts

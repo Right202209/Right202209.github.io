@@ -26,6 +26,7 @@
 14. [RSS、SEO 与 Sitemap](#14-rssseo-与-sitemap)
 15. [部署到 GitHub Pages](#15-部署到-github-pages)
 16. [常见问题](#16-常见问题)
+17. [自动化：Issue 发布与自动翻译](#17-自动化issue-发布与自动翻译)
 
 ---
 
@@ -654,6 +655,100 @@ Jekyll 默认按空格数词。在 `_layouts/post.html` 里把 `number_of_words`
 
 **`docs/` 会被发布到网站上吗？**
 不会，它已经写在 `_config.yml` 的 `exclude` 里。
+
+---
+
+## 17. 自动化：Issue 发布与自动翻译
+
+只写中文。用 Issue 发布文章或「值得一读」，GitHub Action 会自动生成 Markdown、翻译出英文版并部署上线。
+
+### 它是怎么工作的
+
+```text
+新建 Issue（文章 / 值得一读表单）
+   └─ issue-publish.yml
+        ├─ scripts/issue_publish.py   Issue → _posts/ 或 _reading/ 下的中文 Markdown
+        ├─ scripts/translate.py       调用翻译接口 → _posts/en/ 或 _reading/en/
+        ├─ 提交并推送
+        ├─ 触发 pages.yml 部署
+        └─ 在 Issue 下回复链接，并关闭 Issue
+
+直接 push 中文 Markdown
+   └─ translate.yml → 补齐或更新英文版 → 触发部署
+```
+
+相关文件：
+
+| 文件 | 作用 |
+| --- | --- |
+| `.github/ISSUE_TEMPLATE/post.yml` | 「发布文章」表单 |
+| `.github/ISSUE_TEMPLATE/reading.yml` | 「值得一读」表单 |
+| `.github/workflows/issue-publish.yml` | Issue → 发布 |
+| `.github/workflows/translate.yml` | push 中文后自动翻译 |
+| `scripts/` | 上面两个工作流用到的 Python 脚本（不会发布到网站） |
+
+### 一次性设置
+
+1. **翻译密钥**：仓库 → Settings → Secrets and variables → Actions → **Secrets** → New repository secret，名称 `TRANSLATE_API_KEY`，值填你的 API Key。
+2. **翻译服务（可选）**：同一页面切到 **Variables**，按需添加：
+
+   | 变量 | 默认值 | 说明 |
+   | --- | --- | --- |
+   | `TRANSLATE_BASE_URL` | `https://api.openai.com/v1` | 任何兼容 OpenAI Chat Completions 的接口 |
+   | `TRANSLATE_MODEL` | `gpt-4o-mini` | 模型名 |
+
+   例如用 DeepSeek：`TRANSLATE_BASE_URL=https://api.deepseek.com`，`TRANSLATE_MODEL=deepseek-chat`。其他兼容 OpenAI 格式的服务同理。
+
+3. **标签**：Issues → Labels → New label，建两个标签 `post` 和 `reading`。表单会自动给 Issue 打上它们，工作流靠标签判断类型。也可以用命令行：
+
+   ```bash
+   gh label create post && gh label create reading
+   ```
+
+4. **部署方式**：确认 Settings → Pages → Source 是 **GitHub Actions**（见第 15 节）。
+
+### 用 Issue 发布
+
+1. Issues → New issue → 选择 **✍️ 发布文章** 或 **📚 值得一读**。
+2. Issue 标题就是文章标题，`[文章]`、`[值得一读]` 前缀会自动去掉。
+3. 填写表单。正文支持 Markdown，图片可以直接拖进去。
+4. 提交。大约一两分钟后，Action 会在 Issue 下回复文章链接并关闭 Issue；再过几分钟部署完成即可访问。
+
+**修改**：直接编辑这个 Issue（已关闭的也可以），文章和英文版会一起更新。文件名和日期保持不变。
+
+**Slug**：留空时，会请翻译接口根据标题生成英文短链接；没有配置密钥时，退回为 `post-<编号>` 或 `reading-<编号>`。
+
+**安全**：只有仓库主人开的 Issue 才会触发发布，别人开的 Issue 会被忽略。
+
+### 自动翻译的规则
+
+- 中文文件在 `_posts/`、`_reading/`；英文版写到 `_posts/en/`、`_reading/en/`，文件名相同。
+- 中文没有 `ref` 时，会自动用文件名补上，中英文因此自动对应。
+- 英文文件里有 `translated: auto` 和 `source_hash`。中文改动后，`source_hash` 对不上，英文会重新翻译。
+- **手写的英文永远不会被覆盖**：没有 `translated: auto` 的英文文件会被跳过。想亲自润色某篇机翻，改完后删掉 `translated: auto` 这一行，它就锁定了。
+- 翻译保留 Markdown 结构；代码块、链接、Liquid 标签不翻译。
+- 想全部补译一遍：Actions → **Translate** → Run workflow。
+- 没有设置 `TRANSLATE_API_KEY` 时，翻译步骤会跳过，中文照常发布。
+
+### 本地手动翻译
+
+```bash
+pip install pyyaml
+export TRANSLATE_API_KEY=你的密钥
+python scripts/translate.py                       # 扫描全部
+python scripts/translate.py _posts/2026-10-08-a-quiet-morning.md   # 只翻这一篇
+```
+
+### 常见问题
+
+**提交 Issue 后没有反应？**
+看 Actions 页里 **Publish from issue** 有没有运行。常见原因：标签 `post` / `reading` 还没建，导致 Issue 没被打上标签；或者 Issue 不是仓库主人开的。
+
+**推送失败，提示没有权限？**
+Settings → Actions → General → Workflow permissions，选 **Read and write permissions**。
+
+**翻译风格不满意？**
+改 `scripts/common.py` 里的 `SYSTEM_PROMPT`。
 
 ---
 

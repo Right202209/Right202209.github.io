@@ -1,0 +1,36 @@
+name: 📚 值得一读
+description: 记下一本书或一篇文章；提交后自动生成条目、翻译英文版并部署。
+title: "[值得一读] "
+labels: [reading]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issue 标题就是书名或文章名（`[值得一读]` 前缀会被自动去掉）。只写中文即可。
+  - type: input
+    id: author
+    attributes:
+      label: 作者
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: 原文链接
+      placeholder: https://
+  - type: input
+    id: description
+    attributes:
+      label: 一句话短评
+  - type: input
+    id: slug
+    attributes:
+      label: Slug（可选）
+      description: 英文短链接，如 walden。留空则根据标题自动生成。
+  - type: textarea
+    id: body
+    attributes:
+      label: 正文
+      description: 读后感、摘抄，一句话也行。支持 Markdown。
+    validations:
+      required: true

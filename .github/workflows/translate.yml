@@ -1,0 +1,48 @@
+# 自动翻译：push 了中文文章 / 值得一读后，生成或更新英文版（_posts/en、_reading/en）。
+# 手写的英文文件（没有 translated: auto）永远不会被覆盖。
+name: Translate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "_posts/*.md"
+      - "_reading/*.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - run: python scripts/translate.py
+        env:
+          TRANSLATE_API_KEY: ${{ secrets.TRANSLATE_API_KEY }}
+          TRANSLATE_BASE_URL: ${{ vars.TRANSLATE_BASE_URL }}
+          TRANSLATE_MODEL: ${{ vars.TRANSLATE_MODEL }}
+      - id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _posts _reading
+          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git commit -m "translate: update English versions"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      # GITHUB_TOKEN 的 push 不会触发其他工作流，所以手动触发一次部署
+      - if: steps.commit.outputs.changed == 'true'
+        run: gh workflow run pages.yml --ref "${{ github.ref_name }}"
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -1,0 +1,75 @@
+# 从 Issue 发布文章 / 值得一读：只响应仓库主人，带 post 或 reading 标签的 Issue。
+name: Publish from issue
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: publish-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      (contains(github.event.issue.labels.*.name, 'post') || contains(github.event.issue.labels.*.name, 'reading'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+
+      - id: md
+        name: Issue → Markdown
+        run: python scripts/issue_publish.py
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_LABELS: ${{ toJSON(github.event.issue.labels.*.name) }}
+          ISSUE_CREATED_AT: ${{ github.event.issue.created_at }}
+          TRANSLATE_API_KEY: ${{ secrets.TRANSLATE_API_KEY }}
+          TRANSLATE_BASE_URL: ${{ vars.TRANSLATE_BASE_URL }}
+          TRANSLATE_MODEL: ${{ vars.TRANSLATE_MODEL }}
+
+      - name: Translate to English
+        run: python scripts/translate.py "${{ steps.md.outputs.path }}"
+        env:
+          TRANSLATE_API_KEY: ${{ secrets.TRANSLATE_API_KEY }}
+          TRANSLATE_BASE_URL: ${{ vars.TRANSLATE_BASE_URL }}
+          TRANSLATE_MODEL: ${{ vars.TRANSLATE_MODEL }}
+
+      - id: commit
+        name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _posts _reading
+          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git commit -m "publish: #${{ github.event.issue.number }} ${{ steps.md.outputs.path }}"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy
+        if: steps.commit.outputs.changed == 'true'
+        run: gh workflow run pages.yml --ref "${{ github.event.repository.default_branch }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Reply and close
+        run: |
+          SITE="https://${{ github.repository_owner }}.github.io"
+          gh issue comment "${{ github.event.issue.number }}" --body "${{ github.event.action == 'opened' && '已发布' || '已更新' }} → ${SITE}${{ steps.md.outputs.url }}
+
+          文件：\`${{ steps.md.outputs.path }}\`。几分钟后部署完成即可访问；再编辑这个 Issue，文章会同步更新。"
+          gh issue close "${{ github.event.issue.number }}" --reason completed
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -26,6 +26,7 @@ This guide covers everything the theme does: running it locally, writing your fi
 14. [RSS, SEO and sitemap](#14-rss-seo-and-sitemap)
 15. [Deploying to GitHub Pages](#15-deploying-to-github-pages)
 16. [FAQ](#16-faq)
+17. [Automation: publish from issues, translate automatically](#17-automation-publish-from-issues-translate-automatically)
 
 ---
 
@@ -650,6 +651,100 @@ Check that the page has `oneko: true`, that Reduce Motion is off, and that `asse
 
 **Will `docs/` be published?**
 No. It's listed under `exclude` in `_config.yml`.
+
+---
+
+## 17. Automation: publish from issues, translate automatically
+
+Write in Chinese only. Publish posts or Reading entries by opening an issue; GitHub Actions turns it into Markdown, translates an English version and deploys.
+
+### How it works
+
+```text
+New issue (Post / Reading form)
+   └─ issue-publish.yml
+        ├─ scripts/issue_publish.py   issue → Chinese Markdown in _posts/ or _reading/
+        ├─ scripts/translate.py       translation API → _posts/en/ or _reading/en/
+        ├─ commit and push
+        ├─ trigger pages.yml to deploy
+        └─ reply with the link and close the issue
+
+Push Chinese Markdown directly
+   └─ translate.yml → create or update the English version → trigger deploy
+```
+
+Files involved:
+
+| File | Purpose |
+| --- | --- |
+| `.github/ISSUE_TEMPLATE/post.yml` | "Publish a post" form |
+| `.github/ISSUE_TEMPLATE/reading.yml` | "Reading" form |
+| `.github/workflows/issue-publish.yml` | issue → publish |
+| `.github/workflows/translate.yml` | translate after you push Chinese files |
+| `scripts/` | Python used by both workflows (never published) |
+
+### One-time setup
+
+1. **API key**: repo → Settings → Secrets and variables → Actions → **Secrets** → New repository secret named `TRANSLATE_API_KEY`.
+2. **Provider (optional)**: on the **Variables** tab of the same page:
+
+   | Variable | Default | Notes |
+   | --- | --- | --- |
+   | `TRANSLATE_BASE_URL` | `https://api.openai.com/v1` | Any OpenAI Chat Completions–compatible endpoint |
+   | `TRANSLATE_MODEL` | `gpt-4o-mini` | Model name |
+
+   DeepSeek, for example: `TRANSLATE_BASE_URL=https://api.deepseek.com`, `TRANSLATE_MODEL=deepseek-chat`. Other OpenAI-compatible services work the same way.
+
+3. **Labels**: Issues → Labels → New label; create `post` and `reading`. The forms apply them, and the workflow uses them to tell the two apart. Or from the command line:
+
+   ```bash
+   gh label create post && gh label create reading
+   ```
+
+4. **Deploy source**: Settings → Pages → Source must be **GitHub Actions** (see section 15).
+
+### Publishing from an issue
+
+1. Issues → New issue → choose **✍️ 发布文章** (post) or **📚 值得一读** (Reading).
+2. The issue title is the post title; the `[文章]` / `[值得一读]` prefix is stripped.
+3. Fill in the form. The body takes Markdown, and you can drag images in.
+4. Submit. In a minute or two the Action replies with the link and closes the issue; the deploy finishes a few minutes later.
+
+**Editing**: edit the issue (closed ones too) and both the post and its English version update. The filename and date stay the same.
+
+**Slug**: if left empty, the translation API suggests an English slug from the title; without an API key it falls back to `post-<number>` or `reading-<number>`.
+
+**Safety**: only issues opened by the repo owner publish anything. Everyone else's issues are ignored.
+
+### Translation rules
+
+- Chinese files live in `_posts/` and `_reading/`; English versions go to `_posts/en/` and `_reading/en/` under the same filename.
+- If a Chinese file has no `ref`, one is added from its filename, so the pair links up automatically.
+- English files carry `translated: auto` and a `source_hash`. When the Chinese changes, the hash no longer matches and the English is retranslated.
+- **Hand-written English is never overwritten**: English files without `translated: auto` are skipped. To polish a machine translation yourself, edit it and delete the `translated: auto` line; it's locked from then on.
+- Markdown structure is kept; code blocks, links and Liquid tags are not translated.
+- To backfill everything: Actions → **Translate** → Run workflow.
+- Without `TRANSLATE_API_KEY`, translation is skipped and the Chinese still publishes.
+
+### Translate locally
+
+```bash
+pip install pyyaml
+export TRANSLATE_API_KEY=your-key
+python scripts/translate.py                       # scan everything
+python scripts/translate.py _posts/2026-10-08-a-quiet-morning.md   # just this one
+```
+
+### FAQ
+
+**Nothing happened after I opened the issue.**
+Check whether **Publish from issue** ran on the Actions tab. Usually the `post` / `reading` labels don't exist yet, so the issue was never labeled, or the issue wasn't opened by the repo owner.
+
+**The push failed with a permission error.**
+Settings → Actions → General → Workflow permissions → **Read and write permissions**.
+
+**I don't like the translation style.**
+Edit `SYSTEM_PROMPT` in `scripts/common.py`.
 
 ---
 
