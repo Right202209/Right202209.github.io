@@ -1,11 +1,14 @@
+<div align="right">
+  <a href="README.zh.md">中文</a>
+</div>
+
 # Stoa
 
 A quiet Jekyll theme for people who think in public.
 Warm paper, serif type, a single clay accent. Dark mode. ⌘K search. Nothing else.
 
-📖 **Docs / 教程**：[中文](docs/zh-CN/README.md) · [English](docs/en/README.md)
+📖 **Docs / Tutorial**：[English](docs/en/README.md) · [中文](docs/zh-CN/README.md)  
 
-🤖 **Automation**：publish posts & Reading from issues, write Chinese only, English is translated by Actions. 用 Issue 发布、只写中文、自动翻译 → [中文](docs/zh-CN/README.md#17-自动化issue-发布与自动翻译) · [English](docs/en/README.md#17-automation-publish-from-issues-translate-automatically)
 
 ## Run
 
