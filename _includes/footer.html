@@ -1,3 +1,4 @@
+{% include lang.html %}
 <footer class="site-footer">
   <div class="wrap">
     <div class="social">
@@ -6,6 +7,6 @@
       {% if site.social.x %}<a href="https://x.com/{{ site.social.x }}">X</a>{% endif %}
       {% if site.social.rss %}<a href="{{ '/feed.xml' | relative_url }}">RSS</a>{% endif %}
     </div>
-    <p class="fine">© {{ site.time | date: "%Y" }} {{ site.author }}. Everything here is provisional.</p>
+    <p class="fine">© {{ site.time | date: "%Y" }} {{ site.author }}. {{ t.footer }}</p>
   </div>
 </footer>

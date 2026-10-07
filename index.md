@@ -1,12 +1,13 @@
 ---
 layout: home
-title: About
+title: 关于
+ref: home
 ---
 
-I am a person who reads more than he writes, and writes mostly to understand what he has read.
+读得多，写得少。写，多半是为了弄懂读过的东西。
 
-The work is building things. The rest is learning that a life is not only the work.
+工作是造东西。其余的时间，在学习：人生不只有工作。
 
-This is a notebook kept in public. It does not promise to be useful. It only promises to be honest, and a little slow.
+这是一本公开的笔记本。不承诺有用，只承诺诚实，以及慢一点。
 
-If a thought here stays with you, [write to me](mailto:you@example.com).
+如果这里有哪个念头留在了你心里，[给我写信](mailto:you@example.com)。

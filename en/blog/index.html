@@ -1,8 +1,8 @@
 ---
 ref: blog
 layout: page
-title: 文章
-description: 思想的草稿，按时间排列。
+title: Writing
+description: Drafts of a mind, in chronological order.
 ---
 {% include lang.html %}
 {% assign years = site.posts | where: "lang", L | group_by_exp: "p", "p.date | date: '%Y'" %}

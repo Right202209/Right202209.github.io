@@ -1,38 +1,41 @@
 ---
 layout: default
 ---
+{% include lang.html %}
 <section class="intro">
   <div class="intro-text">
     <h1 class="display">{{ site.title }}</h1>
-    {% if site.alias %}<p class="alias">{{ site.alias }}</p>{% endif %}
+    {% if t.alias %}<p class="alias">{{ t.alias }}</p>{% endif %}
     <div class="prose">{{ content }}</div>
   </div>
   {% if site.avatar %}
   <figure class="intro-figure">
     <img src="{{ site.avatar | relative_url }}" alt="{{ site.author }}">
-    {% if site.avatar_caption %}<figcaption>{{ site.avatar_caption }}</figcaption>{% endif %}
+    {% if t.avatar_caption %}<figcaption>{{ t.avatar_caption }}</figcaption>{% endif %}
   </figure>
   {% endif %}
 </section>
 
-{% if site.data.news %}
+{% assign news = site.data.news[L] %}
+{% if news %}
 <section class="block">
-  <h2 class="eyebrow">Notes</h2>
+  <h2 class="eyebrow">{{ t.notes }}</h2>
   <ul class="rows">
-    {% for item in site.data.news limit: site.home.news_limit %}
-    <li><time>{{ item.date | date: "%b %d, %Y" }}</time><span>{{ item.text | markdownify | remove: '<p>' | remove: '</p>' }}</span></li>
+    {% for item in news limit: site.home.news_limit %}
+    <li><time>{{ item.date | date: t.date_short }}</time><span>{{ item.text | markdownify | remove: '<p>' | remove: '</p>' }}</span></li>
     {% endfor %}
   </ul>
 </section>
 {% endif %}
 
 <section class="block">
-  <h2 class="eyebrow"><a href="{{ '/blog/' | relative_url }}">Latest writing</a></h2>
+  <h2 class="eyebrow"><a href="{{ t.nav[1].url | relative_url }}">{{ t.latest }}</a></h2>
   <ul class="rows">
-    {% for post in site.posts limit: site.home.posts_limit %}
-    <li><time>{{ post.date | date: "%b %d, %Y" }}</time><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+    {% assign posts = site.posts | where: "lang", L %}
+    {% for post in posts limit: site.home.posts_limit %}
+    <li><time>{{ post.date | date: t.date_short }}</time><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
 </section>
 
-<blockquote class="epigraph">{{ site.tagline }}</blockquote>
+<blockquote class="epigraph">{{ t.tagline }}</blockquote>

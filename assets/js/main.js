@@ -22,13 +22,14 @@
   function render(q) {
     q = q.trim().toLowerCase();
     if (!q || !index) { list.innerHTML = ''; return; }
+    var lang = document.documentElement.lang;
     var hits = index.filter(function (p) {
-      return (p.title + ' ' + p.text).toLowerCase().indexOf(q) > -1;
+      return p.lang === lang && (p.title + ' ' + p.text).toLowerCase().indexOf(q) > -1;
     }).slice(0, 8);
     sel = 0;
     list.innerHTML = hits.length ? hits.map(function (p, i) {
       return '<li><a href="' + p.url + '"' + (i === 0 ? ' class="sel"' : '') + '>' + p.title + '<small>' + p.date + '</small></a></li>';
-    }).join('') : '<li style="padding:10px 14px;color:var(--muted)">Nothing yet. Perhaps that is the answer.</li>';
+    }).join('') : '<li style="padding:10px 14px;color:var(--muted)">' + (window.SEARCH_EMPTY || 'Nothing yet.') + '</li>';
   }
 
   document.getElementById('search-open').addEventListener('click', open);

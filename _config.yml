@@ -3,32 +3,22 @@
 # ------------------------------------------------------------
 title: Stoa
 author: Droit
-alias: "Also known as — Right"
 email: right202601@gmail.com
 description: "A small place to think slowly."
-tagline: "We write not to be read, but to find out what we think."
 url: ""          # e.g. https://example.com
 baseurl: ""      # e.g. /blog
-lang: zh_CN
+# Languages: the first is the default and lives at /, the others live at /<code>/.
+# Use a hyphen (zh-CN), never an underscore (zh_CN).
+lang: zh-CN
+languages: [zh-CN, en]
 timezone: Asia/Shanghai
 
 avatar: /assets/img/avatar.svg
-avatar_caption: "Somewhere between the map and the territory."
-
-nav:
-  - title: About
-    url: /
-  - title: Writing
-    url: /blog/
-  - title: Reading
-    url: /reading/
-  - title: Life
-    url: /life/
 
 social:
   github: your-github
   x: your-x
-  email: you@example.com
+  email: right202601@gmail.com
   rss: true
 
 home:
@@ -36,6 +26,15 @@ home:
   posts_limit: 5
 
 permalink: /blog/:year/:title/
+
+# Posts in _posts/en/ are English and live under /en/blog/.
+defaults:
+  - scope: { path: "" }
+    values: { lang: zh-CN }
+  - scope: { path: "_posts/en" }
+    values: { lang: en, permalink: "/en/blog/:year/:title/" }
+  - scope: { path: "en" }
+    values: { lang: en }
 markdown: kramdown
 highlighter: rouge
 kramdown:
