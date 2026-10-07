@@ -36,7 +36,10 @@ Open http://localhost:4000
 Push to GitHub and use a GitHub Actions Jekyll workflow (the theme uses Jekyll 4),
 or build locally and upload `_site/` anywhere.
 
-MIT licensed. Say less, mean more.
+## Cursors and the Cat
+
+- Global cursors: Put `default.cur` and `pointer.cur` in `assets/css/`; the styles are in `_sass/_cursor.scss`. If the files are missing, it automatically falls back to the system cursor.
+- oneko cat: Set `oneko: true` in the page's front matter to make it appear; currently only on the "Life" page. The sprite sheet is `assets/img/oneko.png` (256×128). It is automatically hidden on systems with "Reduce Motion" enabled. The script is from [adryd325/oneko.js](https://github.com/adryd325/oneko.js).
 
 ## Acknowledgements
 
@@ -48,3 +51,14 @@ Thank you for leaving the door open.
 
 - [Jekyll](https://jekyllrb.com/): Lets words just be words.
 - [Simple Icons](https://simpleicons.org/)、[Newsreader](https://fonts.google.com/specimen/Newsreader)、[Inter](https://rsms.me/inter/)、[JetBrains Mono](https://www.jetbrains.com/lp/mono/)、[Unsplash](https://unsplash.com/)：The invisible things that hold everything up.
+
+
+- s
+
+
+
+
+
+## LICENSE
+ MIT licensed. Say less, mean more.
+
