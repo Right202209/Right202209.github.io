@@ -7,7 +7,7 @@
 enabled: true          # false → entry row, weeks page and search entries all switch off
 entry: true            # the "today | my life in weeks" row on the Life page
 view: grid             # default view: grid | timeline (visitors can switch)
-hemisphere: north      # season ticks: north | south
+hemisphere: north      # season borders, split at 立春 立夏 立秋 立冬: north | south
 
 birthday: 1995-01-01   # ← your birthday (it is public on the site)
 life_expectancy: 80    # how many years to draw
@@ -24,7 +24,7 @@ places:
   - { age: 0, zh: 家乡, en: Hometown, color: "#b9a68a" }
 
 # Milestones. Examples below — replace them with your own.
-#   private: true → shown only as a solid dot, no text, not searchable
+#   private: true → a sealed week: hatched box + one ringed dot, no text, not searchable
 #   line: true    → a vertical marker on the timeline
 events:
   - { date: 2013-06-20, emoji: "🎒", zh: 高中毕业, en: Finished high school }
