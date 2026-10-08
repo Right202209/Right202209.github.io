@@ -75,8 +75,14 @@
   var wk = document.querySelector('[data-weeks]');
   if (wk) {
     var zh = wk.dataset.lang.indexOf('zh') === 0, tip = wk.querySelector('.wk-tip');
+    var bp = (wk.dataset.born || '').split('-'), by = +bp[0], bm = bp[1] - 1, bdd = +bp[2];
     var name = function (attr, cls) { var m = new RegExp('(?:^| )' + attr[0] + '(\\d+)').exec(cls); var k = m && wk.querySelector('[data-' + attr + '="' + m[1] + '"]'); return k ? k.textContent : ''; };
     wk.classList.add('js-weeks');
+
+    // Locale-format the glance numbers (week of life, % lived, weeks left).
+    each('[data-weeks-glance] b[data-n]', function (b) {
+      b.textContent = (+b.dataset.n).toLocaleString(zh ? 'zh-CN' : 'en-US', { maximumFractionDigits: 1 });
+    });
 
     // Re-mark this week and the future against the visitor's clock (the build may be days old).
     var rows = wk.querySelectorAll('.wk-yr[data-from]');
@@ -99,9 +105,13 @@
     var show = function (c) {
       if (!c || c.tagName !== 'I' || !c.parentNode.classList.contains('wk-cells') || (c.classList.contains('f') && !c.dataset.ev)) { tip.hidden = true; return; }
       var row = c.closest('.wk-yr'), i = Array.prototype.indexOf.call(c.parentNode.children, c);
-      var age = row.dataset.age, era = name('era', c.className), place = name('place', c.className);
+      // Rows are ~20-week chunks that cross birthdays, so age and week-of-year come from the cell's own date.
+      var d = ymd(row.dataset.from) + i * WEEK, y = new Date(d).getUTCFullYear(), bd = Date.UTC(y, bm, bdd);
+      if (d < bd) { y--; bd = Date.UTC(y, bm, bdd); }
+      var age = y - by, wn = Math.floor((d - bd) / WEEK) + 1;
+      var era = name('era', c.className), place = name('place', c.className);
       var where = [era, place && (zh ? '在' + place : 'in ' + place)].filter(Boolean).join(zh ? '，' : ', ');
-      tip.textContent = [fmt(ymd(row.dataset.from) + i * WEEK, zh), zh ? age + ' 岁第 ' + (i + 1) + ' 周' : 'age ' + age + ', week ' + (i + 1), where, c.dataset.ev]
+      tip.textContent = [fmt(d, zh), zh ? age + ' 岁第 ' + wn + ' 周' : 'age ' + age + ', week ' + wn, where, c.dataset.ev]
         .filter(Boolean).join(' · ');
       tip.hidden = false;
       var r = c.getBoundingClientRect(), w = tip.offsetWidth, o = wk.getBoundingClientRect();
@@ -123,6 +133,22 @@
     each('.wk-switch button', function (btn) {
       btn.addEventListener('click', function () { setView(btn.dataset.v); localStorage.setItem('weeks-view', btn.dataset.v); });
     }, wk);
+
+    // Scroll progress: the thin line under the sticky bar fills as the module scrolls past.
+    if (wk.querySelector('.wk-progress')) {
+      var ticking = false;
+      var paint = function () {
+        ticking = false;
+        var r = wk.getBoundingClientRect(), span = r.height - window.innerHeight;
+        var p = span > 0 ? -r.top / span : (r.top < 0 ? 1 : 0);
+        wk.style.setProperty('--wk-p', Math.max(0, Math.min(1, p)).toFixed(4));
+      };
+      var onScroll = function () { if (!ticking) { ticking = true; requestAnimationFrame(paint); } };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', paint);
+      each('.wk-switch button', function (btn) { btn.addEventListener('click', function () { requestAnimationFrame(paint); }); }, wk);
+      paint();
+    }
 
     // #ev-YYYY-MM-DD (from search or the timeline) → grid view, flash that week
     var jump = function () {

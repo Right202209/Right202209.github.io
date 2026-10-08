@@ -31,7 +31,9 @@ zh-CN:
   weeks_decade: "{n} 岁"
   weeks_now: 现在
   weeks_end: 预期寿命
+  weeks_bday: "🎂 {n} 岁 · {y}"
   weeks_seasons: 季节
+  weeks_glance: "人生第 {n} 周 · 已走过 {p}% · 还剩约 {left} 周"
 en:
   label: EN
   switch_label: EN
@@ -64,4 +66,6 @@ en:
   weeks_decade: "{n}s"
   weeks_now: Now
   weeks_end: Life expectancy
+  weeks_bday: "🎂 {n} in {y}"
   weeks_seasons: Seasons
+  weeks_glance: "Week {n} of a life · {p}% lived · about {left} to go"

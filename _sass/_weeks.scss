@@ -1,28 +1,53 @@
 // ─── Life in Weeks · 人生周历 ─────────────────────────────────
-// Ported from weeks.ginatrapani.org. Pure CSS Grid, no framework.
+// Ported from weeks.ginatrapani.org (after Buster Benson). Pure CSS Grid, no framework.
+// Restyled for Stoa: airy cells, decade rhythm, quiet chrome.
 
 .weeks-entry { margin-top: 2.5rem; }
 .weeks-entry .note { font-family: var(--sans); }
-.weeks-intro { margin-bottom: 1.6rem; }
+.weeks-intro { margin-bottom: 1.2rem; }
 
 .weeks {
-  --wk-gap: 2px;
+  --wk-gap: 3px;
   --spring: #9cc59a; --summer: #e8c170; --autumn: var(--accent); --winter: #8eb2d6;
   position: relative;
 }
 
-// Sticky bar: decade jumps + view switch
-.wk-bar {
-  position: sticky; top: 65px; z-index: 5; background: var(--bg);
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  padding: .6rem 0 .45rem; margin-bottom: 1rem; border-bottom: 1px solid var(--accent);
-  font: 500 .82rem/1.4 var(--sans);
+// The grid and its intro share one wider stage on desktop, so the 53 weeks
+// per row can breathe instead of shrinking into confetti.
+@media (min-width: 721px) {
+  .weeks, .weeks-intro {
+    width: min(1150px, calc(100vw - 72px));
+    max-width: none;
+    margin-inline: calc((100% - min(1150px, calc(100vw - 72px))) / 2);
+  }
 }
-.wk-nav { display: flex; flex-wrap: wrap; gap: .15rem .9rem; }
-.wk-nav a { color: var(--accent); text-decoration: none; }
-.wk-nav a:hover { text-decoration: underline; }
-.wk-switch { display: none; flex: none; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+
+// Quiet glance line: which week of life this is, how far along, how much left.
+.wk-glance { margin: 0 0 .9rem; font: .8rem/1.5 var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; }
+.wk-glance b { font-weight: 500; color: var(--ink); }
+
+// Sticky bar: decade pills + view switch
+.wk-bar {
+  position: sticky; top: 65px; z-index: 5;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: .6rem 0 .45rem; margin-bottom: 1rem; border-bottom: 1px solid var(--line); flex-wrap: wrap;
+  font: 500 .78rem/1.4 var(--sans);
+}
+.wk-nav { display: grid; flex: 1; grid-auto-flow: column; grid-auto-columns: 1fr; gap: .3rem .4rem; }
+.wk-nav a {
+  color: var(--muted); text-decoration: none; text-align: center; white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--line) 30%, var(--muted));
+  border-radius: 999px; padding: .3em .85em; transition: color .2s, border-color .2s;
+}
+.wk-nav a:hover { color: var(--accent); border-color: var(--accent); }
+.wk-switch { display: none; flex: none; border: 1px solid color-mix(in srgb, var(--line) 30%, var(--muted)); border-radius: 999px; padding: 2px; }
 .js-weeks .wk-switch { display: inline-flex; }
+// Scroll progress: a thin accent line riding the bottom border of the bar
+.wk-progress { display: none; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; }
+.js-weeks .wk-progress { display: block; }
+.wk-progress i { display: block; height: 100%; border-radius: 2px; background: var(--accent); transform-origin: left center; transform: scaleX(var(--wk-p, 0)); transition: transform .15s linear; }
 .wk-switch button {
   border: 0; background: none; color: var(--muted); font: inherit; font-size: .78rem;
   padding: .2em .8em; border-radius: 999px; cursor: var(--cursor-pointer);
@@ -34,36 +59,42 @@
 .weeks[data-view="grid"] .wk-tlwrap { display: none; }
 
 // Legend
-.wk-legend { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-bottom: 1.4rem; font: .78rem/1.4 var(--sans); color: var(--muted); }
+.wk-legend { display: none; }
 .wk-key { display: inline-flex; align-items: center; gap: .4em; }
-.wk-key::before { content: ""; width: 11px; height: 11px; border-radius: 2px; background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg)); }
+.wk-key::before { content: ""; width: 11px; height: 11px; border-radius: 3px; background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg)); }
 .wk-key-place::before { background: none; box-shadow: inset 0 0 0 1.5px var(--place); }
 .wk-key-season::before { display: none; }
 .wk-key-season i { position: relative; width: 4px; height: 11px; }
 
-// Grid: one row per year
+// Grid: a continuous stream of week boxes in rows of ~17–21, after weeks.ginatrapani.org
 .wk-dec { scroll-margin-top: 130px; }
-.wk-dec + .wk-dec { margin-top: .9rem; }
-.wk-yr { display: grid; grid-template-columns: 5.2em minmax(0, 1fr) 8.5em; gap: 10px; align-items: center; margin: 0 0 var(--wk-gap); }
-.wk-age { font: .7rem/1 var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.wk-cells { display: grid; grid-template-columns: repeat(53, minmax(0, 1fr)); gap: var(--wk-gap); }
+.wk-dec + .wk-dec {
+  margin-top: 1.5rem; padding-top: 1.3rem;
+  border-top: 1px dashed color-mix(in srgb, var(--line) 75%, transparent);
+}
+.wk-yr { display: flex; margin: 0 0 var(--wk-gap); }
+.wk-cells { display: flex; flex: 1 1 auto; min-width: 0; gap: var(--wk-gap); }
 .wk-cells i {
-  position: relative; aspect-ratio: 1; border-radius: 2px; cursor: var(--cursor-pointer);
+  position: relative; flex: 1 1 0; min-width: 0; height: 1.9rem; border-radius: 3px; cursor: var(--cursor-pointer);
+  display: inline-flex; align-items: center; font: 500 .78rem/1 var(--sans); color: var(--ink); white-space: nowrap;
   background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg));
   box-shadow: inset 0 0 0 1px var(--place, transparent);
   transition: transform .15s;
 }
-.wk-cells i:hover { transform: scale(1.7); z-index: 2; background: var(--accent); box-shadow: none; }
-.wk-cells i.f { background: transparent; box-shadow: inset 0 0 0 1px var(--line); opacity: .7; cursor: default; }
-.wk-cells i.f:hover { transform: none; background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
-.wk-cells i.now { background: var(--accent); box-shadow: none; animation: wk-pulse 2.4s ease-in-out infinite; }
-.wk-cells i.ev::after { content: ""; position: absolute; inset: 28%; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--accent); }
-.wk-cells i.pv::after { box-shadow: none; background: var(--ink); }   // private: a solid dot, nothing else
+// Labelled boxes (birthdays, events) take the width of their text, like the original
+.wk-cells i.bd, .wk-cells i.ev:not(.pv) { flex: 0 0 auto; padding: 0 .6em; scroll-margin-top: 140px; }
+.wk-cells i.bd { justify-content: center; }
+.wk-cells i:hover { transform: scale(1.6); z-index: 2; background: var(--accent); box-shadow: none; }
+.wk-cells i.bd:hover, .wk-cells i.ev:not(.pv):hover { transform: scale(1.04); }
+.wk-cells i.f { background: color-mix(in srgb, var(--line) 60%, transparent); box-shadow: none; cursor: default; color: var(--muted); }
+.wk-cells i.f:hover { transform: none; background: color-mix(in srgb, var(--line) 60%, transparent); }
+.wk-cells i.now { background: var(--accent); box-shadow: none; color: var(--bg); animation: wk-pulse 2.4s ease-in-out infinite; }
+.wk-cells i.pv::after { content: ""; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--ink); }   // private: a solid dot, nothing else
 .wk-cells i.hit { animation: wk-hit 1.2s ease-in-out 3; z-index: 3; }
 
 // Seasons: a faint tick at the first week of each season
 .wk-cells i[class*=" s"]::before, .wk-key-season i::before {
-  content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 1px; opacity: .55; pointer-events: none;
+  content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 1px; opacity: .45; pointer-events: none;
 }
 .wk-cells i.s0::before, .wk-key-season i.s0::before { background: var(--winter); }
 .wk-cells i.s1::before, .wk-key-season i.s1::before { background: var(--spring); }
@@ -71,17 +102,13 @@
 .wk-cells i.s3::before, .wk-key-season i.s3::before { background: var(--autumn); }
 .wk-key-season i::before { left: 1px; top: 0; bottom: 0; opacity: .9; }
 
-.wk-notes { font: .72rem/1.3 var(--sans); color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; align-content: center; gap: 0 .6em; min-width: 0; height: 0; overflow: visible; }
-.wk-notes a { text-decoration: none; white-space: nowrap; scroll-margin-top: 140px; }
-.wk-notes a:target { color: var(--accent); }
-.wk-pdot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); align-self: center; }
-.wk-last { grid-template-columns: 5.2em minmax(0, 1fr); }
-.wk-last.f { opacity: .6; }
 
 .wk-tip {
   position: absolute; z-index: 20; max-width: min(320px, 90vw);
-  background: var(--accent); color: #fff; padding: 6px 10px; border-radius: 6px;
-  font: 500 .78rem/1.4 var(--sans); pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,.15);
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+  padding: 7px 11px; border-radius: 8px;
+  font: 500 .78rem/1.45 var(--sans); pointer-events: none;
+  box-shadow: 0 12px 32px rgba(0,0,0,.18);
 }
 .wk-tip[hidden] { display: none; }
 
@@ -140,15 +167,16 @@
 @keyframes wk-grow { from { transform: scaleX(0); } }
 @media (prefers-reduced-motion: reduce) {
   .wk-node, .wk-axis i, .wk-cells i.now, .is-now .wk-dot, .wk-cells i.hit { animation: none; opacity: 1; }
+  .wk-progress i { transition: none; }
 }
 
 @media (max-width: 720px) {
   .wk-bar { flex-direction: column; align-items: flex-start; gap: .4rem; }
+  .wk-nav { display: grid; width: 100%; grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); gap: .25rem .3rem; }
+  .wk-nav a { padding: .28em .5em; font-size: .74rem; }
   .weeks[data-view="timeline"] .wk-nav { display: none; }
-  .wk-yr { grid-template-columns: 3.6em minmax(0, 1fr); gap: 6px; }
-  .wk-notes { grid-column: 2; }
-  .wk-notes:empty { display: none; }
-  .wk-age { font-size: .62rem; }
+  .wk-cells i { height: 1.35rem; font-size: .58rem; }
+  .wk-cells i.bd, .wk-cells i.ev:not(.pv) { padding: 0 .4em; }
   .weeks { --wk-gap: 1px; }
   // Timeline turns vertical on phones
   .wk-tlwrap { overflow: visible; }
