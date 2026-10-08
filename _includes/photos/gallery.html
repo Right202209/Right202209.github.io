@@ -1,0 +1,19 @@
+{%- include lang.html -%}
+{%- include photos/setup.html -%}
+{%- assign _intro = ph.intro[L] | default: ph.intro[site.lang] -%}
+{%- if _intro %}<p class="archive-sum">{{ _intro }}</p>{% endif %}
+{%- if ph_count > 0 %}
+<div class="ph-grid" data-photos>
+  {%- for p in ph_list %}{% include photos/item.html p=p %}{% endfor -%}
+  {%- for f in ph_files %}{% include photos/item.html f=f %}{% endfor -%}
+</div>
+<dialog class="ph-lb" aria-label="{{ t.photos_title }}">
+  <figure class="ph-lb-fig">
+    <img alt="">
+    <figcaption><span class="ph-title"></span><span class="ph-meta"></span><span class="ph-n"></span></figcaption>
+  </figure>
+  <button class="ph-lb-btn ph-prev" type="button" aria-label="{{ t.photos_prev }}">←</button>
+  <button class="ph-lb-btn ph-next" type="button" aria-label="{{ t.photos_next }}">→</button>
+  <button class="ph-lb-btn ph-close" type="button" aria-label="{{ t.photos_close }}">✕</button>
+</dialog>
+{%- endif %}

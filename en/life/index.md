@@ -12,3 +12,4 @@ Mountains, mostly. Long walks. Coffee that is too strong.
 
 
 {% include weeks/entry.html %}
+{% include photos/entry.html %}

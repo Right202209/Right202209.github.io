@@ -1,0 +1,4 @@
+{%- comment -%} Resolve a photo address: full URL as is, /path via relative_url, a bare filename from assets/img/photos/. {%- endcomment -%}
+{%- assign _s = include.s -%}
+{%- assign _c0 = _s | slice: 0 -%}
+{%- if _s contains "://" -%}{{ _s }}{%- elsif _c0 == "/" -%}{{ _s | relative_url }}{%- else -%}{{ "/assets/img/photos/" | append: _s | relative_url }}{%- endif -%}

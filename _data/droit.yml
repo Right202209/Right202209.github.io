@@ -4,7 +4,7 @@
 #          首页例外：头图在宽屏放在简介右侧，手机上放在简介之后。
 #  · 哪一张：页面 front matter 的 droit_art 优先；否则
 #      首页 → home_hero；文章 → post_<ref>（没有就 post_end）；值得一读 → reading_item；
-#      文章 / 值得一读列表为空 → empty；其他页面 → 页面的 ref（blog、reading、life、social、friends、weeks、notfound）
+#      文章 / 值得一读列表为空 → empty；其他页面 → 页面的 ref（blog、reading、life、social、friends、photos、weeks、notfound）
 #  · 尺寸：按图片横竖自动决定（横图最宽 520px，竖图最宽 260px），style 只对首页头图有用。
 #  · 全站关闭：enabled: false；单张关闭：show: false；单页不要插画：front matter 写 droit: false
 #  · 标着“备用”的几张不会自动出现，想用就在某一页写 droit_art: <key>。
@@ -81,6 +81,13 @@ art:
     w: 1024
     h: 1024
     alt: { zh-CN: "白狗叼着一封信小跑过来", en: "A white dog trotting over with a letter" }
+  photos:         # 相册页
+    show: true
+    style: md
+    file: 11_quote_reflection.webp
+    w: 848
+    h: 1264
+    alt: { zh-CN: "白狗在墨水池里看见自己的倒影", en: "A white dog sees its reflection in a pool of ink" }
   weeks:
     show: true
     style: wide

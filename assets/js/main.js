@@ -208,3 +208,47 @@
   }
 })();
 
+
+// ─── Album lightbox ──────────────────────────────────────────
+// Each [data-photo] link opens the full image in the dialog; ← → / swipe to move, Esc to close.
+// Without JS the links still open the image on its own.
+(function () {
+  var grid = document.querySelector('[data-photos]'), lb = document.querySelector('.ph-lb');
+  if (!grid || !lb || typeof lb.showModal !== 'function') return;
+  var links = Array.prototype.slice.call(grid.querySelectorAll('[data-photo]'));
+  var img = lb.querySelector('img'), tt = lb.querySelector('.ph-title'), mt = lb.querySelector('.ph-meta'), nn = lb.querySelector('.ph-n');
+  var cur = 0;
+  if (links.length < 2) lb.classList.add('single');
+  var preload = function (i) { var a = links[(i + links.length) % links.length]; if (a) { var p = new Image(); p.src = a.href; } };
+  var show = function (i) {
+    cur = (i + links.length) % links.length;
+    var a = links[cur];
+    img.classList.add('loading');
+    img.onload = function () { img.classList.remove('loading'); };
+    img.src = a.href; img.alt = a.dataset.title || '';
+    tt.textContent = a.dataset.title || ''; mt.textContent = a.dataset.meta || '';
+    nn.textContent = links.length > 1 ? (cur + 1) + ' / ' + links.length : '';
+    preload(cur + 1); preload(cur - 1);
+  };
+  links.forEach(function (a, i) {
+    a.addEventListener('click', function (e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault(); show(i); lb.showModal(); document.documentElement.style.overflow = 'hidden';
+    });
+  });
+  lb.addEventListener('close', function () { document.documentElement.style.overflow = ''; links[cur].focus({ preventScroll: true }); });
+  lb.querySelector('.ph-prev').addEventListener('click', function () { show(cur - 1); });
+  lb.querySelector('.ph-next').addEventListener('click', function () { show(cur + 1); });
+  lb.querySelector('.ph-close').addEventListener('click', function () { lb.close(); });
+  lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });   // tap the dark backdrop
+  lb.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(cur - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); show(cur + 1); }
+  });
+  var x0 = null;
+  lb.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', function (e) {
+    if (x0 === null) return; var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 45) show(cur + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+})();

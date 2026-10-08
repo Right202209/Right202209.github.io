@@ -858,3 +858,16 @@ Settings → Actions → General → Workflow permissions，选 **Read and write
   - `me` 是页面底部「交换友链」里展示的本站信息。
   - 页面文件：`social/friends.html`，英文版是 `en/social/friends.html`。模板在 `_includes/friends/`。
 - **返回链接**：任何页面的 front matter 写 `back: <ref>`，标题上方就会出现「← 那一页的标题」。人生周历写的是 `back: life`，友链写的是 `back: social`，标签和归档写的是 `back: blog`。
+
+
+## 相册
+
+- 生活页在「人生周历」卡片下面有一张相册卡片，叠着三张缩略图，点进去是 `/life/photos/`（英文版是 `/en/life/photos/`）。
+- 数据在 `_data/photos.yml`：
+  - `enabled: false` 关掉整个模块，`entry: false` 只隐藏生活页上的卡片。
+  - 照片有两种来源，可以同时用：
+    1. **写在 `list` 里**：`src` 可以是完整 URL、站内路径，或者只写文件名（会去 `assets/img/photos/` 里找）。可选字段有 `thumb`（缩略图）、`title`、`place`、`date`、`hidden`。
+    2. **直接丢进 `assets/img/photos/`**（`folder: true`）：会自动收录 jpg、png、webp、gif、avif。文件名用 `2026-05-01-west-lake.jpg` 这种格式时，日期和标题会自动读出来。按文件名排序，`folder_order: desc` 是新的在前。已经写进 `list` 的文件不会重复出现。
+- 相册是按原图比例排的瀑布流，点开是灯箱：键盘方向键、手机左右滑可以翻页，Esc 或点空白处关闭。
+- 图片尽量先压缩到长边 2000px 以内，或者给 `thumb` 一张小图，网格加载会快很多。
+- 页面文件在 `life/photos.html`，模板在 `_includes/photos/`，样式在 `_sass/_photos.scss`。
