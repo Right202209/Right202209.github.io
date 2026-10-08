@@ -6,11 +6,22 @@
 {%- assign placeholder_n = "{n}" -%}
 {%- if site.data.weeks and site.data.weeks.enabled != false -%}
 {%- include weeks/setup.html -%}
+{%- assign w_lived = w_today | minus: w_born | divided_by: WK | floor | plus: 1 -%}
+{%- assign w_total = w_years | times: 52.1775 | round -%}
+{%- assign w_left = w_total | minus: w_lived -%}
+{%- if w_left < 0 -%}{%- assign w_left = 0 -%}{%- endif -%}
+{%- assign w_pct = w_today | minus: w_born | times: 100.0 | divided_by: w_span | round: 1 -%}
+{%- capture gl_n -%}<b data-n="{{ w_lived }}">{{ w_lived }}</b>{%- endcapture -%}
+{%- capture gl_p -%}<b data-n="{{ w_pct }}">{{ w_pct }}</b>{%- endcapture -%}
+{%- capture gl_l -%}<b data-n="{{ w_left }}">{{ w_left }}</b>{%- endcapture -%}
+{%- assign ph_n = "{n}" -%}{%- assign ph_p = "{p}" -%}{%- assign ph_l = "{left}" -%}
+{%- assign glance = t.weeks_glance | replace: ph_n, gl_n | replace: ph_p, gl_p | replace: ph_l, gl_l -%}
 <style>
 {%- for e in W.eras -%}.weeks .e{{ forloop.index0 }}{--era:{{ e.color | default: "var(--surface)" }}}{%- endfor -%}
 {%- for e in W.places -%}.weeks .p{{ forloop.index0 }}{--place:{{ e.color | default: "transparent" }}}{%- endfor -%}
 </style>
-<div class="weeks" data-weeks data-view="{{ W.view | default: 'grid' }}" data-lang="{{ L }}">
+<div class="weeks" data-weeks data-view="{{ W.view | default: 'grid' }}" data-lang="{{ L }}" data-born="{{ w_bd }}">
+  <p class="wk-glance" data-weeks-glance data-lang="{{ L }}">{{ glance }}</p>
   <div class="wk-bar">
     <nav class="wk-nav" aria-label="decades">
       {%- assign decs = w_years | divided_by: 10 | floor -%}
@@ -22,6 +33,7 @@
       <button type="button" data-v="grid">{{ t.weeks_grid }}</button>
       <button type="button" data-v="timeline">{{ t.weeks_timeline }}</button>
     </div>
+    <div class="wk-progress" aria-hidden="true"><i></i></div>
   </div>
   <div class="wk-legend">
     {%- for e in W.eras -%}<span class="wk-key e{{ forloop.index0 }}" data-era="{{ forloop.index0 }}">{% if L == "en" %}{{ e.en | default: e.zh }}{% else %}{{ e.zh | default: e.en }}{% endif %}</span>{%- endfor -%}
