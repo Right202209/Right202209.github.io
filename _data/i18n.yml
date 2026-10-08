@@ -17,6 +17,7 @@ zh-CN:
   minutes: 分钟
   search_placeholder: "寻找一个念头…"
   search_empty: "还没。也许这就是答案。"
+  search_close: 取消
   footer: "此间万物，不过暂寄。"
   date_long: "%Y年%m月%d日"
   date_short: "%Y-%m-%d"
@@ -58,6 +59,7 @@ en:
   minutes: min
   search_placeholder: "Search for a thought…"
   search_empty: "Nothing yet. Perhaps that is the answer."
+  search_close: Cancel
   footer: "Everything here is provisional."
   date_long: "%B %d, %Y"
   date_short: "%b %d, %Y"

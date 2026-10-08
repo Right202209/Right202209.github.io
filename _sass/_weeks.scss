@@ -85,7 +85,7 @@
 
 // Sticky bar: decade pills + view switch
 .wk-bar {
-  position: sticky; top: 65px; z-index: 5;
+  position: sticky; top: var(--header-h); z-index: 5; transition: top .32s cubic-bezier(.2,.7,.2,1);
   background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: blur(10px);
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
@@ -125,7 +125,7 @@
 
 // Grid: each decade is one wrapping stream of week boxes, after weeks.ginatrapani.org.
 // Boxes have a minimum width and grow to fill the row, so the rows reflow with the window.
-.wk-dec { display: flex; flex-wrap: wrap; gap: var(--wk-gap); scroll-margin-top: 130px; }
+.wk-dec { display: flex; flex-wrap: wrap; gap: var(--wk-gap); scroll-margin-top: calc(var(--header-h) + 70px); }
 .wk-dec::before {   // decade label
   content: attr(data-label); flex: 0 0 100%; margin: 0 0 .4rem;
   font: italic 400 1.05rem/1.2 var(--serif); color: var(--muted);
@@ -150,7 +150,7 @@
 .wk-cells i.q3 { --season: var(--autumn); }
 .wk-cells i[class*=" q"] { --season-band: color-mix(in srgb, var(--season) 70%, transparent); }
 // Labelled boxes (birthdays, events) take the width of their text, like the original
-.wk-cells i.bd, .wk-cells i.ev:not(.pv) { flex: 1 0 auto; justify-content: center; padding: 0 .6em; scroll-margin-top: 140px; }
+.wk-cells i.bd, .wk-cells i.ev:not(.pv) { flex: 1 0 auto; justify-content: center; padding: 0 .6em; scroll-margin-top: calc(var(--header-h) + 80px); }
 .wk-cells i.bd { justify-content: center; }
 .wk-cells i:hover { transform: scale(1.25); z-index: 2; background: var(--accent); box-shadow: none; }
 .wk-cells i.bd:hover, .wk-cells i.ev:not(.pv):hover { transform: scale(1.04); }
@@ -287,3 +287,6 @@
   .far .wk-cap::before { display: none; }
   .mk::before { left: -26px; top: auto; bottom: 0; height: 0; width: calc(100% + 26px); border-left: 0; border-top: 1px dashed var(--accent); }
 }
+
+.hdr-hidden .wk-bar { top: 0; }
+@media (hover: none) { .wk-entry:hover { transform: none; } }

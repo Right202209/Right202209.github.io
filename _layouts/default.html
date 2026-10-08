@@ -9,6 +9,7 @@
     {% include footer.html %}
     {% include search.html %}
     <script src="{{ '/assets/js/main.js' | relative_url }}" defer></script>
-    {% if page.oneko %}<script src="{{ '/assets/js/oneko.js' | relative_url }}" data-cat="{{ '/assets/img/oneko.png' | relative_url }}" data-persist-position="false"></script>{% endif %}
+    {% if page.oneko %}{% comment %} The cat chases a mouse pointer, so phones and tablets skip it. {% endcomment %}
+    <script>if (matchMedia('(hover: hover) and (pointer: fine)').matches) { var s = document.createElement('script'); s.src = "{{ '/assets/js/oneko.js' | relative_url }}"; s.dataset.cat = "{{ '/assets/img/oneko.png' | relative_url }}"; s.dataset.persistPosition = "false"; document.body.appendChild(s); }</script>{% endif %}
   </body>
 </html>
