@@ -1,0 +1,30 @@
+{%- comment -%}
+  One photo tile. Pass p= (a list entry) or f= (a static file from the photos folder).
+{%- endcomment -%}
+{%- if include.p -%}
+  {%- assign _p = include.p -%}
+  {%- capture _full -%}{% include photos/src.html s=_p.src %}{%- endcapture -%}
+  {%- capture _th -%}{% include photos/src.html s=_p.thumb | default: _p.src %}{%- endcapture -%}
+  {%- if _p.thumb == nil -%}{%- assign _th = _full -%}{%- endif -%}
+  {%- assign _title = _p.title[L] | default: _p.title[site.lang] | default: _p.title -%}
+  {%- assign _place = _p.place[L] | default: _p.place[site.lang] | default: _p.place -%}
+  {%- assign _date = _p.date -%}
+{%- else -%}
+  {%- assign _f = include.f -%}
+  {%- assign _full = _f.path | relative_url -%}{%- assign _th = _full -%}
+  {%- assign _b = _f.basename -%}{%- assign _date = nil -%}
+  {%- assign _d4 = _b | slice: 4 -%}{%- assign _d7 = _b | slice: 7 -%}
+  {%- if _d4 == "-" and _d7 == "-" -%}{%- assign _date = _b | slice: 0, 10 -%}{%- assign _b = _b | slice: 11, 200 -%}{%- endif -%}
+  {%- assign _title = _b | replace: "-", " " | replace: "_", " " | strip -%}
+  {%- assign _place = nil -%}
+{%- endif -%}
+{%- capture _ds -%}{%- if _date -%}{%- if L == "en" -%}{{ _date | date: "%b %-d, %Y" }}{%- else -%}{{ _date | date: "%Y.%m.%d" }}{%- endif -%}{%- endif -%}{%- endcapture -%}
+{%- capture _meta -%}{{ _place }}{%- if _place and _ds != "" %} · {% endif -%}{{ _ds }}{%- endcapture -%}
+<figure class="ph-item">
+  <a class="ph-link" href="{{ _full }}" data-photo data-title="{{ _title | escape }}" data-meta="{{ _meta | strip | escape }}">
+    <img src="{{ _th }}" alt="{{ _title | default: _meta | escape }}" loading="lazy" decoding="async">
+  </a>
+  {%- if _title or _meta != "" %}
+  <figcaption>{% if _title and _title != "" %}<span class="ph-title">{{ _title }}</span>{% endif %}{% assign _ms = _meta | strip %}{% if _ms != "" %}<span class="ph-meta">{{ _ms }}</span>{% endif %}</figcaption>
+  {%- endif %}
+</figure>

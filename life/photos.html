@@ -1,0 +1,10 @@
+---
+layout: page
+ref: photos
+back: life
+title: 相册
+description: 光落下的地方。
+permalink: /life/photos/
+---
+{% include optional-page.html on=site.data.photos.enabled to="life" %}
+{% if site.data.photos.enabled != false %}{% include photos/gallery.html %}{% endif %}

@@ -1,0 +1,22 @@
+{%- comment -%}
+  Gathers the album: ph_list (visible entries from _data/photos.yml) and ph_files (images in
+  assets/img/photos/ not already named in the list), plus ph_count, ph_dir, ph_on.
+{%- endcomment -%}
+{%- assign ph = site.data.photos -%}
+{%- assign ph_on = false -%}{%- if ph and ph.enabled != false -%}{%- assign ph_on = true -%}{%- endif -%}
+{%- assign ph_dir = "/assets/img/photos/" -%}
+{%- assign ph_list = ph.list | where_exp: "p", "p.hidden != true" -%}
+{%- assign ph_used = "|" -%}
+{%- for p in ph_list -%}{%- assign ph_used = ph_used | append: p.src | append: "|" -%}{%- endfor -%}
+{%- assign ph_exts = ".jpg,.jpeg,.png,.webp,.gif,.avif" | split: "," -%}
+{%- assign ph_files = "" | split: "" -%}
+{%- if ph.folder != false -%}
+  {%- assign _sf = site.static_files | sort: "name" -%}
+  {%- if ph.folder_order != "asc" -%}{%- assign _sf = _sf | reverse -%}{%- endif -%}
+  {%- for f in _sf -%}
+    {%- assign _ext = f.extname | downcase -%}
+    {%- capture _key -%}|{{ f.name }}|{%- endcapture -%}
+    {%- if f.path contains ph_dir and ph_exts contains _ext -%}{%- unless ph_used contains _key -%}{%- assign ph_files = ph_files | push: f -%}{%- endunless -%}{%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign ph_count = ph_list.size | plus: ph_files.size -%}

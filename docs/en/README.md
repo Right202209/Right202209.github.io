@@ -857,3 +857,16 @@ Words come first, and each page shows exactly one illustration: a closing vignet
   - `me` holds this site's own details, shown under "Swap links".
   - The page files are `social/friends.html` and `en/social/friends.html`. The includes are in `_includes/friends/`.
 - **Back links:** add `back: <ref>` to any page's front matter to show "← <that page's title>" above the title. Weeks uses `back: life`, Friends uses `back: social`, and Tags and Archive use `back: blog`.
+
+
+## Album
+
+- On the Life page, an album card sits under the weeks card, with three stacked thumbnails. It opens `/life/photos/` (`/en/life/photos/` for English).
+- Settings live in `_data/photos.yml`:
+  - `enabled: false` turns the whole module off. `entry: false` hides only the card on the Life page.
+  - Photos come from two sources, and you can use both:
+    1. **The `list`:** `src` is a full URL, a site path, or just a file name inside `assets/img/photos/`. Optional fields are `thumb`, `title`, `place`, `date`, and `hidden`.
+    2. **The `assets/img/photos/` folder** (`folder: true`): every jpg, png, webp, gif, and avif in it is picked up. A name like `2026-05-01-west-lake.jpg` gives the date and the title. Photos are sorted by file name, newest first with `folder_order: desc`. Files already named in the list are not repeated.
+- The grid is a masonry layout that keeps each photo's shape. Clicking a photo opens a lightbox: use the arrow keys or swipe to move, and Esc or tap outside to close.
+- Keep photos under about 2000px on the long side, or give each a small `thumb`, so the grid loads fast.
+- The page is `life/photos.html`, the includes are in `_includes/photos/`, and the styles are in `_sass/_photos.scss`.

@@ -1,0 +1,75 @@
+// ─── Album · 相册 ─────────────────────────────────────────────
+// Entry card on the Life page (sits under the weeks card), the masonry grid, and the lightbox.
+
+// ── Entry card ───────────────────────────────────────────────
+.ph-entry {
+  @extend .wk-entry;
+  margin-top: 1rem;
+}
+.ph-stack { position: relative; display: block; width: 132px; height: 92px; }
+.ph-stack img {
+  position: absolute; top: 8px; left: calc((var(--k) - 1) * 26px); width: 72px; height: 72px; object-fit: cover;
+  border-radius: 6px; border: 3px solid var(--bg); background: var(--surface);
+  box-shadow: 0 6px 16px -10px rgba(20, 20, 19, .55);
+  transform: rotate(calc((var(--k) - 2) * 5deg)); transition: transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.ph-entry:hover .ph-stack img { transform: rotate(calc((var(--k) - 2) * 9deg)) translateY(-3px); }
+.ph-entry-text { display: block; min-width: 0; }
+.ph-entry .eyebrow { display: block; margin: 0 0 .55rem; }
+.ph-entry-now { display: block; font: 400 clamp(1.25rem, 2.6vw, 1.55rem)/1.25 var(--serif); letter-spacing: -.01em; }
+.ph-entry-now b { font-weight: 500; color: var(--accent); font-variant-numeric: tabular-nums; }
+.ph-entry-sub { display: block; margin-top: .35rem; font: .85rem/1.5 var(--sans); color: var(--muted); }
+.ph-entry:hover .wk-entry-go { transform: translateX(3px); color: var(--bg); background: var(--accent); border-color: var(--accent); }
+@media (max-width: 560px) {
+  .ph-stack { grid-column: 1 / -1; }
+}
+
+// ── Grid (masonry by columns: keeps every photo's own shape) ─
+.ph-grid { columns: 3 240px; column-gap: 18px; margin-top: 8px; }
+.ph-item { break-inside: avoid; margin: 0 0 22px; }
+.ph-link { display: block; overflow: hidden; border-radius: 10px; background: var(--surface); cursor: zoom-in; }
+.ph-link img { display: block; width: 100%; height: auto; transition: transform .6s cubic-bezier(.2,.7,.2,1), filter .4s; }
+.ph-link:hover img { transform: scale(1.025); }
+.ph-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ph-item figcaption { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin-top: 8px; padding: 0 2px; }
+.ph-title { font: 400 .98rem/1.4 var(--serif); }
+.ph-meta { color: var(--muted); font-size: .76rem; font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) {
+  .ph-grid { columns: 2; column-gap: 10px; }
+  .ph-item { margin-bottom: 14px; }
+  .ph-title { font-size: .88rem; }
+}
+@media (max-width: 380px) { .ph-grid { columns: 1; } }
+
+// ── Lightbox ─────────────────────────────────────────────────
+.ph-lb {
+  width: 100vw; height: 100vh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+  background: transparent; color: #faf9f5; overflow: hidden;
+}
+.ph-lb::backdrop { background: rgba(14, 13, 12, .94); }
+.ph-lb[open] { display: grid; place-items: center; animation: ph-in .25s ease; }
+.ph-lb-fig { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 92vw; }
+.ph-lb-fig img { max-width: 92vw; max-height: calc(100vh - 140px); object-fit: contain; border-radius: 4px; transition: opacity .2s; }
+.ph-lb-fig img.loading { opacity: .25; }
+.ph-lb figcaption { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 4px 12px; text-align: center; }
+.ph-lb .ph-title { font-size: 1.05rem; }
+.ph-lb .ph-meta, .ph-lb .ph-n { color: rgba(250, 249, 245, .6); }
+.ph-lb .ph-n { font-size: .76rem; font-variant-numeric: tabular-nums; }
+.ph-lb-btn {
+  position: fixed; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(250, 249, 245, .22); background: rgba(20, 20, 19, .4); color: inherit;
+  font: 1rem/1 var(--sans); cursor: pointer; transition: background .2s, border-color .2s;
+}
+.ph-lb-btn:hover { background: var(--accent); border-color: var(--accent); }
+.ph-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+.ph-next { right: 20px; top: 50%; transform: translateY(-50%); }
+.ph-close { right: 20px; top: 20px; }
+.ph-lb.single .ph-prev, .ph-lb.single .ph-next { display: none; }
+@media (max-width: 720px) {
+  .ph-prev, .ph-next { top: auto; bottom: 18px; transform: none; }
+  .ph-prev { left: calc(50% - 56px); } .ph-next { right: calc(50% - 56px); }
+  .ph-lb-fig img { max-height: calc(100vh - 190px); }
+  .ph-close { top: 14px; right: 14px; }
+}
+@keyframes ph-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ph-lb[open] { animation: none; } .ph-link img, .ph-stack img { transition: none; } }

@@ -1,0 +1,30 @@
+{%- comment -%}
+  Pluggable: {% include photos/entry.html %} puts the album card on any page (the Life page uses it,
+  under the weeks card). Hidden when the module or `entry` is off, or there are no photos.
+{%- endcomment -%}
+{%- include lang.html -%}
+{%- include photos/setup.html -%}
+{%- assign _pp = site.pages | where: "ref", "photos" | where: "lang", L | first -%}
+{%- if ph_on and ph.entry != false and ph_count > 0 and _pp -%}
+{%- assign _ph_n = "{n}" -%}
+{%- capture _b_n -%}<b>{{ ph_count }}</b>{%- endcapture -%}
+<a class="ph-entry" href="{{ _pp.url | relative_url }}">
+  <span class="ph-stack" aria-hidden="true">
+    {%- assign _k = 0 -%}
+    {%- for p in ph_list limit: 3 -%}{%- assign _k = _k | plus: 1 -%}
+      {%- capture _th -%}{% include photos/src.html s=p.thumb %}{%- endcapture -%}{%- if p.thumb == nil -%}{%- capture _th -%}{% include photos/src.html s=p.src %}{%- endcapture -%}{%- endif -%}
+      <img src="{{ _th }}" alt="" loading="lazy" decoding="async" style="--k:{{ _k }}">
+    {%- endfor -%}
+    {%- assign _left = 3 | minus: _k -%}
+    {%- if _left > 0 -%}{%- for f in ph_files limit: _left -%}{%- assign _k = _k | plus: 1 -%}
+      <img src="{{ f.path | relative_url }}" alt="" loading="lazy" decoding="async" style="--k:{{ _k }}">
+    {%- endfor -%}{%- endif -%}
+  </span>
+  <span class="ph-entry-text">
+    <span class="eyebrow">{{ t.photos_title }}</span>
+    <span class="ph-entry-now">{{ t.photos_entry_now | replace: _ph_n, _b_n }}</span>
+    <span class="ph-entry-sub">{{ t.photos_entry_sub }}</span>
+  </span>
+  <span class="wk-entry-go" aria-hidden="true">→</span>
+</a>
+{%- endif -%}

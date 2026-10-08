@@ -51,6 +51,12 @@ zh-CN:
   weeks_stat_left: 大约还剩的周
   weeks_entry_now: "这是我人生的第 {n} 周"
   weeks_entry_sub: "共约 {total} 周，已走过 {p}%"
+  photos_title: 相册
+  photos_entry_now: "{n} 张照片"
+  photos_entry_sub: 光落下的地方。
+  photos_prev: 上一张
+  photos_next: 下一张
+  photos_close: 关闭
 en:
   label: EN
   switch_label: EN
@@ -103,3 +109,9 @@ en:
   weeks_stat_left: weeks left, roughly
   weeks_entry_now: "This is week {n} of my life"
   weeks_entry_sub: "of about {total} · {p}% lived"
+  photos_title: Album
+  photos_entry_now: "{n} photographs"
+  photos_entry_sub: Where the light fell.
+  photos_prev: Previous
+  photos_next: Next
+  photos_close: Close

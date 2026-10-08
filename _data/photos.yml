@@ -1,0 +1,45 @@
+# ------------------------------------------------------------
+#  相册 / Album —— 可插拔模块
+#  · enabled: false  → 生活页的相册入口消失，/life/photos/ 退回生活页
+#  · entry: false    → 只隐藏生活页的入口卡，相册页照常可以访问
+#  · folder: true    → 自动收录 assets/img/photos/ 里的所有图片
+#                      （jpg / jpeg / png / webp / gif / avif）
+#      文件名以日期开头（2026-05-01-west-lake.jpg）时，日期会被读出来，
+#      剩下的部分当标题（west lake）。按文件名排序，folder_order: desc 是新的在前。
+#  · list：想写标题、地点、日期的照片写在这里，顺序就是展示顺序，排在文件夹照片前面。
+#      src    完整 URL（https://...）、站内路径（/assets/...），
+#             或只写文件名（会去 assets/img/photos/ 里找；写进 list 的文件不会被重复收录）
+#      thumb  可选，网格里用的小图；不写就用 src
+#      title  一句话，按语言写 { zh-CN: ..., en: ... }，也可以只写一个字符串
+#      place  地点，写法同 title
+#      date   2024-05-01
+#      hidden: true  暂时藏起来
+#  下面四张 Unsplash 是示例，换成你自己的。
+# ------------------------------------------------------------
+enabled: true
+entry: true
+folder: true
+folder_order: desc
+
+intro:
+  zh-CN: 不是为了记住，是为了承认：那天确实来过。
+  en: Not to remember, but to admit that the day did happen.
+
+list:
+  - src: https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=75
+    thumb: https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=720&q=70
+    title: { zh-CN: 安静的山脊, en: A quiet ridge }
+    place: { zh-CN: 某座山, en: Somewhere high }
+    date: 2024-08-12
+  - src: https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1800&q=75
+    thumb: https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=720&q=70
+    title: { zh-CN: 雾还没散, en: Before the fog lifted }
+    date: 2024-03-02
+  - src: https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1800&q=75
+    thumb: https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=720&q=70
+    title: { zh-CN: 湖面比天空更安静, en: "The lake, quieter than the sky" }
+    date: 2023-10-21
+  - src: https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1800&q=75
+    thumb: https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=720&q=70
+    title: { zh-CN: 林子里的光, en: Light in the woods }
+    date: 2023-06-04
