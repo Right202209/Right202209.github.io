@@ -4,8 +4,8 @@
 {%- if include.p -%}
   {%- assign _p = include.p -%}
   {%- capture _full -%}{% include photos/src.html s=_p.src %}{%- endcapture -%}
-  {%- capture _th -%}{% include photos/src.html s=_p.thumb | default: _p.src %}{%- endcapture -%}
-  {%- if _p.thumb == nil -%}{%- assign _th = _full -%}{%- endif -%}
+  {%- assign _thumb_src = _p.thumb | default: _p.src -%}
+  {%- capture _th -%}{% include photos/src.html s=_thumb_src %}{%- endcapture -%}
   {%- assign _title = _p.title[L] | default: _p.title[site.lang] | default: _p.title -%}
   {%- assign _place = _p.place[L] | default: _p.place[site.lang] | default: _p.place -%}
   {%- assign _date = _p.date -%}
