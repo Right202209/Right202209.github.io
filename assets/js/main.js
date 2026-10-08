@@ -101,7 +101,9 @@
       each('.wk-node[data-d]', function (n) { var f = ymd(n.dataset.d) > today; n.classList.toggle('is-future', f); n.classList.toggle('is-past', !f); }, tl);
     }
 
-    // Tooltip: date · age & week · era, place · event
+    // Tooltip: date · age & week · season · era, place · event
+    var SEASON_ZH = ['冬', '春', '夏', '秋'], SEASON_EN = ['Winter', 'Spring', 'Summer', 'Autumn'];
+    var SOLAR_ZH = ['立冬', '立春', '立夏', '立秋'], SOLAR_EN = ['Start of Winter', 'Start of Spring', 'Start of Summer', 'Start of Autumn'];
     var show = function (c) {
       if (!c || c.tagName !== 'I' || !c.parentNode.classList.contains('wk-cells') || (c.classList.contains('f') && !c.dataset.ev)) { tip.hidden = true; return; }
       var row = c.closest('.wk-yr'), i = Array.prototype.indexOf.call(c.parentNode.children, c);
@@ -111,7 +113,12 @@
       var age = y - by, wn = Math.floor((d - bd) / WEEK) + 1;
       var era = name('era', c.className), place = name('place', c.className);
       var where = [era, place && (zh ? '在' + place : 'in ' + place)].filter(Boolean).join(zh ? '，' : ', ');
-      tip.textContent = [fmt(d, zh), zh ? age + ' 岁第 ' + wn + ' 周' : 'age ' + age + ', week ' + wn, where, c.dataset.ev]
+      // Season (split at 立春 立夏 立秋 立冬); the week a season begins names its solar term.
+      var q = /(?:^| )q(\d)/.exec(c.className), st = (c.dataset.st || '').split(' ');
+      var season = c.dataset.st ? (zh ? SOLAR_ZH : SOLAR_EN)[st[0]] + ' ' + fmt(ymd(st[1]), zh).replace(/^\d{4}-/, '')
+                 : q ? (zh ? SEASON_ZH : SEASON_EN)[q[1]] : '';
+      var priv = c.classList.contains('pv') ? (zh ? '🔒 私密' : '🔒 Private') : '';
+      tip.textContent = [fmt(d, zh), zh ? age + ' 岁第 ' + wn + ' 周' : 'age ' + age + ', week ' + wn, season, where, c.dataset.ev || priv]
         .filter(Boolean).join(' · ');
       tip.hidden = false;
       var r = c.getBoundingClientRect(), w = tip.offsetWidth, o = wk.getBoundingClientRect();

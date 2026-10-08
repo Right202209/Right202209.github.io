@@ -6,7 +6,7 @@
   with a birthday box (🐣 at birth, 🎂 age · year after that), public events put their label
   inside the week's box, and each decade starts a fresh section and row.
   Week index, era, place, season and events are all resolved here at build time.
-  Cell classes: eN era · pN place · sN season tick (0 winter, 1 spring, 2 summer, 3 autumn)
+  Cell classes: eN era · pN place · qN season border · sN first week of a season (0 winter, 1 spring, 2 summer, 3 autumn; split at 立春 立夏 立秋 立冬)
                 f future · now this week · ev event · pv private-only event · bd birthday
 {%- endcomment -%}
 {%- assign ps = -1 -%}
@@ -38,11 +38,28 @@
     {%- if te > to -%}{%- assign te = to -%}{%- endif -%}
     {%- assign ei = 0 -%}{%- for s in w_era_ts -%}{%- assign tt = s | plus: 0 -%}{%- if tt <= ts -%}{%- assign ei = forloop.index0 -%}{%- endif -%}{%- endfor -%}
     {%- assign pi = 0 -%}{%- for s in w_pl_ts -%}{%- assign tt = s | plus: 0 -%}{%- if tt <= ts -%}{%- assign pi = forloop.index0 -%}{%- endif -%}{%- endfor -%}
-    {%- assign m = ts | date: "%m" | plus: 0 -%}
-    {%- assign sn = m | modulo: 12 | divided_by: 3 | floor -%}
+    {%- comment -%} Season of the week's last day, split at 立春 立夏 立秋 立冬 (_data/solar_terms.yml). {%- endcomment -%}
+    {%- assign tl = te | minus: 86400 -%}
+    {%- assign ty = tl | date: "%Y" | plus: 0 -%}
+    {%- assign tmd = tl | date: "%m-%d" -%}
+    {%- assign st = site.data.solar_terms[ty] -%}
+    {%- if st -%}
+      {%- if tmd < st[0] or tmd >= st[3] -%}{%- assign sn = 0 -%}{%- elsif tmd < st[1] -%}{%- assign sn = 1 -%}{%- elsif tmd < st[2] -%}{%- assign sn = 2 -%}{%- else -%}{%- assign sn = 3 -%}{%- endif -%}
+    {%- else -%}
+      {%- assign sn = tl | date: "%m" | plus: 0 | modulo: 12 | divided_by: 3 | floor -%}
+    {%- endif -%}
+    {%- assign tn = sn -%}
     {%- if W.hemisphere == "south" -%}{%- assign sn = sn | plus: 2 | modulo: 4 -%}{%- endif -%}
-    {%- assign tick = false -%}
-    {%- if sn != ps -%}{%- assign tick = true -%}{%- assign ps = sn -%}{%- endif -%}
+    {%- assign tick = false -%}{%- assign term = "" -%}
+    {%- if sn != ps -%}
+      {%- assign tick = true -%}{%- assign ps = sn -%}
+      {%- if st -%}
+        {%- assign ti = tn | plus: 3 | modulo: 4 -%}
+        {%- assign term = ty | append: "-" | append: st[ti] -%}
+        {%- assign tts = term | date: "%s" | plus: 0 -%}
+        {%- if tts < ts or tts >= te -%}{%- assign term = "" -%}{%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
     {%- assign hasev = false -%}{%- assign elab = "" -%}{%- assign keys = "" -%}{%- assign idate = "" -%}
     {%- for k in yev -%}
       {%- if k == "" -%}{%- continue -%}{%- endif -%}
@@ -76,7 +93,7 @@
     <div class="wk-yr" data-from="{{ ts | date: '%Y-%m-%d' }}" data-age="{{ age }}"><span class="wk-cells">
     {%- assign row_open = true -%}
     {%- endunless -%}
-    <i class="e{{ ei }} p{{ pi }}{% if tick %} s{{ sn }}{% endif %}{% if ts > w_today %} f{% elsif te > w_today %} now{% endif %}{% if hasev %} ev{% if elab == "" %} pv{% endif %}{% endif %}{% if i == 0 %} bd{% endif %}"{% if elab != "" %} id="ev-{{ idate }}" data-k="{{ keys }}" data-ev="{{ elab | escape }}"{% endif %}>{{ lab }}</i>
+    <i class="e{{ ei }} p{{ pi }} q{{ sn }}{% if tick %} s{{ sn }}{% endif %}{% if ts > w_today %} f{% elsif te > w_today %} now{% endif %}{% if hasev %} ev{% if elab == "" %} pv{% endif %}{% endif %}{% if i == 0 %} bd{% endif %}"{% if term != "" %} data-st="{{ tn }} {{ term }}"{% endif %}{% if elab != "" %} id="ev-{{ idate }}" data-k="{{ keys }}" data-ev="{{ elab | escape }}"{% endif %}>{{ lab }}</i>
     {%- assign row_units = row_units | plus: units -%}
     {%- if row_units >= max_units -%}{%- assign pending = true -%}{%- endif -%}
   {%- endfor -%}

@@ -8,7 +8,8 @@
 
 .weeks {
   --wk-gap: 3px;
-  --spring: #9cc59a; --summer: #e8c170; --autumn: var(--accent); --winter: #8eb2d6;
+  // Season palette: 新绿 spring, 麦黄 summer, 陶土 autumn, 霜蓝 winter
+  --spring: #8fbf88; --summer: #e2b04f; --autumn: #d97757; --winter: #8aaed3;
   position: relative;
 }
 
@@ -78,24 +79,43 @@
   position: relative; flex: 1 1 0; min-width: 0; height: 1.9rem; border-radius: 3px; cursor: var(--cursor-pointer);
   display: inline-flex; align-items: center; font: 500 .78rem/1 var(--sans); color: var(--ink); white-space: nowrap;
   background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg));
-  box-shadow: inset 0 0 0 1px var(--place, transparent);
+  // Place = hairline frame; season = a 2px band along the bottom, so each row reads as a ribbon of seasons
+  box-shadow: inset 0 -2px 0 var(--season-band, transparent), inset 0 0 0 1px var(--place, transparent);
   transition: transform .15s;
 }
+.wk-cells i.q0 { --season: var(--winter); }
+.wk-cells i.q1 { --season: var(--spring); }
+.wk-cells i.q2 { --season: var(--summer); }
+.wk-cells i.q3 { --season: var(--autumn); }
+.wk-cells i[class*=" q"] { --season-band: color-mix(in srgb, var(--season) 70%, transparent); }
 // Labelled boxes (birthdays, events) take the width of their text, like the original
 .wk-cells i.bd, .wk-cells i.ev:not(.pv) { flex: 0 0 auto; padding: 0 .6em; scroll-margin-top: 140px; }
 .wk-cells i.bd { justify-content: center; }
 .wk-cells i:hover { transform: scale(1.6); z-index: 2; background: var(--accent); box-shadow: none; }
 .wk-cells i.bd:hover, .wk-cells i.ev:not(.pv):hover { transform: scale(1.04); }
-.wk-cells i.f { background: color-mix(in srgb, var(--line) 60%, transparent); box-shadow: none; cursor: default; color: var(--muted); }
+.wk-cells i.f { background: color-mix(in srgb, var(--line) 60%, transparent); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--season, transparent) 30%, transparent); cursor: default; color: var(--muted); }
 .wk-cells i.f:hover { transform: none; background: color-mix(in srgb, var(--line) 60%, transparent); }
 .wk-cells i.now { background: var(--accent); box-shadow: none; color: var(--bg); animation: wk-pulse 2.4s ease-in-out infinite; }
-.wk-cells i.pv::after { content: ""; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--ink); }   // private: a solid dot, nothing else
+// Private: a sealed week. Fine hatching like a redacted line, one solid dot with a seal ring, no text.
+.wk-cells i.pv {
+  background-image: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--ink) 9%, transparent) 3px 4px);
+}
+.wk-cells i.pv::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 80%, transparent), 0 0 0 3px color-mix(in srgb, var(--ink) 28%, transparent);
+  transition: transform .2s, background .2s, box-shadow .2s;
+}
+.wk-cells i.pv:hover { transform: scale(1.25); background-color: var(--accent); background-image: none; }
+.wk-cells i.pv:hover::after { background: var(--bg); box-shadow: 0 0 0 2px var(--accent), 0 0 0 3.5px color-mix(in srgb, var(--bg) 70%, transparent); }
+.wk-cells i.pv.f { background-image: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--muted) 14%, transparent) 3px 4px); }
 .wk-cells i.hit { animation: wk-hit 1.2s ease-in-out 3; z-index: 3; }
 
-// Seasons: a faint tick at the first week of each season
+// Seasons begin at 立春 立夏 立秋 立冬: the week holding the solar term gets a boundary post on its left
 .wk-cells i[class*=" s"]::before, .wk-key-season i::before {
-  content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 1px; opacity: .45; pointer-events: none;
+  content: ""; position: absolute; left: -3px; top: -3px; bottom: -1px; width: 2px; border-radius: 2px; opacity: .85; pointer-events: none;
 }
+.wk-cells i.f[class*=" s"]::before { opacity: .4; }
 .wk-cells i.s0::before, .wk-key-season i.s0::before { background: var(--winter); }
 .wk-cells i.s1::before, .wk-key-season i.s1::before { background: var(--spring); }
 .wk-cells i.s2::before, .wk-key-season i.s2::before { background: var(--summer); }
@@ -135,7 +155,12 @@
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 18px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 .is-now .wk-dot { left: -8px; top: -8px; width: 16px; height: 16px; background: var(--accent); animation: wk-pulse 2.4s ease-in-out infinite; }
-.pv .wk-dot { left: -4px; top: -4px; width: 8px; height: 8px; background: var(--ink); border: 0; }   // private: dot only
+.pv .wk-dot {   // private: a sealed dot, no label
+  left: -4.5px; top: -4.5px; width: 9px; height: 9px; background: var(--ink); border: 0;
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px color-mix(in srgb, var(--ink) 28%, transparent);
+}
+.pv.is-future .wk-dot { background: var(--muted); }
+.wk-node.pv:hover .wk-dot { transform: scale(1.5); box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--ink), 0 0 14px color-mix(in srgb, var(--ink) 35%, transparent); }
 .wk-cap {
   position: absolute; left: 0; transform: translateX(-50%); width: max-content; max-width: 9.5em;
   display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1px;
@@ -187,7 +212,7 @@
   .wk-node { position: relative; left: auto; top: auto; width: auto; height: auto; padding: .55rem 0; min-height: 2.2rem; }
   .wk-dot { left: -25px; top: .9rem; }
   .is-now .wk-dot { left: -27px; top: .8rem; }
-  .pv .wk-dot { left: -23px; top: 1.05rem; }
+  .pv .wk-dot { left: -22.5px; top: 1.05rem; }
   .wk-cap, .up .wk-cap, .down .wk-cap, .far .wk-cap, .is-start .wk-cap, .is-end .wk-cap { position: static; transform: none; width: auto; max-width: none; align-items: flex-start; text-align: left; }
   .wk-node:hover .wk-cap, .is-start:hover .wk-cap, .is-end:hover .wk-cap { transform: translateX(3px); }
   .far .wk-cap::before { display: none; }

@@ -400,7 +400,7 @@ To remove it completely, delete `_data/weeks.yml`, `_includes/weeks/`, `_layouts
 **Grid view.** One row per year of age, one cell per week (53 columns).
 
 - The fill shows the phase of life (`eras`); the border shows where you lived (`places`)
-- The first week of each season gets a faint tick on its left: blue for winter, green for spring, yellow for summer, clay for autumn
+- Season bands and boundary posts, split at the four "start of season" solar terms (see Season borders below)
 - This week is highlighted; future weeks are empty
 - Hover or tap a cell for "date · age, week · phase, in place · event"
 - That year's events are listed at the end of the row
@@ -412,6 +412,10 @@ To remove it completely, delete `_data/weeks.yml`, `_includes/weeks/`, `_layouts
 - Dots grow and glow on hover; clicking an event's dot switches to the grid and jumps to its week
 - Add `line: true` to an event for a vertical marker
 - Nodes fade in one after another; on phones the timeline turns vertical
+
+**Season borders.** Seasons are split at the four Chinese "start of season" solar terms (立春, 立夏, 立秋, 立冬), not by month. Every box has a 2px season band along its bottom, so each row reads as a ribbon of the year: spring green, summer wheat, autumn clay, winter frost blue. The week a season begins gets a post of the same color on its left, and its tooltip names the term and its date, for example "Start of Autumn Aug 07". The dates come from `_data/solar_terms.yml`, computed from the sun's apparent ecliptic longitude (315°, 45°, 135°, 225°, Beijing time) for 1900 to 2150; there is no need to edit it. Set `hemisphere: south` to shift the seasons by half a year.
+
+**Private events.** A week with `private: true` is drawn sealed: fine hatching like a redacted line, and one solid dot inside a seal ring. Its tooltip only says "🔒 Private"; it shows no text and stays out of search. On the timeline it is just a ringed dot.
 
 **Events**
 
