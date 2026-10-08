@@ -1,0 +1,39 @@
+# ------------------------------------------------------------
+#  友链 / Friends —— 可插拔模块
+#  · enabled: false  → 社交页的入口消失，/social/friends/ 退回社交页
+#  · 每一项：
+#      name    名字（必填）
+#      url     网址（必填）
+#      avatar  头像地址，可以是完整 URL，也可以是站内路径（/assets/img/...）
+#      github  GitHub 用户名；没写 avatar 时用 https://github.com/<用户名>.png 当头像
+#      desc    一句话介绍，按语言写：{ zh-CN: ..., en: ... }（也可以只写一种）
+#      hidden: true  暂时藏起来
+#    头像都没有、或加载失败时，显示名字的第一个字。
+#  · me：页面底部“交换友链”里展示的本站信息，方便别人照抄。
+#  下面三项是示例，换成你的朋友。
+# ------------------------------------------------------------
+enabled: true
+
+intro:
+  zh-CN: 散落在网上的几盏灯。
+  en: A few lights scattered across the web.
+
+list:
+  - name: Gina Trapani
+    url: https://weeks.ginatrapani.org
+    github: ginatrapani
+    desc: { zh-CN: 人生周历的样式来自她。, en: Where the life-in-weeks grid comes from. }
+    hidden: true
+  - name: ifuryst
+    url: https://ifuryst.com
+    desc: { zh-CN: 这个站的骨架，最早是照着它搭的。, en: The site this one first borrowed its bones from. }
+    hidden: true
+  - name: Wait But Why
+    url: https://waitbutwhy.com
+    desc: { zh-CN: 把人生画成格子的那篇文章。, en: The post that drew a life as a grid. }
+    hidden: true
+me:
+  name: Droit
+  url: https://right202209.github.io
+  avatar: /assets/img/droit/20_avatar.webp
+  desc: { zh-CN: 一个慢慢想事情的地方。, en: A small place to think slowly. }

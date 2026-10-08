@@ -8,6 +8,7 @@ layout: default
 <p class="fine"><a href="{{ life.url | relative_url }}">←</a></p>
 {% else %}
 <header class="page-head wk-head">
+  {% include back.html %}
   <p class="eyebrow">Life in Weeks</p>
   <h1 class="display">{{ page.title }}</h1>
   {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}

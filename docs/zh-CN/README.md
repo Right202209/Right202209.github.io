@@ -847,3 +847,14 @@ Settings → Actions → General → Workflow permissions，选 **Read and write
   - 打开时：文章列表页标题下面会出现「归档 · 标签」两个小链接，文章顶部的标签也会变成链接，点了直接跳到标签页里对应的那一组。
   - 关掉（改成 `false`）时：这些链接会消失；访问 `/tags/` 或 `/archive/` 的人会被送回文章列表，页面带 `noindex`，不会被搜索引擎收录。
   - 页面文件：`tags/index.html`、`archive/index.html`，英文版在 `en/` 下。
+
+
+## 友链与返回链接
+
+- **友链**：数据在 `_data/friends.yml`，是一个可以整个关掉的模块。
+  - `enabled: false` 时，社交页底部的友链入口会消失，访问 `/social/friends/` 的人会被送回社交页。
+  - 每位朋友填 `name`、`url`，再加 `avatar`（图片地址）或 `github`（用户名，自动取 GitHub 头像）。`desc` 按语言写一句介绍。`hidden: true` 可以暂时藏起来。
+  - 没有头像、或头像加载失败时，显示名字的第一个字。
+  - `me` 是页面底部「交换友链」里展示的本站信息。
+  - 页面文件：`social/friends.html`，英文版是 `en/social/friends.html`。模板在 `_includes/friends/`。
+- **返回链接**：任何页面的 front matter 写 `back: <ref>`，标题上方就会出现「← 那一页的标题」。人生周历写的是 `back: life`，友链写的是 `back: social`，标签和归档写的是 `back: blog`。

@@ -1,0 +1,10 @@
+---
+layout: page
+ref: friends
+back: social
+title: Friends
+description: Sites I pass by, return to, or miss.
+permalink: /en/social/friends/
+---
+{% include optional-page.html on=site.data.friends.enabled to="social" %}
+{% if site.data.friends.enabled != false %}{% include friends/list.html %}{% endif %}

@@ -1,4 +1,5 @@
 ---
+back: life
 layout: weeks
 title: Life in Weeks
 ref: weeks

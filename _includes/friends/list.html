@@ -1,0 +1,34 @@
+{%- include lang.html -%}
+{%- assign _fd = site.data.friends -%}
+{%- assign _fl = _fd.list | where_exp: "f", "f.hidden != true" -%}
+{%- assign _intro = _fd.intro[L] | default: _fd.intro[site.lang] -%}
+{%- if _intro %}<p class="archive-sum">{{ _intro }}</p>{% endif %}
+<ul class="fr-grid">
+  {%- for f in _fl %}
+  {%- assign _d = f.desc[L] | default: f.desc[site.lang] | default: f.desc -%}
+  {%- assign _host = f.url | remove: "https://" | remove: "http://" | split: "/" | first -%}
+  <li>
+    <a class="fr-card" href="{{ f.url }}" target="_blank" rel="noopener">
+      {% include friends/avatar.html f=f %}
+      <span class="fr-text">
+        <strong>{{ f.name }}</strong>
+        {% if _d %}<span class="fr-desc">{{ _d }}</span>{% endif %}
+        <span class="fr-host">{{ _host }}</span>
+      </span>
+    </a>
+  </li>
+  {%- endfor %}
+</ul>
+{%- if _fd.me %}
+{%- assign _m = _fd.me -%}
+{%- assign _md = _m.desc[L] | default: _m.desc[site.lang] | default: _m.desc -%}
+{%- capture _mav -%}{%- assign _c0 = _m.avatar | slice: 0 -%}{%- if _c0 == "/" -%}{{ _m.url }}{{ _m.avatar | relative_url }}{%- else -%}{{ _m.avatar }}{%- endif -%}{%- endcapture -%}
+<section class="fr-apply">
+  <h2 class="eyebrow">{{ t.friends_apply }}</h2>
+  <p>{{ t.friends_apply_note }}</p>
+<pre><code>name: {{ _m.name }}
+url: {{ _m.url }}
+avatar: {{ _mav }}
+desc: {{ _md }}</code></pre>
+</section>
+{%- endif %}
