@@ -7,6 +7,22 @@
     localStorage.setItem('theme', next);
   });
 
+  // Small screens: the two-row header slides away while reading down and returns on the way up.
+  var small = matchMedia('(max-width: 720px)'), lastY = window.scrollY, ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function () {
+      var y = window.scrollY, dy = y - lastY;
+      if (!small.matches || y < 80 || dy < -6) root.classList.remove('hdr-hidden');
+      else if (dy > 6) root.classList.add('hdr-hidden');
+      if (Math.abs(dy) > 6) lastY = y;
+      ticking = false;
+    });
+  }, { passive: true });
+  // Keep the active tab in view in the scrolling nav row.
+  var act = document.querySelector('.nav-links a.active');
+  if (act && small.matches) act.parentNode.scrollLeft = act.offsetLeft - (act.parentNode.clientWidth - act.offsetWidth) / 2;
+
   var modal = document.getElementById('search');
   var input = document.getElementById('search-input');
   var list = document.getElementById('search-results');
@@ -17,8 +33,8 @@
     return fetch(window.SEARCH_INDEX).then(function (r) { return r.json(); })
       .then(function (d) { index = d; return d; });
   }
-  function open() { modal.hidden = false; input.value = ''; list.innerHTML = ''; input.focus(); load(); }
-  function close() { modal.hidden = true; }
+  function open() { modal.hidden = false; root.classList.add('search-on'); input.value = ''; list.innerHTML = ''; input.focus(); load(); }
+  function close() { modal.hidden = true; root.classList.remove('search-on'); }
   function render(q) {
     q = q.trim().toLowerCase();
     if (!q || !index) { list.innerHTML = ''; return; }
@@ -33,6 +49,8 @@
   }
 
   document.getElementById('search-open').addEventListener('click', open);
+  var closeBtn = document.getElementById('search-close');
+  if (closeBtn) closeBtn.addEventListener('click', close);
   list.addEventListener('click', function (e) { if (e.target.closest('a')) close(); });
   modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
   input.addEventListener('input', function () { load().then(function () { render(input.value); }); });

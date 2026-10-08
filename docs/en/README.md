@@ -807,3 +807,20 @@ Edit `SYSTEM_PROMPT` in `scripts/common.py`.
 ---
 
 > The tools are ready. All that's left is to sit down and write.
+
+
+## Mobile
+
+The whole site has been checked on phones first. At widths of 360, 390, 768 and 1280 nothing scrolls sideways.
+
+- **Header**: at 720px wide or less it becomes two rows.
+  - The first row holds the brand and the tools (search, theme, language), each with a 40×40 tap target.
+  - The second row is the nav, as tabs you can swipe sideways, with a clay underline on the current page.
+  - The header slides away while you read down and returns as soon as you scroll up.
+- **Search** opens as a sheet from the top with a Cancel button, and the page behind it stops scrolling.
+- **Reading**: text and headings are slightly smaller. Code blocks run edge to edge, tables scroll sideways, and the previous/next links stack.
+- **Elsewhere**:
+  - The avatar is smaller and the social links sit in one column.
+  - Notch safe areas are respected, and the browser bar colour follows light and dark mode.
+  - Hover lifts are off on touch screens, and the oneko cat only appears on devices with a mouse.
+- The breakpoints are at the end of `_sass/_layout.scss`, under `@media (max-width: 720px)`. `--header-h` holds the header height, and the sticky bar on the weeks page follows it.

@@ -1,7 +1,10 @@
 {% include lang.html %}
 <div class="search" id="search" hidden>
   <div class="search-panel" role="dialog" aria-label="Search">
-    <input id="search-input" type="search" placeholder="{{ t.search_placeholder }}" autocomplete="off">
+    <div class="search-head">
+      <input id="search-input" type="search" placeholder="{{ t.search_placeholder }}" autocomplete="off" enterkeyhint="search">
+      <button type="button" class="search-close" id="search-close">{{ t.search_close }}</button>
+    </div>
     <ul id="search-results"></ul>
   </div>
 </div>
