@@ -824,3 +824,8 @@ The whole site has been checked on phones first. At widths of 360, 390, 768 and 
   - Notch safe areas are respected, and the browser bar colour follows light and dark mode.
   - Hover lifts are off on touch screens, and the oneko cat only appears on devices with a mouse.
 - The breakpoints are at the end of `_sass/_layout.scss`, under `@media (max-width: 720px)`. `--header-h` holds the header height, and the sticky bar on the weeks page follows it.
+
+
+## Illustrations (Droit the white dog)
+
+Words come first, and each page shows exactly one illustration: a closing vignette placed after the text. The home hero is the one exception. It sits beside the intro on wide screens and below it on phones. The rules and the list of keys are in the header comment of `_data/droit.yml`.

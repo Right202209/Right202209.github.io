@@ -54,7 +54,7 @@
 // The grid and its intro share one wider stage on desktop, so the 53 weeks
 // per row can breathe instead of shrinking into confetti.
 @media (min-width: 721px) {
-  .weeks, .weeks-intro, .wk-head {
+  .weeks, .weeks-intro, .wk-head, .wk-coda {
     width: min(1150px, calc(100vw - 72px));
     max-width: none;
     margin-inline: calc((100% - min(1150px, calc(100vw - 72px))) / 2);

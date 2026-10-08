@@ -1,11 +1,14 @@
 # ------------------------------------------------------------
-#  Droit 白狗插画 —— 每一张都可以单独关掉。
-#  · 全站关闭：enabled: false
-#  · 单张关闭：把那一项的 show 改成 false
-#  · 单页关闭：页面 front matter 写 droit: false（关掉这页所有插画）
-#             或 droit_hide: [home_notes, footer]（只关掉这页的某几张）
-#  · 文章换图：front matter 写 droit_art: 任意 key（如 post_tools）
-#  图片放在 dir 下，都是 WebP。w/h 用来占位防止页面跳动。
+#  Droit 白狗插画 —— 文字优先，每个页面只出现一张。
+#  · 位置：插画永远放在文字之后，作为页尾的“收尾小图”（前面有一行 · · ·）。
+#          首页例外：头图在宽屏放在简介右侧，手机上放在简介之后。
+#  · 哪一张：页面 front matter 的 droit_art 优先；否则
+#      首页 → home_hero；文章 → post_<ref>（没有就 post_end）；值得一读 → reading_item；
+#      文章 / 值得一读列表为空 → empty；其他页面 → 页面的 ref（blog、reading、life、social、weeks、notfound）
+#  · 尺寸：按图片横竖自动决定（横图最宽 520px，竖图最宽 260px），style 只对首页头图有用。
+#  · 全站关闭：enabled: false；单张关闭：show: false；单页不要插画：front matter 写 droit: false
+#  · 标着“备用”的几张不会自动出现，想用就在某一页写 droit_art: <key>。
+#  图片放在 dir 下，都是 WebP。w/h 用来占位防止页面跳动，也用来判断横竖。
 # ------------------------------------------------------------
 enabled: true
 dir: /assets/img/droit/
@@ -20,21 +23,21 @@ art:
     w: 848
     h: 1231
     alt: { zh-CN: "白狗抱着苹果睡在大黑树顶上", en: "A white dog asleep on top of a big black tree" }
-  home_contact:   # 首页简介下方，“写信给我”
+  home_contact:   # 备用（原首页简介下）   # 首页简介下方，“写信给我”
     show: true
     style: sm
     file: 15_contact_letter.webp
     w: 1024
     h: 1024
     alt: { zh-CN: "白狗叼着一封信小跑过来", en: "A white dog trotting over with a letter" }
-  home_notes:     # “随记”标题旁
+  home_notes:   # 备用（原“随记”旁）     # “随记”标题旁
     show: true
     style: aside
     file: 08_note_rest_hammock.webp
     w: 1376
     h: 768
     alt: { zh-CN: "白狗在吊床上午睡，工具丢在地上", en: "A white dog napping in a hammock, tools left on the ground" }
-  home_epigraph:  # 页尾引言上方
+  home_epigraph:   # 备用（原首页引言上方）  # 页尾引言上方
     show: true
     style: sm
     file: 11_quote_reflection.webp
@@ -131,7 +134,7 @@ art:
     alt: { zh-CN: "白狗捧着一杯热咖啡", en: "A white dog holding a warm mug" }
 
   # —— 全站 ——
-  footer:
+  footer:   # 备用（原页脚）
     show: true
     style: footer
     file: 14_footer_boat.webp

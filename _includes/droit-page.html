@@ -1,0 +1,30 @@
+{%- comment -%}
+  One illustration per page, after the words. Every layout calls this once, at the end of its content.
+  Which picture:
+    page.droit_art (any key in _data/droit.yml) wins;
+    posts       → post_<ref>, else post_end
+    reading     → reading_item
+    blog/reading list with nothing in it → empty
+    other pages → the page's ref (blog, reading, life, social, weeks, notfound)
+  The home page places its own hero (home_hero) and skips this.
+{%- endcomment -%}
+{%- include lang.html -%}
+{%- assign _k = page.droit_art -%}
+{%- if _k == nil or _k == "" -%}
+  {%- if page.layout == "post" -%}
+    {%- capture _k -%}post_{{ page.ref }}{%- endcapture -%}
+    {%- assign _a = site.data.droit.art[_k] -%}
+    {%- if _a == nil or _a.show == false -%}{%- assign _k = "post_end" -%}{%- endif -%}
+  {%- elsif page.layout == "reading" -%}
+    {%- assign _k = "reading_item" -%}
+  {%- elsif page.ref == "blog" -%}
+    {%- assign _n = site.posts | where: "lang", L | size -%}
+    {%- if _n == 0 -%}{%- assign _k = "empty" -%}{%- else -%}{%- assign _k = "blog" -%}{%- endif -%}
+  {%- elsif page.ref == "reading" -%}
+    {%- assign _n = site.reading | where: "lang", L | size -%}
+    {%- if _n == 0 -%}{%- assign _k = "empty" -%}{%- else -%}{%- assign _k = "reading" -%}{%- endif -%}
+  {%- else -%}
+    {%- assign _k = page.ref -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if _k and _k != "" -%}{% include droit.html key=_k class="droit-coda" %}{%- endif -%}

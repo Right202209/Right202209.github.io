@@ -7,9 +7,8 @@ layout: default
     <h1 class="display">{{ site.title }}</h1>
     {% if t.alias %}<p class="alias">{{ t.alias }}</p>{% endif %}
     <div class="prose">{{ content }}</div>
-    {% include droit.html key="home_contact" %}
   </div>
-  {% capture droit_hero %}{% include droit.html key="home_hero" class="intro-figure" caption=t.avatar_caption eager="1" %}{% endcapture %}{% assign droit_hero = droit_hero | strip %}
+  {% capture droit_hero %}{% include droit.html key="home_hero" class="intro-figure droit-hero-slot" caption=t.avatar_caption eager="1" %}{% endcapture %}{% assign droit_hero = droit_hero | strip %}
   {% if droit_hero != "" %}{{ droit_hero }}
   {% elsif site.avatar %}
   <figure class="intro-figure">
@@ -22,7 +21,6 @@ layout: default
 {% assign news = site.data.news[L] %}
 {% if news %}
 <section class="block">
-  {% include droit.html key="home_notes" %}
   <h2 class="eyebrow">{{ t.notes }}</h2>
   <ul class="rows">
     {% for item in news limit: site.home.news_limit %}
@@ -42,6 +40,4 @@ layout: default
   </ul>
 </section>
 
-{% capture droit_ep %}{% include droit.html key="home_epigraph" %}{% endcapture %}{% assign droit_ep = droit_ep | strip %}
-{% if droit_ep != "" %}<div style="margin-top:96px">{{ droit_ep }}</div>{% endif %}
-<blockquote class="epigraph"{% if droit_ep != "" %} style="margin-top:0"{% endif %}>{{ t.tagline }}</blockquote>
+<blockquote class="epigraph">{{ t.tagline }}</blockquote>
