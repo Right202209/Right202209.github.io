@@ -2,12 +2,50 @@
 // Ported from weeks.ginatrapani.org (after Buster Benson). Pure CSS Grid, no framework.
 // Restyled for Stoa: airy cells, decade rhythm, quiet chrome.
 
-.weeks-entry { margin-top: 2.5rem; }
-.weeks-entry .note { font-family: var(--sans); }
-.weeks-intro { margin-bottom: 1.2rem; }
+// ── Entry card on the Life page ──────────────────────────────
+.wk-entry {
+  position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.8rem;
+  margin: 3rem 0 0; padding: 1.5rem 1.7rem; border: 1px solid var(--line); border-radius: 18px;
+  background: linear-gradient(135deg, var(--surface), var(--bg) 70%);
+  color: var(--ink); text-decoration: none; overflow: hidden;
+  transition: transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s, box-shadow .3s;
+}
+.wk-entry::after {   // a soft clay glow that wakes on hover
+  content: ""; position: absolute; inset: auto -20% -60% auto; width: 60%; aspect-ratio: 1; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 16%, transparent), transparent);
+  opacity: 0; transition: opacity .4s;
+}
+.wk-entry:hover { color: var(--ink); transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--accent) 60%, transparent); }
+.wk-entry:hover::after { opacity: 1; }
+.wk-entry:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+// One square per year of a life: lived · this year · to come
+.wk-mini { display: grid; grid-template-columns: repeat(20, 7px); gap: 3px; }
+.wk-mini i { width: 7px; height: 7px; border-radius: 2px; background: var(--line); transition: background .35s; transition-delay: calc(var(--i) * 6ms); }
+.wk-mini i.p { background: color-mix(in srgb, var(--ink) 72%, transparent); }
+.wk-mini i.now { background: var(--accent); animation: wk-pulse 2.4s ease-in-out infinite; }
+.wk-entry:hover .wk-mini i.p { background: color-mix(in srgb, var(--accent) 80%, var(--ink)); }
+.wk-entry-text { display: block; min-width: 0; }
+.wk-entry .eyebrow { display: block; margin: 0 0 .55rem; }
+.wk-entry-now { display: block; font: 400 clamp(1.25rem, 2.6vw, 1.55rem)/1.25 var(--serif); letter-spacing: -.01em; }
+.wk-entry-now b { font-weight: 500; color: var(--accent); font-variant-numeric: tabular-nums; }
+.wk-entry-sub { display: block; margin-top: .35rem; font: .85rem/1.5 var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; }
+.wk-entry-go {
+  display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  border: 1px solid var(--line); color: var(--muted); font: 1.05rem/1 var(--sans);
+  transition: transform .3s, color .3s, border-color .3s, background .3s;
+}
+.wk-entry:hover .wk-entry-go { transform: translateX(3px); color: var(--bg); background: var(--accent); border-color: var(--accent); }
+@media (max-width: 560px) {
+  .wk-entry { grid-template-columns: 1fr auto; gap: 1.1rem 1rem; padding: 1.25rem; }
+  .wk-mini { grid-column: 1 / -1; }
+}
+
+.weeks-intro { margin-bottom: .5rem; }
+.wk-head { margin-bottom: 28px; }
 
 .weeks {
-  --wk-gap: 3px;
+  --wk-gap: 3px; --wk-w: 2.4rem; --wk-h: 1.9rem;
   // Season palette: 新绿 spring, 麦黄 summer, 陶土 autumn, 霜蓝 winter
   --spring: #8fbf88; --summer: #e2b04f; --autumn: #d97757; --winter: #8aaed3;
   position: relative;
@@ -16,16 +54,34 @@
 // The grid and its intro share one wider stage on desktop, so the 53 weeks
 // per row can breathe instead of shrinking into confetti.
 @media (min-width: 721px) {
-  .weeks, .weeks-intro {
+  .weeks, .weeks-intro, .wk-head {
     width: min(1150px, calc(100vw - 72px));
     max-width: none;
     margin-inline: calc((100% - min(1150px, calc(100vw - 72px))) / 2);
   }
 }
 
-// Quiet glance line: which week of life this is, how far along, how much left.
-.wk-glance { margin: 0 0 .9rem; font: .8rem/1.5 var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; }
-.wk-glance b { font-weight: 500; color: var(--ink); }
+// Three numbers and a life bar: weeks lived, % of a life, weeks left
+.wk-stats {
+  display: grid; grid-template-columns: repeat(3, auto) minmax(160px, 1fr); align-items: end; gap: 1.2rem 2.6rem;
+  margin: 2.2rem 0 1.2rem; padding: 1.5rem 0 0; border-top: 1px solid var(--line);
+}
+.wk-stat b {
+  font: 400 clamp(1.9rem, 3.8vw, 2.7rem)/1 var(--serif); letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+}
+.wk-stat:first-child b { color: var(--accent); }
+.wk-stat small { margin-left: .1em; font: 400 1.1rem var(--serif); color: var(--muted); }
+.wk-stat span { display: block; margin-top: .5rem; font: .76rem/1.3 var(--sans); letter-spacing: .04em; color: var(--muted); }
+.wk-life { position: relative; align-self: center; height: 6px; margin-bottom: 1.1rem; border-radius: 6px; background: var(--line); overflow: hidden; }
+.wk-life i {
+  display: block; height: 100%; width: calc(var(--p) * 1%); border-radius: inherit; transform-origin: left;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 35%, transparent), var(--accent));
+  animation: wk-grow 1.4s cubic-bezier(.2,.7,.2,1) both;
+}
+.wk-life::after {   // decade notches
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(var(--dec) - 2px), var(--bg) calc(var(--dec) - 2px) var(--dec));
+}
 
 // Sticky bar: decade pills + view switch
 .wk-bar {
@@ -67,16 +123,21 @@
 .wk-key-season::before { display: none; }
 .wk-key-season i { position: relative; width: 4px; height: 11px; }
 
-// Grid: a continuous stream of week boxes in rows of ~17–21, after weeks.ginatrapani.org
-.wk-dec { scroll-margin-top: 130px; }
+// Grid: each decade is one wrapping stream of week boxes, after weeks.ginatrapani.org.
+// Boxes have a minimum width and grow to fill the row, so the rows reflow with the window.
+.wk-dec { display: flex; flex-wrap: wrap; gap: var(--wk-gap); scroll-margin-top: 130px; }
+.wk-dec::before {   // decade label
+  content: attr(data-label); flex: 0 0 100%; margin: 0 0 .4rem;
+  font: italic 400 1.05rem/1.2 var(--serif); color: var(--muted);
+}
+.wk-dec::after { content: ""; flex: 999 1 0; }   // keeps the last row from stretching
 .wk-dec + .wk-dec {
-  margin-top: 1.5rem; padding-top: 1.3rem;
+  margin-top: 1.6rem; padding-top: 1.2rem;
   border-top: 1px dashed color-mix(in srgb, var(--line) 75%, transparent);
 }
-.wk-yr { display: flex; margin: 0 0 var(--wk-gap); }
-.wk-cells { display: flex; flex: 1 1 auto; min-width: 0; gap: var(--wk-gap); }
+.wk-yr, .wk-cells { display: contents; }
 .wk-cells i {
-  position: relative; flex: 1 1 0; min-width: 0; height: 1.9rem; border-radius: 3px; cursor: var(--cursor-pointer);
+  position: relative; flex: 1 0 var(--wk-w); min-width: var(--wk-w); height: var(--wk-h); border-radius: 3px; cursor: var(--cursor-pointer);
   display: inline-flex; align-items: center; font: 500 .78rem/1 var(--sans); color: var(--ink); white-space: nowrap;
   background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg));
   // Place = hairline frame; season = a 2px band along the bottom, so each row reads as a ribbon of seasons
@@ -89,9 +150,9 @@
 .wk-cells i.q3 { --season: var(--autumn); }
 .wk-cells i[class*=" q"] { --season-band: color-mix(in srgb, var(--season) 70%, transparent); }
 // Labelled boxes (birthdays, events) take the width of their text, like the original
-.wk-cells i.bd, .wk-cells i.ev:not(.pv) { flex: 0 0 auto; padding: 0 .6em; scroll-margin-top: 140px; }
+.wk-cells i.bd, .wk-cells i.ev:not(.pv) { flex: 1 0 auto; justify-content: center; padding: 0 .6em; scroll-margin-top: 140px; }
 .wk-cells i.bd { justify-content: center; }
-.wk-cells i:hover { transform: scale(1.6); z-index: 2; background: var(--accent); box-shadow: none; }
+.wk-cells i:hover { transform: scale(1.25); z-index: 2; background: var(--accent); box-shadow: none; }
 .wk-cells i.bd:hover, .wk-cells i.ev:not(.pv):hover { transform: scale(1.04); }
 .wk-cells i.f { background: color-mix(in srgb, var(--line) 60%, transparent); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--season, transparent) 30%, transparent); cursor: default; color: var(--muted); }
 .wk-cells i.f:hover { transform: none; background: color-mix(in srgb, var(--line) 60%, transparent); }
@@ -187,22 +248,30 @@
 .is-end:hover .wk-cap { transform: translateX(calc(-100% + 12px)) translateY(2px); }
 
 @keyframes wk-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 22%, transparent); } }
-@keyframes wk-hit { 50% { transform: scale(2.2); background: var(--accent); } }
+@keyframes wk-hit { 50% { transform: scale(1.5); background: var(--accent); } }
 @keyframes wk-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
 @keyframes wk-grow { from { transform: scaleX(0); } }
 @media (prefers-reduced-motion: reduce) {
-  .wk-node, .wk-axis i, .wk-cells i.now, .is-now .wk-dot, .wk-cells i.hit { animation: none; opacity: 1; }
+  .wk-node, .wk-axis i, .wk-life i, .wk-mini i.now, .wk-cells i.now, .is-now .wk-dot, .wk-cells i.hit { animation: none; opacity: 1; }
+  .wk-entry, .wk-mini i { transition: none; }
   .wk-progress i { transition: none; }
 }
 
+@media (min-width: 721px) and (max-width: 1000px) { .weeks { --wk-w: 2rem; --wk-h: 1.7rem; } }
+
 @media (max-width: 720px) {
   .wk-bar { flex-direction: column; align-items: flex-start; gap: .4rem; }
-  .wk-nav { display: grid; width: 100%; grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); gap: .25rem .3rem; }
-  .wk-nav a { padding: .28em .5em; font-size: .74rem; }
+  .wk-nav { display: flex; width: 100%; gap: .3rem; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+  .wk-nav::-webkit-scrollbar { display: none; }
+  .wk-nav a { flex: none; padding: .28em .8em; font-size: .74rem; }
   .weeks[data-view="timeline"] .wk-nav { display: none; }
-  .wk-cells i { height: 1.35rem; font-size: .58rem; }
+  .wk-cells i { font-size: .6rem; }
   .wk-cells i.bd, .wk-cells i.ev:not(.pv) { padding: 0 .4em; }
-  .weeks { --wk-gap: 1px; }
+  .weeks { --wk-gap: 2px; --wk-w: 1.15rem; --wk-h: 1.4rem; }
+  .wk-cells i:hover { transform: scale(1.35); }
+  .wk-stats { grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.6rem; }
+  .wk-stat b { font-size: 1.7rem; }
+  .wk-life { grid-column: 1 / -1; margin-bottom: 0; }
   // Timeline turns vertical on phones
   .wk-tlwrap { overflow: visible; }
   .wk-tl { height: auto; min-width: 0; margin: 0; padding: 4px 0 4px 26px; }

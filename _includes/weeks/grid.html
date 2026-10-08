@@ -1,21 +1,16 @@
 {%- comment -%}
-  The grid, laid out like weeks.ginatrapani.org: one continuous stream of week boxes, in rows
-  of ~17–21 that flow across year boundaries. Rows break at 21 "box units": an empty week is
-  1 unit, a labelled box is .9 + (label length − 2) × .319 units (its label spans several box
-  widths), and a labelled box that would overflow starts the next row instead. Every year opens
-  with a birthday box (🐣 at birth, 🎂 age · year after that), public events put their label
-  inside the week's box, and each decade starts a fresh section and row.
+  The grid, after weeks.ginatrapani.org: one continuous stream of week boxes per decade.
+  Rows are NOT fixed at build time. Each decade is a wrapping flex box, so the boxes reflow with
+  the window: wide screens fit ~25 a row, phones ~14. Every year opens with a birthday box
+  (🐣 at birth, 🎂 age · year after that) and public events put their label inside their week.
+  A year is a .wk-yr (display: contents) carrying data-from, so JS can date any box by its index.
   Week index, era, place, season and events are all resolved here at build time.
   Cell classes: eN era · pN place · qN season border · sN first week of a season (0 winter, 1 spring, 2 summer, 3 autumn; split at 立春 立夏 立秋 立冬)
                 f future · now this week · ev event · pv private-only event · bd birthday
 {%- endcomment -%}
 {%- assign ps = -1 -%}
-{%- assign max_units = 21 -%}
-{%- assign row_units = 0 -%}
-{%- assign row_open = false -%}
-{%- assign pending = false -%}
 {%- assign ph_n = "{n}" -%}{%- assign ph_y = "{y}" -%}
-<section class="wk-dec" id="decade-0">
+<section class="wk-dec" id="decade-0" data-label="{{ t.weeks_first_decade }}">
 {%- for age in (0..w_years) -%}
   {%- assign y0 = w_by | plus: age -%}
   {%- assign y1 = y0 | plus: 1 -%}
@@ -23,11 +18,11 @@
   {%- assign to = y1 | append: "-" | append: w_md | date: "%s" | plus: 0 -%}
   {%- assign dec = age | modulo: 10 -%}
   {%- if dec == 0 and age != 0 -%}
-    {%- if row_open -%}</span></div>{%- endif -%}
+    {%- if age == 10 -%}{%- assign dl = t.weeks_teens -%}{%- else -%}{%- assign dl = t.weeks_decade | replace: ph_n, age -%}{%- endif -%}
     </section>
-    <section class="wk-dec" id="decade-{{ age }}">
-    {%- assign row_open = false -%}{%- assign row_units = 0 -%}{%- assign pending = false -%}
+    <section class="wk-dec" id="decade-{{ age }}" data-label="{{ dl }}">
   {%- endif -%}
+  <div class="wk-yr" data-from="{{ from | date: '%Y-%m-%d' }}" data-age="{{ age }}"><span class="wk-cells">
   {%- capture yev -%}{%- for s in w_ev_ts -%}{%- assign tt = s | plus: 0 -%}{%- if tt >= from and tt < to -%}{{ forloop.index0 }},{%- endif -%}{%- endfor -%}{%- endcapture -%}
   {%- assign yev = yev | split: "," -%}
   {%- assign n = to | minus: from | minus: 1 | divided_by: WK | floor | plus: 1 -%}
@@ -83,20 +78,8 @@
       {%- if age == 0 -%}{%- capture lab -%}🐣 {{ t.weeks_born }}{%- endcapture -%}
       {%- else -%}{%- assign lab = t.weeks_bday | replace: ph_n, age | replace: ph_y, y0 -%}{%- endif -%}
     {%- endif -%}
-    {%- assign units = 1 -%}
-    {%- if lab != "" -%}{%- assign units = lab | size | minus: 2 | times: 0.319 | plus: 0.9 -%}{%- endif -%}
-    {%- assign brk = pending -%}
-    {%- if lab != "" -%}{%- assign would = row_units | plus: units -%}{%- if would >= max_units -%}{%- assign brk = true -%}{%- endif -%}{%- endif -%}
-    {%- if brk and row_open -%}</span></div>{%- assign row_open = false -%}{%- endif -%}
-    {%- if brk -%}{%- assign row_units = 0 -%}{%- assign pending = false -%}{%- endif -%}
-    {%- unless row_open -%}
-    <div class="wk-yr" data-from="{{ ts | date: '%Y-%m-%d' }}" data-age="{{ age }}"><span class="wk-cells">
-    {%- assign row_open = true -%}
-    {%- endunless -%}
     <i class="e{{ ei }} p{{ pi }} q{{ sn }}{% if tick %} s{{ sn }}{% endif %}{% if ts > w_today %} f{% elsif te > w_today %} now{% endif %}{% if hasev %} ev{% if elab == "" %} pv{% endif %}{% endif %}{% if i == 0 %} bd{% endif %}"{% if term != "" %} data-st="{{ tn }} {{ term }}"{% endif %}{% if elab != "" %} id="ev-{{ idate }}" data-k="{{ keys }}" data-ev="{{ elab | escape }}"{% endif %}>{{ lab }}</i>
-    {%- assign row_units = row_units | plus: units -%}
-    {%- if row_units >= max_units -%}{%- assign pending = true -%}{%- endif -%}
   {%- endfor -%}
+  </span></div>
 {%- endfor -%}
-{%- if row_open -%}</span></div>{%- endif -%}
 </section>

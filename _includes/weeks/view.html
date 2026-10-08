@@ -11,17 +11,18 @@
 {%- assign w_left = w_total | minus: w_lived -%}
 {%- if w_left < 0 -%}{%- assign w_left = 0 -%}{%- endif -%}
 {%- assign w_pct = w_today | minus: w_born | times: 100.0 | divided_by: w_span | round: 1 -%}
-{%- capture gl_n -%}<b data-n="{{ w_lived }}">{{ w_lived }}</b>{%- endcapture -%}
-{%- capture gl_p -%}<b data-n="{{ w_pct }}">{{ w_pct }}</b>{%- endcapture -%}
-{%- capture gl_l -%}<b data-n="{{ w_left }}">{{ w_left }}</b>{%- endcapture -%}
-{%- assign ph_n = "{n}" -%}{%- assign ph_p = "{p}" -%}{%- assign ph_l = "{left}" -%}
-{%- assign glance = t.weeks_glance | replace: ph_n, gl_n | replace: ph_p, gl_p | replace: ph_l, gl_l -%}
+{%- assign w_dec = 1000.0 | divided_by: w_years | round: 3 -%}
 <style>
 {%- for e in W.eras -%}.weeks .e{{ forloop.index0 }}{--era:{{ e.color | default: "var(--surface)" }}}{%- endfor -%}
 {%- for e in W.places -%}.weeks .p{{ forloop.index0 }}{--place:{{ e.color | default: "transparent" }}}{%- endfor -%}
 </style>
-<div class="weeks" data-weeks data-view="{{ W.view | default: 'grid' }}" data-lang="{{ L }}" data-born="{{ w_bd }}">
-  <p class="wk-glance" data-weeks-glance data-lang="{{ L }}">{{ glance }}</p>
+<div class="weeks" data-weeks data-view="{{ W.view | default: 'grid' }}" data-lang="{{ L }}" data-born="{{ w_bd }}" data-total="{{ w_total }}" data-end="{{ w_end | date: '%Y-%m-%d' }}">
+  <div class="wk-stats" data-weeks-glance>
+    <div class="wk-stat"><b data-n="{{ w_lived }}" data-k="lived">{{ w_lived }}</b><span>{{ t.weeks_stat_lived }}</span></div>
+    <div class="wk-stat"><b data-n="{{ w_pct }}" data-k="pct">{{ w_pct }}</b><small>%</small><span>{{ t.weeks_stat_pct }}</span></div>
+    <div class="wk-stat"><b data-n="{{ w_left }}" data-k="left">{{ w_left }}</b><span>{{ t.weeks_stat_left }}</span></div>
+    <div class="wk-life" style="--p:{{ w_pct }};--dec:{{ w_dec }}%" aria-hidden="true"><i></i></div>
+  </div>
   <div class="wk-bar">
     <nav class="wk-nav" aria-label="decades">
       {%- assign decs = w_years | divided_by: 10 | floor -%}

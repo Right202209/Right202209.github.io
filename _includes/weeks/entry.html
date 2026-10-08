@@ -1,16 +1,30 @@
-{%- comment -%} Pluggable: drop {% include weeks/entry.html %} into any page. One post-list row: today | the weeks page. {%- endcomment -%}
+{%- comment -%}
+  Pluggable: drop {% include weeks/entry.html %} into any page. A card that links to the weeks page:
+  a miniature of the whole life (one square per year, lived · this year · to come), this week's
+  number, and how far along. Built at compile time; main.js re-dates it against the visitor's clock.
+{%- endcomment -%}
 {%- include lang.html -%}
 {%- if site.data.weeks and site.data.weeks.enabled != false and site.data.weeks.entry != false -%}
 {%- include weeks/setup.html -%}
 {%- assign wpage = site.pages | where: "ref", "weeks" | where: "lang", L | first -%}
 {%- assign lived = w_today | minus: w_born | divided_by: WK | floor | plus: 1 -%}
 {%- assign total = w_years | times: 52.1775 | round -%}
-{% assign placeholder_n = "{n}" %}
-{% assign placeholder_total = "{total}" %}
-<ul class="rows weeks-entry" data-weeks-entry data-born="{{ w_bd }}" data-total="{{ total }}" data-lang="{{ L }}">
-  <li>
-    <time datetime="{{ site.time | date: '%Y-%m-%d' }}">{{ site.time | date: t.date_short }}</time>
-    <a href="{{ wpage.url | relative_url }}">{{ t.weeks_title }}<span class="note">{{ t.weeks_count | replace: placeholder_n, lived | replace: placeholder_total, total }}</span></a>
-  </li>
-</ul>
+{%- assign pct = w_today | minus: w_born | times: 100.0 | divided_by: w_span | round: 1 -%}
+{%- assign age_now = w_today | minus: w_born | divided_by: 31556952 | floor -%}
+{%- assign ph_n = "{n}" -%}{%- assign ph_t = "{total}" -%}{%- assign ph_p = "{p}" -%}
+{%- capture b_n -%}<b data-k="lived">{{ lived }}</b>{%- endcapture -%}
+{%- capture b_t -%}<span data-k="total">{{ total }}</span>{%- endcapture -%}
+{%- capture b_p -%}<span data-k="pct">{{ pct }}</span>{%- endcapture -%}
+{%- assign last = w_years | minus: 1 -%}
+<a class="wk-entry" href="{{ wpage.url | relative_url }}" data-weeks-entry data-born="{{ w_bd }}" data-end="{{ w_end | date: '%Y-%m-%d' }}" data-total="{{ total }}" data-lang="{{ L }}">
+  <span class="wk-mini" aria-hidden="true">
+    {%- for a in (0..last) -%}<i style="--i:{{ a }}"{% if a < age_now %} class="p"{% elsif a == age_now %} class="now"{% endif %}></i>{%- endfor -%}
+  </span>
+  <span class="wk-entry-text">
+    <span class="eyebrow">{{ t.weeks_title }}</span>
+    <span class="wk-entry-now">{{ t.weeks_entry_now | replace: ph_n, b_n }}</span>
+    <span class="wk-entry-sub">{{ t.weeks_entry_sub | replace: ph_t, b_t | replace: ph_p, b_p }}</span>
+  </span>
+  <span class="wk-entry-go" aria-hidden="true">→</span>
+</a>
 {%- endif -%}
