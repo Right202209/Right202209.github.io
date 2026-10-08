@@ -11,8 +11,10 @@ layout: default
     <h1 class="display">{{ page.title }}</h1>
     {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
   </header>
+  {% if page.droit_art %}{% include droit.html key=page.droit_art %}{% endif %}
   <div class="prose">
     {{ content }}
     {% if page.source %}<a class="source-link" href="{{ page.source }}" target="_blank" rel="noopener">{{ t.read_original }} →</a>{% endif %}
   </div>
+  {% include droit.html key="reading_item" class="reading-end" %}
 </article>

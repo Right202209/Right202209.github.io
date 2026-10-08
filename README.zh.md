@@ -38,6 +38,35 @@
 - 主页短记位于 `_data/news.yml`，按语言分组。“Worth Reading”像文章一样编写：中文放在 `_reading/`，英文放在 `_reading/en/`，同一篇使用相同的 `ref:`。
 - 社交链接位于 `_data/social.yml`，不区分语言；`note` 可以按语言分别编写，`hidden: true` 会将其隐藏。
 
+## Droit 白狗插画
+
+站里的插画都是同一只白色长嘴小狗（potato.horse 风格），图片在 `assets/img/droit/`（WebP），配置在 `_data/droit.yml`。
+
+- 全站关闭：`enabled: false`
+- 关掉某一张：把那一项的 `show` 改成 `false`
+- 关掉某一页的全部插画：在页面 front matter 里写 `droit: false`
+- 只关掉某一页的某几张：`droit_hide: [home_notes, footer]`
+- 给文章换图或配图：`droit_art: <key>`。默认按 `post_<ref>` 自动匹配，例如 `ref: tools` 对应 `post_tools`。
+- 新加一张图：把 WebP 放进 `assets/img/droit/`，在 `art:` 里加一项。`style` 可选 `hero`、`wide`、`md`、`sm`、`aside`、`footer`。
+- 在任意位置手动插图：`{% include droit.html key="life" %}`
+
+| key | 位置 | 图 |
+|---|---|---|
+| home_hero | 首页头图（替代 avatar.svg，深色模式换夜空） | 01 / 16 |
+| home_contact | 首页简介下 | 15 |
+| home_notes | 随记 | 08 |
+| home_epigraph | 首页引言上方 | 11 |
+| blog / reading / life / social | 各栏目页头 | 03 / 04 / 05 / 06 |
+| weeks | 人生周历 | 02 |
+| notfound | 404 | 12 |
+| empty | 列表为空 | 17 |
+| post_beginning / post_tools / post_slowness | 三篇文章 | 07 / 09 / 10 |
+| post_end | 每篇文章末尾 | 21 |
+| reading_item | 每篇“值得一读”末尾 | 19 |
+| footer | 全站页脚 | 14 |
+| search_empty / search_loading | ⌘K 无结果 / 加载中 | 13 / 18 |
+| touch_icon | 添加到主屏幕图标 | 20 |
+
 ## 部署
 
 将 **Settings → Pages → Source** 设为 **GitHub Actions**，然后推送。`.github/workflows/pages.yml` 使用 Jekyll 4 构建并部署。

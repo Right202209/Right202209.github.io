@@ -8,4 +8,6 @@
     <ul id="search-results"></ul>
   </div>
 </div>
-<script>window.SEARCH_INDEX = "{{ '/search.json' | relative_url }}"; window.SEARCH_EMPTY = {{ t.search_empty | jsonify }};</script>
+<script>window.SEARCH_INDEX = "{{ '/search.json' | relative_url }}"; window.SEARCH_EMPTY = {{ t.search_empty | jsonify }};
+{%- capture se %}{% include droit.html key="search_empty" url_only="1" %}{% endcapture %}{%- capture sl %}{% include droit.html key="search_loading" url_only="1" %}{% endcapture %}
+window.SEARCH_ART = { empty: {{ se | strip | jsonify }}, loading: {{ sl | strip | jsonify }} };</script>

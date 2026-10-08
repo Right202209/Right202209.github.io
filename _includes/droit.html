@@ -1,0 +1,22 @@
+{%- comment -%}
+  Droit 白狗插画。用法：{% include droit.html key="blog" %}
+  可选 class="..." 追加样式。是否显示由 _data/droit.yml 和页面 front matter 决定。
+  只想拿到地址不渲染：{% include droit.html key="search_empty" url_only="1" %}
+{%- endcomment -%}
+{%- assign _dr = site.data.droit -%}
+{%- assign _da = _dr.art[include.key] -%}
+{%- assign _on = true -%}
+{%- if _dr == nil or _dr.enabled == false or _da == nil or _da.show == false or page.droit == false -%}{%- assign _on = false -%}{%- endif -%}
+{%- if page.droit_hide contains include.key -%}{%- assign _on = false -%}{%- endif -%}
+{%- if _on -%}
+{%- assign _L = page.lang | default: site.lang -%}
+{%- assign _alt = _da.alt[_L] | default: _da.alt[site.lang] | default: "" -%}
+{%- capture _src -%}{{ _dr.dir | append: _da.file | relative_url }}{%- endcapture -%}
+{%- if include.url_only -%}{{ _src }}{%- else -%}
+<figure class="droit droit-{{ _da.style | default: 'md' }}{% if include.class %} {{ include.class }}{% endif %}" data-droit="{{ include.key }}">
+  <img src="{{ _src }}" alt="{{ _alt | escape }}"{% if _da.w %} width="{{ _da.w }}" height="{{ _da.h }}"{% endif %} {% if include.eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async"{% if _da.dark %} class="droit-light"{% endif %}>
+  {%- if _da.dark %}<img src="{{ _dr.dir | append: _da.dark | relative_url }}" alt="{{ _alt | escape }}"{% if _da.w %} width="{{ _da.w }}" height="{{ _da.h }}"{% endif %} loading="lazy" decoding="async" class="droit-dark">{% endif %}
+  {%- if include.caption %}<figcaption>{{ include.caption }}</figcaption>{% endif %}
+</figure>
+{%- endif -%}
+{%- endif -%}
