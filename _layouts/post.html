@@ -12,10 +12,8 @@ layout: default
     <h1 class="display">{{ page.title }}</h1>
     {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
   </header>
-  {% capture droit_key %}{% if page.droit_art %}{{ page.droit_art }}{% else %}post_{{ page.ref }}{% endif %}{% endcapture %}
-  {% include droit.html key=droit_key %}
   <div class="prose">{{ content }}</div>
-  {% include droit.html key="post_end" %}
+  {% include droit-page.html %}
   <nav class="pager">
     {% assign same = site.posts | where: "lang", L %}
     {% assign newer = nil %}{% assign older = nil %}

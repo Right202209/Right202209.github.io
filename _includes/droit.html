@@ -13,7 +13,7 @@
 {%- assign _alt = _da.alt[_L] | default: _da.alt[site.lang] | default: "" -%}
 {%- capture _src -%}{{ _dr.dir | append: _da.file | relative_url }}{%- endcapture -%}
 {%- if include.url_only -%}{{ _src }}{%- else -%}
-<figure class="droit droit-{{ _da.style | default: 'md' }}{% if include.class %} {{ include.class }}{% endif %}" data-droit="{{ include.key }}">
+<figure class="droit droit-{{ _da.style | default: 'md' }} {% if _da.w > _da.h %}droit-landscape{% else %}droit-portrait{% endif %}{% if include.class %} {{ include.class }}{% endif %}" data-droit="{{ include.key }}">
   <img src="{{ _src }}" alt="{{ _alt | escape }}"{% if _da.w %} width="{{ _da.w }}" height="{{ _da.h }}"{% endif %} {% if include.eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async"{% if _da.dark %} class="droit-light"{% endif %}>
   {%- if _da.dark %}<img src="{{ _dr.dir | append: _da.dark | relative_url }}" alt="{{ _alt | escape }}"{% if _da.w %} width="{{ _da.w }}" height="{{ _da.h }}"{% endif %} loading="lazy" decoding="async" class="droit-dark">{% endif %}
   {%- if include.caption %}<figcaption>{{ include.caption }}</figcaption>{% endif %}

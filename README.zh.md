@@ -42,28 +42,38 @@
 
 站里的插画都是同一只白色长嘴小狗（potato.horse 风格），图片在 `assets/img/droit/`（WebP），配置在 `_data/droit.yml`。
 
+**文字优先，每页一张。** 插画永远排在文字之后，是页尾的一张收尾小图，前面隔一行 `· · ·`。首页例外：头图在宽屏放在简介右边，手机上放在简介下面。尺寸按图片横竖自动定：横图最宽 520px，竖图最宽 260px。
+
+每页用哪一张：
+
+1. 页面 front matter 写了 `droit_art: <key>`，就用它；
+2. 否则首页用 `home_hero`，文章用 `post_<ref>`（没有就用 `post_end`），「值得一读」单篇用 `reading_item`；
+3. 文章列表或「值得一读」列表是空的时候用 `empty`；
+4. 其他页面用页面的 `ref`：blog、reading、life、social、weeks、notfound。
+
+开关：
+
 - 全站关闭：`enabled: false`
 - 关掉某一张：把那一项的 `show` 改成 `false`
-- 关掉某一页的全部插画：在页面 front matter 里写 `droit: false`
-- 只关掉某一页的某几张：`droit_hide: [home_notes, footer]`
-- 给文章换图或配图：`droit_art: <key>`。默认按 `post_<ref>` 自动匹配，例如 `ref: tools` 对应 `post_tools`。
-- 新加一张图：把 WebP 放进 `assets/img/droit/`，在 `art:` 里加一项。`style` 可选 `hero`、`wide`、`md`、`sm`、`aside`、`footer`。
-- 在任意位置手动插图：`{% include droit.html key="life" %}`
+- 某一页不要插画：在 front matter 里写 `droit: false`
+- 新加一张图：把 WebP 放进 `assets/img/droit/`，在 `art:` 里加一项，写上 `w`/`h`，再用 `droit_art` 指给某一页。
+- `home_contact`、`home_notes`、`home_epigraph`、`footer` 现在是备用，不会自动出现。
+- ⌘K 搜索里「加载中 / 没找到」的小图只在搜索面板里出现，不算页面插画。不想要的话，把 `search_loading` 和 `search_empty` 的 `show` 改成 `false`。
 
 | key | 位置 | 图 |
 |---|---|---|
-| home_hero | 首页头图（替代 avatar.svg，深色模式换夜空） | 01 / 16 |
-| home_contact | 首页简介下 | 15 |
-| home_notes | 随记 | 08 |
-| home_epigraph | 首页引言上方 | 11 |
-| blog / reading / life / social | 各栏目页头 | 03 / 04 / 05 / 06 |
-| weeks | 人生周历 | 02 |
+| home_hero | 首页（宽屏在简介右边，手机在简介下面；深色模式换夜空） | 01 / 16 |
+| home_contact | 备用 | 15 |
+| home_notes | 备用 | 08 |
+| home_epigraph | 备用 | 11 |
+| blog / reading / life / social | 各栏目页尾 | 03 / 04 / 05 / 06 |
+| weeks | 人生周历页尾（格子之后） | 02 |
 | notfound | 404 | 12 |
 | empty | 列表为空 | 17 |
-| post_beginning / post_tools / post_slowness | 三篇文章 | 07 / 09 / 10 |
-| post_end | 每篇文章末尾 | 21 |
+| post_beginning / post_tools / post_slowness | 三篇文章的页尾 | 07 / 09 / 10 |
+| post_end | 没有专属插画的文章，放在页尾 | 21 |
 | reading_item | 每篇“值得一读”末尾 | 19 |
-| footer | 全站页脚 | 14 |
+| footer | 备用 | 14 |
 | search_empty / search_loading | ⌘K 无结果 / 加载中 | 13 / 18 |
 | touch_icon | 添加到主屏幕图标 | 20 |
 

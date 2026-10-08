@@ -104,7 +104,7 @@ main.wrap { padding-top: 72px; padding-bottom: 96px; min-height: 70vh; }
   .nav-links a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: 5px; height: 2px; border-radius: 2px; background: var(--accent); }
 
   .intro { grid-template-columns: 1fr; gap: 28px; margin-bottom: 56px; }
-  .intro-figure { max-width: 168px; order: -1; }
+  .intro-figure { max-width: 200px; }
   .block { margin-bottom: 48px; }
   .rows li { grid-template-columns: 1fr; gap: 2px; padding: 13px 0; }
   .rows time { font-size: .8rem; }

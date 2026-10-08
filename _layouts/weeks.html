@@ -12,7 +12,7 @@ layout: default
   <h1 class="display">{{ page.title }}</h1>
   {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
 </header>
-{% include droit.html key="weeks" %}
 <div class="prose weeks-intro">{{ content }}</div>
 {% include weeks/view.html %}
+<div class="wk-coda">{% include droit-page.html %}</div>
 {% endif %}

@@ -1,26 +1,39 @@
-// Droit 白狗插画
-.droit { margin: 0 0 40px; }
-.droit img { display: block; width: 100%; height: auto; border-radius: 14px; background: #f2d9c0; }
-.droit-wide { max-width: var(--measure); }
-.droit-wide img { max-height: 420px; object-fit: cover; }
-.droit-md { max-width: 360px; }
-.droit-sm { max-width: 200px; }
-.droit-aside { float: right; width: 200px; margin: -8px 0 12px 24px; }
-.droit-footer { max-width: 320px; margin: 0 0 18px; }
-.droit-footer img { border-radius: 10px; }
+// Droit 白狗插画 —— 文字优先，每页一张。
+// Every page carries one picture, placed after its words (a closing vignette, ".droit-coda").
+// The home page is the one exception: its hero sits beside the intro on wide screens and after it on phones.
+.droit { margin: 0; }
+.droit img { display: block; width: 100%; height: auto; border-radius: 14px; background: var(--surface); }
 .droit-dark { display: none !important; }
 [data-theme="dark"] .droit-light { display: none !important; }
 [data-theme="dark"] .droit-dark { display: block !important; }
 [data-theme="dark"] .droit img { filter: brightness(.82) contrast(1.05); }
+
+// Closing vignette: a quiet "· · ·", then the picture, sized by its shape.
+.droit-coda { margin: 88px 0 0; max-width: var(--measure); }
+.droit-coda::before {
+  content: "· · ·"; display: block; margin: 0 0 28px;
+  color: var(--muted); letter-spacing: .6em; font-size: .9rem;
+}
+.droit-coda.droit-portrait { width: min(260px, 62%); }
+.droit-coda.droit-landscape { width: min(520px, 100%); }
+.droit-coda img { opacity: 0; transform: translateY(8px); animation: droit-in .9s .15s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes droit-in { to { opacity: 1; transform: none; } }
+.post .droit-coda + .pager { margin-top: 56px; }
+.wk-coda .droit-coda { margin-top: 72px; }
+
+// Home: the hero beside the words, never before them.
 .intro-figure.droit { margin: 8px 0 0; }
 .intro-figure.droit img { aspect-ratio: 4/5; object-fit: cover; }
-.post .droit-sm, .reading-end.droit-sm { margin: 56px 0 0; }
+.intro-figure figcaption { font: italic .9rem/1.4 var(--serif); color: var(--muted); margin-top: .7rem; }
+
+// ⌘K search: tiny states inside the overlay (loading / nothing found), not part of any page.
 .search-art { list-style: none; text-align: center; padding: 14px 14px 18px; color: var(--muted); }
-.search-art img { display: block; width: 140px; height: auto; margin: 0 auto 10px; border-radius: 12px; }
+.search-art img { display: block; width: 120px; height: auto; margin: 0 auto 10px; border-radius: 12px; }
+
 @media (max-width: 720px) {
-  .droit-aside { float: none; width: 160px; margin: 0 0 20px; }
-  .droit-wide img { max-height: 280px; }
-  .droit-sm { max-width: 150px; }
+  .droit-coda { margin-top: 64px; }
+  .droit-coda::before { margin-bottom: 22px; }
+  .droit-coda.droit-portrait { width: min(200px, 58%); }
+  .intro-figure.droit-hero-slot { order: 0; max-width: 200px; }
 }
-.droit-hero { max-width: none; }
-@media (max-width: 720px) { .intro-figure.droit-hero { max-width: 168px; } }
+@media (prefers-reduced-motion: reduce) { .droit-coda img { animation: none; opacity: 1; transform: none; } }

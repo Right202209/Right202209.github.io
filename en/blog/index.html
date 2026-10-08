@@ -6,7 +6,6 @@ description: Drafts of a mind, in chronological order.
 ---
 {% include lang.html %}
 {% assign years = site.posts | where: "lang", L | group_by_exp: "p", "p.date | date: '%Y'" %}
-{% if years.size == 0 %}{% include droit.html key="empty" %}{% endif %}
 {% for y in years %}
 <h2 class="year">{{ y.name }}</h2>
 <ul class="rows">
