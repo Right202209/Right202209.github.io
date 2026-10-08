@@ -5,10 +5,12 @@
 {%- assign wpage = site.pages | where: "ref", "weeks" | where: "lang", L | first -%}
 {%- assign lived = w_today | minus: w_born | divided_by: WK | floor | plus: 1 -%}
 {%- assign total = w_years | times: 52.1775 | round -%}
+{% assign placeholder_n = "{n}" %}
+{% assign placeholder_total = "{total}" %}
 <ul class="rows weeks-entry" data-weeks-entry data-born="{{ w_bd }}" data-total="{{ total }}" data-lang="{{ L }}">
   <li>
     <time datetime="{{ site.time | date: '%Y-%m-%d' }}">{{ site.time | date: t.date_short }}</time>
-    <a href="{{ wpage.url | relative_url }}">{{ t.weeks_title }}<span class="note">{{ t.weeks_count | replace: "{n}", lived | replace: "{total}", total }}</span></a>
+    <a href="{{ wpage.url | relative_url }}">{{ t.weeks_title }}<span class="note">{{ t.weeks_count | replace: placeholder_n, lived | replace: placeholder_total, total }}</span></a>
   </li>
 </ul>
 {%- endif -%}
