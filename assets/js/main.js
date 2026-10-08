@@ -45,7 +45,13 @@
     sel = 0;
     list.innerHTML = hits.length ? hits.map(function (p, i) {
       return '<li><a href="' + p.url + '"' + (i === 0 ? ' class="sel"' : '') + '>' + p.title + '<small>' + p.date + '</small></a></li>';
-    }).join('') : '<li style="padding:10px 14px;color:var(--muted)">' + (window.SEARCH_EMPTY || 'Nothing yet.') + '</li>';
+    }).join('') : art('empty', window.SEARCH_EMPTY || 'Nothing yet.');
+  }
+  // Droit 白狗：搜索无结果 / 加载中的插画（_data/droit.yml 里可关）
+  function art(kind, text) {
+    var src = (window.SEARCH_ART || {})[kind];
+    if (!src) return text ? '<li style="padding:10px 14px;color:var(--muted)">' + text + '</li>' : '';
+    return '<li class="search-art"><img src="' + src + '" alt="" width="140" height="140">' + (text || '') + '</li>';
   }
 
   document.getElementById('search-open').addEventListener('click', open);
@@ -53,7 +59,10 @@
   if (closeBtn) closeBtn.addEventListener('click', close);
   list.addEventListener('click', function (e) { if (e.target.closest('a')) close(); });
   modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
-  input.addEventListener('input', function () { load().then(function () { render(input.value); }); });
+  input.addEventListener('input', function () {
+    if (!index && input.value.trim()) list.innerHTML = art('loading', '');
+    load().then(function () { render(input.value); });
+  });
   document.addEventListener('keydown', function (e) {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); modal.hidden ? open() : close(); }
     if (modal.hidden) return;

@@ -1,0 +1,26 @@
+// Droit 白狗插画
+.droit { margin: 0 0 40px; }
+.droit img { display: block; width: 100%; height: auto; border-radius: 14px; background: #f2d9c0; }
+.droit-wide { max-width: var(--measure); }
+.droit-wide img { max-height: 420px; object-fit: cover; }
+.droit-md { max-width: 360px; }
+.droit-sm { max-width: 200px; }
+.droit-aside { float: right; width: 200px; margin: -8px 0 12px 24px; }
+.droit-footer { max-width: 320px; margin: 0 0 18px; }
+.droit-footer img { border-radius: 10px; }
+.droit-dark { display: none !important; }
+[data-theme="dark"] .droit-light { display: none !important; }
+[data-theme="dark"] .droit-dark { display: block !important; }
+[data-theme="dark"] .droit img { filter: brightness(.82) contrast(1.05); }
+.intro-figure.droit { margin: 8px 0 0; }
+.intro-figure.droit img { aspect-ratio: 4/5; object-fit: cover; }
+.post .droit-sm, .reading-end.droit-sm { margin: 56px 0 0; }
+.search-art { list-style: none; text-align: center; padding: 14px 14px 18px; color: var(--muted); }
+.search-art img { display: block; width: 140px; height: auto; margin: 0 auto 10px; border-radius: 12px; }
+@media (max-width: 720px) {
+  .droit-aside { float: none; width: 160px; margin: 0 0 20px; }
+  .droit-wide img { max-height: 280px; }
+  .droit-sm { max-width: 150px; }
+}
+.droit-hero { max-width: none; }
+@media (max-width: 720px) { .intro-figure.droit-hero { max-width: 168px; } }

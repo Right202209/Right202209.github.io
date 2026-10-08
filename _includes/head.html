@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
   <link rel="icon" href="{{ '/assets/img/favicon.svg' | relative_url }}" type="image/svg+xml">
+  {% capture droit_touch %}{% include droit.html key="touch_icon" url_only="1" %}{% endcapture %}{% if droit_touch != "" %}<link rel="apple-touch-icon" href="{{ droit_touch | strip }}">{% endif %}
   <script>
     (function () {
       var t = localStorage.getItem('theme') ||

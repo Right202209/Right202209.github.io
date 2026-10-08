@@ -1,0 +1,153 @@
+# ------------------------------------------------------------
+#  Droit 白狗插画 —— 每一张都可以单独关掉。
+#  · 全站关闭：enabled: false
+#  · 单张关闭：把那一项的 show 改成 false
+#  · 单页关闭：页面 front matter 写 droit: false（关掉这页所有插画）
+#             或 droit_hide: [home_notes, footer]（只关掉这页的某几张）
+#  · 文章换图：front matter 写 droit_art: 任意 key（如 post_tools）
+#  图片放在 dir 下，都是 WebP。w/h 用来占位防止页面跳动。
+# ------------------------------------------------------------
+enabled: true
+dir: /assets/img/droit/
+
+art:
+  # —— 首页 ——
+  home_hero:      # 首页右侧头图，替代 avatar.svg；深色模式换成 dark 那张
+    show: true
+    style: hero
+    file: 01_hero_sleep_tree.webp
+    dark: 16_night_stars.webp
+    w: 848
+    h: 1231
+    alt: { zh-CN: "白狗抱着苹果睡在大黑树顶上", en: "A white dog asleep on top of a big black tree" }
+  home_contact:   # 首页简介下方，“写信给我”
+    show: true
+    style: sm
+    file: 15_contact_letter.webp
+    w: 1024
+    h: 1024
+    alt: { zh-CN: "白狗叼着一封信小跑过来", en: "A white dog trotting over with a letter" }
+  home_notes:     # “随记”标题旁
+    show: true
+    style: aside
+    file: 08_note_rest_hammock.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "白狗在吊床上午睡，工具丢在地上", en: "A white dog napping in a hammock, tools left on the ground" }
+  home_epigraph:  # 页尾引言上方
+    show: true
+    style: sm
+    file: 11_quote_reflection.webp
+    w: 848
+    h: 1264
+    alt: { zh-CN: "白狗在墨水池里看见自己的倒影", en: "A white dog sees its reflection in a pool of ink" }
+
+  # —— 栏目页（按页面 ref 自动匹配）——
+  blog:
+    show: true
+    style: md
+    file: 03_blog_writing.webp
+    w: 848
+    h: 1231
+    alt: { zh-CN: "白狗伏案写字，墨渍长成了一团黑影", en: "A white dog writing as an ink blot grows into a shadow" }
+  reading:
+    show: true
+    style: md
+    file: 04_reading_books.webp
+    w: 848
+    h: 1264
+    alt: { zh-CN: "白狗坐在一摞书顶上读书", en: "A white dog reading on top of a stack of books" }
+  life:
+    show: true
+    style: wide
+    file: 05_life_flower.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "白狗散步时停下来闻一朵小红花", en: "A white dog stops on a walk to smell a small red flower" }
+  social:
+    show: true
+    style: wide
+    file: 06_social_friends.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "两只白狗隔着篱笆递苹果", en: "Two white dogs passing an apple over a fence" }
+  weeks:
+    show: true
+    style: wide
+    file: 02_about_map_territory.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "白狗拿着地图，面对真实的群山", en: "A white dog holding a map, facing the real mountains" }
+  notfound:       # 404 页
+    show: true
+    style: wide
+    file: 12_404_hole.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "白狗从洞里探出头，有点迷路", en: "A lost white dog peeking out of a hole" }
+  empty:          # 列表为空时（文章 / 值得一读）
+    show: true
+    style: sm
+    file: 17_rain_umbrella.webp
+    w: 848
+    h: 1264
+    alt: { zh-CN: "白狗打着红伞站在雨云下", en: "A white dog under a red umbrella and a rain cloud" }
+
+  # —— 文章（key = post_ + 文章 ref，中英文共用）——
+  post_beginning:
+    show: true
+    style: md
+    file: 07_note_blank_page.webp
+    w: 848
+    h: 1264
+    alt: { zh-CN: "小白狗仰望一张巨大的白纸", en: "A small white dog looking up at a giant blank page" }
+  post_tools:
+    show: true
+    style: wide
+    file: 09_post_tools_think.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "白狗和小机器人歪着头互相打量", en: "A white dog and a little robot tilting their heads at each other" }
+  post_slowness:
+    show: true
+    style: wide
+    file: 10_post_slowness_snail.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "白狗牵着一只蜗牛慢慢散步", en: "A white dog slowly walking a snail on a leash" }
+  post_end:       # 每篇文章末尾
+    show: true
+    style: sm
+    file: 21_journey.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "白狗背着包走向远方", en: "A white dog with a backpack walking toward the horizon" }
+  reading_item:   # 每篇“值得一读”末尾
+    show: true
+    style: sm
+    file: 19_coffee_mug.webp
+    w: 1024
+    h: 1024
+    alt: { zh-CN: "白狗捧着一杯热咖啡", en: "A white dog holding a warm mug" }
+
+  # —— 全站 ——
+  footer:
+    show: true
+    style: footer
+    file: 14_footer_boat.webp
+    w: 1376
+    h: 768
+    alt: { zh-CN: "白狗坐在纸船里，漂在黑色的海上", en: "A white dog in a paper boat on a dark sea" }
+  search_empty:   # ⌘K 搜索无结果
+    show: true
+    file: 13_search_sniff.webp
+    alt: { zh-CN: "白狗拿着放大镜闻脚印", en: "A white dog sniffing footprints with a magnifying glass" }
+  search_loading: # ⌘K 搜索索引加载中
+    show: true
+    file: 18_loading_tail.webp
+    alt: { zh-CN: "白狗转圈追自己的尾巴", en: "A white dog chasing its own tail" }
+  touch_icon:     # 手机“添加到主屏幕”的图标
+    show: true
+    file: 20_avatar.webp
+
+# 00_character.webp 是角色设定图，模板里没用到，留作参考。
