@@ -1,0 +1,33 @@
+# ─────────────────────────────────────────────────────────────
+#  Life in Weeks · 人生周历  — a pluggable module
+#  Ported from Gina Trapani's weeks.ginatrapani.org (after Buster Benson).
+#  Everything is computed at build time; no libraries at runtime.
+# ─────────────────────────────────────────────────────────────
+
+enabled: true          # false → entry row, weeks page and search entries all switch off
+entry: true            # the "today | my life in weeks" row on the Life page
+view: grid             # default view: grid | timeline (visitors can switch)
+hemisphere: north      # season ticks: north | south
+
+birthday: 1995-01-01   # ← your birthday (it is public on the site)
+life_expectancy: 80    # how many years to draw
+
+# Phases of life → box fill. Start with `age:` (years) or `start:` (a date).
+eras:
+  - { age: 0,  zh: 还很小, en: I was tiny,    color: "#f3ece0" }
+  - { age: 6,  zh: 上学,   en: In school,     color: "#e6eef0" }
+  - { age: 18, zh: 大学,   en: At university, color: "#f2e3dc" }
+  - { age: 22, zh: 工作,   en: Working,       color: "#ece3ef" }
+
+# Where you lived → box border.
+places:
+  - { age: 0, zh: 家乡, en: Hometown, color: "#b9a68a" }
+
+# Milestones. Examples below — replace them with your own.
+#   private: true → shown only as a solid dot, no text, not searchable
+#   line: true    → a vertical marker on the timeline
+events:
+  - { date: 2013-06-20, emoji: "🎒", zh: 高中毕业, en: Finished high school }
+  - { date: 2017-06-30, emoji: "🎓", zh: 大学毕业, en: Graduated, line: true }
+  - { date: 2021-04-02, private: true }
+  - { date: 2026-10-08, emoji: "📍", zh: 做了这一页, en: Made this page }

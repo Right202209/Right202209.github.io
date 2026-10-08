@@ -1,0 +1,23 @@
+{%- comment -%}
+  Shared build-time values for the weeks module. Every date goes through "%Y-%m-%d" first,
+  so all timestamps are midnight in the site timezone.
+{%- endcomment -%}
+{%- assign W = site.data.weeks -%}
+{%- assign WK = 604800 -%}
+{%- assign w_bd = W.birthday | date: "%Y-%m-%d" -%}
+{%- assign w_by = w_bd | slice: 0, 4 | plus: 0 -%}
+{%- assign w_md = w_bd | slice: 5, 5 -%}
+{%- if w_md == "02-29" -%}{%- assign w_md = "02-28" -%}{%- endif -%}
+{%- assign w_years = W.life_expectancy | default: 80 | plus: 0 -%}
+{%- assign w_born = w_bd | date: "%s" | plus: 0 -%}
+{%- assign w_ey = w_by | plus: w_years -%}
+{%- assign w_end = w_ey | append: "-" | append: w_md | date: "%s" | plus: 0 -%}
+{%- assign w_span = w_end | minus: w_born -%}
+{%- assign w_today = site.time | date: "%Y-%m-%d" | date: "%s" | plus: 0 -%}
+{%- assign w_events = W.events | sort: "date" -%}
+{%- capture w_ev_ts -%}{%- for e in w_events -%}{{ e.date | date: "%Y-%m-%d" | date: "%s" }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}{%- endcapture -%}
+{%- assign w_ev_ts = w_ev_ts | split: "," -%}
+{%- capture w_era_ts -%}{%- for e in W.eras -%}{%- if e.start -%}{{ e.start | date: "%Y-%m-%d" | date: "%s" }}{%- else -%}{%- assign y = e.age | plus: w_by -%}{{ y | append: "-" | append: w_md | date: "%s" }}{%- endif -%}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}{%- endcapture -%}
+{%- assign w_era_ts = w_era_ts | split: "," -%}
+{%- capture w_pl_ts -%}{%- for e in W.places -%}{%- if e.start -%}{{ e.start | date: "%Y-%m-%d" | date: "%s" }}{%- else -%}{%- assign y = e.age | plus: w_by -%}{{ y | append: "-" | append: w_md | date: "%s" }}{%- endif -%}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}{%- endcapture -%}
+{%- assign w_pl_ts = w_pl_ts | split: "," -%}

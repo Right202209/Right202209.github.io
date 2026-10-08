@@ -22,6 +22,16 @@ zh-CN:
   date_short: "%Y-%m-%d"
   date_month: "%m-%d"
   read_original: "读原文"
+  weeks_title: 人生周历
+  weeks_count: "第 {n} 周，共约 {total} 周"
+  weeks_grid: 格子
+  weeks_timeline: 时间轴
+  weeks_born: 出生
+  weeks_teens: 十几岁
+  weeks_decade: "{n} 岁"
+  weeks_now: 现在
+  weeks_end: 预期寿命
+  weeks_seasons: 季节
 en:
   label: EN
   switch_label: EN
@@ -45,3 +55,13 @@ en:
   date_short: "%b %d, %Y"
   date_month: "%b %d"
   read_original: "Read the original"
+  weeks_title: My life in weeks
+  weeks_count: "Week {n} of about {total}"
+  weeks_grid: Grid
+  weeks_timeline: Timeline
+  weeks_born: Born
+  weeks_teens: Teens
+  weeks_decade: "{n}s"
+  weeks_now: Now
+  weeks_end: Life expectancy
+  weeks_seasons: Seasons

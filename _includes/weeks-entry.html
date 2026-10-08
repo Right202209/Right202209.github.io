@@ -1,0 +1,27 @@
+{%- comment -%} One row in the post-list style: today on the left, the Life-in-Weeks page on the right. {%- endcomment -%}
+{%- include lang.html -%}
+{%- assign wk = site.data.weeks -%}
+{%- assign wpage = site.pages | where: "ref", "weeks" | where: "lang", L | first -%}
+<ul class="rows weeks-entry" data-birthday="{{ wk.birthday | date: '%Y-%m-%d' }}" data-years="{{ wk.life_expectancy }}" data-lang="{{ L }}">
+  <li>
+    <time class="js-today" datetime="{{ site.time | date: '%Y-%m-%d' }}">{{ site.time | date: t.date_short }}</time>
+    <a href="{{ wpage.url | relative_url }}">{{ t.weeks_title }}<span class="note js-weekcount">{{ t.weeks_note }}</span></a>
+  </li>
+</ul>
+<script>
+(function () {
+  var box = document.currentScript.previousElementSibling, zh = box.dataset.lang.indexOf("zh") === 0;
+  var now = new Date(), p = function (n) { return String(n).padStart(2, "0"); };
+  var el = box.querySelector(".js-today");
+  el.textContent = zh ? now.getFullYear() + "-" + p(now.getMonth() + 1) + "-" + p(now.getDate())
+                      : now.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+  el.setAttribute("datetime", now.toISOString().slice(0, 10));
+  var b = box.dataset.birthday.split("-").map(Number), born = Date.UTC(b[0], b[1] - 1, b[2]);
+  var today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  var lived = Math.floor((today - born) / 6048e5) + 1, total = Math.round(box.dataset.years * 52.1775);
+  var f = function (n) { return n.toLocaleString(zh ? "zh-CN" : "en-US"); };
+  box.querySelector(".js-weekcount").textContent = zh
+    ? "第 " + f(lived) + " 周，共约 " + f(total) + " 周"
+    : "Week " + f(lived) + " of about " + f(total);
+})();
+</script>

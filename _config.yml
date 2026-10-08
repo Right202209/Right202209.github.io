@@ -58,6 +58,7 @@ sass:
 
 exclude:
   - README.md
+  - README.zh.md
   - Gemfile
   - Gemfile.lock
   - vendor

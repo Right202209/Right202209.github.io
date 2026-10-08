@@ -1,0 +1,16 @@
+---
+layout: default
+---
+{% include lang.html %}
+{% if site.data.weeks.enabled == false %}
+{% assign life = site.pages | where: "ref", "life" | where: "lang", L | first %}
+<meta http-equiv="refresh" content="0; url={{ life.url | relative_url }}">
+<p class="fine"><a href="{{ life.url | relative_url }}">←</a></p>
+{% else %}
+<header class="page-head">
+  <h1 class="display">{{ page.title }}</h1>
+  {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
+</header>
+<div class="prose weeks-intro">{{ content }}</div>
+{% include weeks/view.html %}
+{% endif %}

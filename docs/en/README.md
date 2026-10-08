@@ -377,6 +377,58 @@ The active nav item is worked out from the current URL; nothing else to set.
 
 ---
 
+### Life in Weeks
+
+A pluggable module ported from [weeks.ginatrapani.org](https://weeks.ginatrapani.org). It uses no Bootstrap and no jQuery, just CSS Grid, and its few dozen lines of script live in `assets/js/main.js`. Week numbers, ages, decades, phases, places, seasons and events are all worked out in Liquid at build time, so the page has no runtime library dependencies.
+
+**Switches and plugging in.** Everything lives in `_data/weeks.yml`.
+
+| Setting | Effect |
+| --- | --- |
+| `enabled: false` | Turns the whole module off: the entry row, the weeks page and the search entries disappear (the weeks page redirects to Life) |
+| `entry: false` | Hides only the entry row on the Life page |
+| `view: grid` / `timeline` | The default view. A visitor's own choice is remembered in their browser |
+| `hemisphere: north` / `south` | Which hemisphere the season ticks follow |
+
+Two includes work on any page:
+
+- `{% include weeks/entry.html %}`: one row in the post-list style, with today's date on the left and "My life in weeks · week N" on the right
+- `{% include weeks/view.html %}`: the full module, with the grid, the timeline and the switch
+
+To remove it completely, delete `_data/weeks.yml`, `_includes/weeks/`, `_layouts/weeks.html`, `_sass/_weeks.scss`, `life/weeks.md` and `en/life/weeks.md`, then drop `@import "weeks"` from `main.scss`.
+
+**Grid view.** One row per year of age, one cell per week (53 columns).
+
+- The fill shows the phase of life (`eras`); the border shows where you lived (`places`)
+- The first week of each season gets a faint tick on its left: blue for winter, green for spring, yellow for summer, clay for autumn
+- This week is highlighted; future weeks are empty
+- Hover or tap a cell for "date · age, week · phase, in place · event"
+- That year's events are listed at the end of the row
+
+**Timeline view.** A horizontal axis of a life, with nodes for birth, each event, now and life expectancy.
+
+- Every node has a dot and a date label; labels alternate above and below, near and far, so they don't crowd each other
+- The "Now" node is highlighted automatically; if an event falls this week, that event is highlighted instead
+- Dots grow and glow on hover; clicking an event's dot switches to the grid and jumps to its week
+- Add `line: true` to an event for a vertical marker
+- Nodes fade in one after another; on phones the timeline turns vertical
+
+**Events**
+
+```yaml
+events:
+  - { date: 2017-06-30, emoji: "🎓", zh: 大学毕业, en: Graduated, line: true }
+  - { date: 2021-04-02, private: true }   # a solid dot only: no text, not searchable
+```
+
+`zh` is used on the Chinese pages and `en` on `/en/`; if one is missing, the other is used.
+
+**Search.** Every public event is written into `search.json`. Press ⌘K, search "Graduated", and you land on that week, which flashes three times.
+
+`eras` and `places` can start at an `age:` (years) or a `start:` (date).
+
+> Your birthday and every non-private event are public. The events in `_data/weeks.yml` are only examples; replace them with your own.
+
 ## 9. Social page
 
 Edit `_data/social.yml`. Links are shared by both languages; only `note` can differ per language.

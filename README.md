@@ -48,6 +48,10 @@ Or build locally and upload `_site/` anywhere.
 - Global cursors: Put `default.cur` and `pointer.cur` in `assets/css/`; the styles are in `_sass/_cursor.scss`. If the files are missing, it automatically falls back to the system cursor.
 - oneko cat: Set `oneko: true` in the page's front matter to make it appear; currently only on the "Life" page. The sprite sheet is `assets/img/oneko.png` (256×128). It is automatically hidden on systems with "Reduce Motion" enabled. The script is from [adryd325/oneko.js](https://github.com/adryd325/oneko.js).
 
+## Life in Weeks
+
+A pluggable module. Under the quote on the Life page is one row: today's date on the left, and on the right a link to your life in weeks. The weeks page has two views, a grid and a horizontal timeline, with season ticks, private events (just a solid dot) and events you can find with ⌘K. All of it is built at compile time, with no libraries. The switches and the data live in `_data/weeks.yml`; see the tutorial. Ported from [Gina Trapani's My Life in Weeks](https://weeks.ginatrapani.org).
+
 ## Acknowledgements
 
 No house is built from nothing. Every brick here once belonged to someone else.
