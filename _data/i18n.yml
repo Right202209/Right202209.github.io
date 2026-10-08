@@ -34,6 +34,12 @@ zh-CN:
   weeks_bday: "🎂 {n} 岁 · {y}"
   weeks_seasons: 季节
   weeks_glance: "人生第 {n} 周 · 已走过 {p}% · 还剩约 {left} 周"
+  weeks_first_decade: 最初的十年
+  weeks_stat_lived: 已经走过的周
+  weeks_stat_pct: 人生进度
+  weeks_stat_left: 大约还剩的周
+  weeks_entry_now: "这是我人生的第 {n} 周"
+  weeks_entry_sub: "共约 {total} 周，已走过 {p}%"
 en:
   label: EN
   switch_label: EN
@@ -69,3 +75,9 @@ en:
   weeks_bday: "🎂 {n} in {y}"
   weeks_seasons: Seasons
   weeks_glance: "Week {n} of a life · {p}% lived · about {left} to go"
+  weeks_first_decade: The first decade
+  weeks_stat_lived: weeks lived
+  weeks_stat_pct: of a life
+  weeks_stat_left: weeks left, roughly
+  weeks_entry_now: "This is week {n} of my life"
+  weeks_entry_sub: "of about {total} · {p}% lived"

@@ -392,7 +392,9 @@ A pluggable module ported from [weeks.ginatrapani.org](https://weeks.ginatrapani
 
 Two includes work on any page:
 
-- `{% include weeks/entry.html %}`: one row in the post-list style, with today's date on the left and "My life in weeks · week N" on the right
+- `{% include weeks/entry.html %}`: an entry card. On the left is a miniature of the whole life, one square per year: lived years in ink, this year in clay with a slow pulse, years to come in light grey. On the right it reads "This is week N of my life", with "of about M · x% lived" below. On hover the card lifts and the lived years turn clay one after another. The numbers are corrected to the visitor's date.
+- The weeks page opens with three large numbers (weeks lived, % of a life, weeks left) and a life bar notched by decade.
+- The boxes reflow with the window. Each decade is one wrapping stream of boxes; every box has a minimum width and grows to fill its row. That gives about 26 a row on wide screens, 21 on tablets and 13 on phones. Each decade is labelled: "The first decade", "Teens", "20s", and so on.
 - `{% include weeks/view.html %}`: the full module, with the grid, the timeline and the switch
 
 To remove it completely, delete `_data/weeks.yml`, `_includes/weeks/`, `_layouts/weeks.html`, `_sass/_weeks.scss`, `life/weeks.md` and `en/life/weeks.md`, then drop `@import "weeks"` from `main.scss`.

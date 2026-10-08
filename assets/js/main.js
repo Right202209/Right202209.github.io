@@ -64,12 +64,20 @@
   };
   var each = function (sel, fn, ctx) { Array.prototype.forEach.call((ctx || document).querySelectorAll(sel), fn); };
 
+  // Weeks: this week of life, % lived, weeks left, against the visitor's clock (the build may be days old).
+  var lifeNow = function (el) {
+    var born = ymd(el.dataset.born), end = ymd(el.dataset.end), total = +el.dataset.total;
+    var lived = Math.floor((today - born) / WEEK) + 1;
+    return { lived: lived, total: total, left: Math.max(0, total - lived),
+             pct: Math.max(0, Math.min(100, Math.round((today - born) / (end - born) * 1000) / 10)),
+             age: Math.floor((today - born) / (365.2425 * DAY)) };
+  };
+  var num = function (n, zh) { return (+n).toLocaleString(zh ? 'zh-CN' : 'en-US', { maximumFractionDigits: 1 }); };
+
   each('[data-weeks-entry]', function (box) {
-    var zh = box.dataset.lang.indexOf('zh') === 0, n = Math.floor((today - ymd(box.dataset.born)) / WEEK) + 1;
-    var loc = zh ? 'zh-CN' : 'en-US', time = box.querySelector('time'), note = box.querySelector('.note');
-    time.textContent = fmt(today, zh); time.dateTime = fmt(today, true);
-    note.textContent = zh ? '第 ' + n.toLocaleString(loc) + ' 周，共约 ' + (+box.dataset.total).toLocaleString(loc) + ' 周'
-                          : 'Week ' + n.toLocaleString(loc) + ' of about ' + (+box.dataset.total).toLocaleString(loc);
+    var zh = box.dataset.lang.indexOf('zh') === 0, v = lifeNow(box);
+    each('[data-k]', function (el) { el.textContent = num(v[el.dataset.k], zh); }, box);
+    each('.wk-mini i', function (c, i) { c.className = i < v.age ? 'p' : i === v.age ? 'now' : ''; }, box);
   });
 
   var wk = document.querySelector('[data-weeks]');
@@ -80,9 +88,9 @@
     wk.classList.add('js-weeks');
 
     // Locale-format the glance numbers (week of life, % lived, weeks left).
-    each('[data-weeks-glance] b[data-n]', function (b) {
-      b.textContent = (+b.dataset.n).toLocaleString(zh ? 'zh-CN' : 'en-US', { maximumFractionDigits: 1 });
-    });
+    var lv = lifeNow(wk);
+    each('[data-weeks-glance] b[data-k]', function (b) { b.textContent = num(lv[b.dataset.k], zh); });
+    each('.wk-life', function (bar) { bar.style.setProperty('--p', lv.pct); }, wk);
 
     // Re-mark this week and the future against the visitor's clock (the build may be days old).
     var rows = wk.querySelectorAll('.wk-yr[data-from]');
