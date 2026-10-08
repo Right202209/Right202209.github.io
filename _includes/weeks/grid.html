@@ -1,0 +1,71 @@
+{%- comment -%}
+  The grid: one row per year of age, one cell per week (CSS Grid, 53 columns).
+  Week index, age, decade, era, place, season and events are all resolved here at build time.
+  Cell classes: eN era · pN place · sN season tick (0 winter, 1 spring, 2 summer, 3 autumn)
+                f future · now this week · ev event · pv private-only event
+{%- endcomment -%}
+{%- assign ps = -1 -%}
+{%- for age in (0..w_years) -%}
+  {%- assign y0 = w_by | plus: age -%}
+  {%- assign y1 = y0 | plus: 1 -%}
+  {%- assign from = y0 | append: "-" | append: w_md | date: "%s" | plus: 0 -%}
+  {%- assign to = y1 | append: "-" | append: w_md | date: "%s" | plus: 0 -%}
+  {%- assign dec = age | modulo: 10 -%}
+  {%- if dec == 0 -%}
+    {%- unless age == 0 -%}</section>{%- endunless -%}
+    <section class="wk-dec" id="decade-{{ age }}">
+  {%- endif -%}
+  {%- if age == w_years -%}
+    <div class="wk-yr wk-last{% if from > w_today %} f{% endif %}"><span class="wk-age">☠️ {{ y0 }}</span><span class="wk-notes">{{ t.weeks_end }}</span></div>
+    {%- break -%}
+  {%- endif -%}
+  {%- capture yev -%}{%- for s in w_ev_ts -%}{%- assign tt = s | plus: 0 -%}{%- if tt >= from and tt < to -%}{{ forloop.index0 }},{%- endif -%}{%- endfor -%}{%- endcapture -%}
+  {%- assign yev = yev | split: "," -%}
+  {%- assign n = to | minus: from | minus: 1 | divided_by: WK | floor | plus: 1 -%}
+  <div class="wk-yr" data-from="{{ from | date: '%Y-%m-%d' }}" data-age="{{ age }}">
+    <span class="wk-age">{% if age == 0 %}🐣 {{ y0 }}{% else %}{{ age }} · {{ y0 }}{% endif %}</span>
+    <span class="wk-cells">
+    {%- for w in (1..n) -%}
+      {%- assign ts = w | minus: 1 | times: WK | plus: from -%}
+      {%- assign te = ts | plus: WK -%}
+      {%- if te > to -%}{%- assign te = to -%}{%- endif -%}
+      {%- assign ei = 0 -%}{%- for s in w_era_ts -%}{%- assign tt = s | plus: 0 -%}{%- if tt <= ts -%}{%- assign ei = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+      {%- assign pi = 0 -%}{%- for s in w_pl_ts -%}{%- assign tt = s | plus: 0 -%}{%- if tt <= ts -%}{%- assign pi = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+      {%- assign m = ts | date: "%m" | plus: 0 -%}
+      {%- assign sn = m | modulo: 12 | divided_by: 3 | floor -%}
+      {%- if W.hemisphere == "south" -%}{%- assign sn = sn | plus: 2 | modulo: 4 -%}{%- endif -%}
+      {%- assign tick = false -%}
+      {%- if sn != ps -%}{%- assign tick = true -%}{%- assign ps = sn -%}{%- endif -%}
+      {%- assign hasev = false -%}{%- assign lab = "" -%}{%- assign keys = "" -%}
+      {%- for k in yev -%}
+        {%- if k == "" -%}{%- continue -%}{%- endif -%}
+        {%- assign ki = k | plus: 0 -%}
+        {%- assign tt = w_ev_ts[ki] | plus: 0 -%}
+        {%- if tt >= ts and tt < te -%}
+          {%- assign hasev = true -%}
+          {%- assign e = w_events[ki] -%}
+          {%- unless e.private -%}
+            {%- capture one -%}{% if e.emoji %}{{ e.emoji }} {% endif %}{% if L == "en" %}{{ e.en | default: e.zh }}{% else %}{{ e.zh | default: e.en }}{% endif %}{%- endcapture -%}
+            {%- if lab != "" -%}{%- assign lab = lab | append: " · " -%}{%- assign keys = keys | append: " " -%}{%- endif -%}
+            {%- assign lab = lab | append: one -%}
+            {%- assign d = e.date | date: "%Y-%m-%d" -%}
+            {%- assign keys = keys | append: "ev-" | append: d -%}
+          {%- endunless -%}
+        {%- endif -%}
+      {%- endfor -%}
+      <i class="e{{ ei }} p{{ pi }}{% if tick %} s{{ sn }}{% endif %}{% if ts > w_today %} f{% elsif te > w_today %} now{% endif %}{% if hasev %} ev{% if lab == "" %} pv{% endif %}{% endif %}"{% if lab != "" %} data-k="{{ keys }}" data-ev="{{ lab | escape }}"{% endif %}></i>
+    {%- endfor -%}
+    </span>
+    <span class="wk-notes">
+    {%- for k in yev -%}
+      {%- if k == "" -%}{%- continue -%}{%- endif -%}
+      {%- assign ki = k | plus: 0 -%}
+      {%- assign e = w_events[ki] -%}
+      {%- if e.private -%}<span class="wk-pdot" aria-hidden="true"></span>
+      {%- else -%}{%- assign d = e.date | date: "%Y-%m-%d" -%}<a id="ev-{{ d }}" href="#ev-{{ d }}">{% if e.emoji %}{{ e.emoji }} {% endif %}{% if L == "en" %}{{ e.en | default: e.zh }}{% else %}{{ e.zh | default: e.en }}{% endif %}</a>
+      {%- endif -%}
+    {%- endfor -%}
+    </span>
+  </div>
+{%- endfor -%}
+</section>

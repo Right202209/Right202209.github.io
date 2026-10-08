@@ -33,6 +33,7 @@
   }
 
   document.getElementById('search-open').addEventListener('click', open);
+  list.addEventListener('click', function (e) { if (e.target.closest('a')) close(); });
   modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
   input.addEventListener('input', function () { load().then(function () { render(input.value); }); });
   document.addEventListener('keydown', function (e) {
@@ -49,4 +50,90 @@
     }
     if (e.key === 'Enter') links[sel].click();
   });
+
+  // ── Life in Weeks: everything is pre-rendered; this only refreshes "today",
+  //    adds the tooltip, the grid/timeline switch and search jumps.
+  var DAY = 864e5, WEEK = 7 * DAY, now = new Date();
+  var today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  var ymd = function (s) { var a = s.split('-'); return Date.UTC(+a[0], a[1] - 1, +a[2]); };
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  var fmt = function (t, zh) {
+    var d = new Date(t);
+    return zh ? d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate())
+              : d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC' });
+  };
+  var each = function (sel, fn, ctx) { Array.prototype.forEach.call((ctx || document).querySelectorAll(sel), fn); };
+
+  each('[data-weeks-entry]', function (box) {
+    var zh = box.dataset.lang.indexOf('zh') === 0, n = Math.floor((today - ymd(box.dataset.born)) / WEEK) + 1;
+    var loc = zh ? 'zh-CN' : 'en-US', time = box.querySelector('time'), note = box.querySelector('.note');
+    time.textContent = fmt(today, zh); time.dateTime = fmt(today, true);
+    note.textContent = zh ? '第 ' + n.toLocaleString(loc) + ' 周，共约 ' + (+box.dataset.total).toLocaleString(loc) + ' 周'
+                          : 'Week ' + n.toLocaleString(loc) + ' of about ' + (+box.dataset.total).toLocaleString(loc);
+  });
+
+  var wk = document.querySelector('[data-weeks]');
+  if (wk) {
+    var zh = wk.dataset.lang.indexOf('zh') === 0, tip = wk.querySelector('.wk-tip');
+    var name = function (attr, cls) { var m = new RegExp('(?:^| )' + attr[0] + '(\\d+)').exec(cls); var k = m && wk.querySelector('[data-' + attr + '="' + m[1] + '"]'); return k ? k.textContent : ''; };
+    wk.classList.add('js-weeks');
+
+    // Re-mark this week and the future against the visitor's clock (the build may be days old).
+    var rows = wk.querySelectorAll('.wk-yr[data-from]');
+    each('.wk-yr[data-from]', function (row, r) {
+      var from = ymd(row.dataset.from), next = rows[r + 1] ? ymd(rows[r + 1].dataset.from) : Infinity;
+      each('i', function (c, i) {
+        var s = from + i * WEEK, e = Math.min(s + WEEK, next);
+        c.classList.toggle('f', s > today); c.classList.toggle('now', s <= today && today < e);
+      }, row.querySelector('.wk-cells'));
+    });
+    var tl = wk.querySelector('.wk-tl');
+    if (tl) {
+      var b = ymd(tl.dataset.born), p = Math.max(0, Math.min(100, (today - b) / (ymd(tl.dataset.end) - b) * 100)).toFixed(2);
+      tl.style.setProperty('--now', p);
+      each('.wk-today', function (n) { n.style.setProperty('--p', p); var t = n.querySelector('time'); t.textContent = fmt(today, zh); t.dateTime = fmt(today, true); }, tl);
+      each('.wk-node[data-d]', function (n) { var f = ymd(n.dataset.d) > today; n.classList.toggle('is-future', f); n.classList.toggle('is-past', !f); }, tl);
+    }
+
+    // Tooltip: date · age & week · era, place · event
+    var show = function (c) {
+      if (!c || c.tagName !== 'I' || !c.parentNode.classList.contains('wk-cells') || (c.classList.contains('f') && !c.dataset.ev)) { tip.hidden = true; return; }
+      var row = c.closest('.wk-yr'), i = Array.prototype.indexOf.call(c.parentNode.children, c);
+      var age = row.dataset.age, era = name('era', c.className), place = name('place', c.className);
+      var where = [era, place && (zh ? '在' + place : 'in ' + place)].filter(Boolean).join(zh ? '，' : ', ');
+      tip.textContent = [fmt(ymd(row.dataset.from) + i * WEEK, zh), zh ? age + ' 岁第 ' + (i + 1) + ' 周' : 'age ' + age + ', week ' + (i + 1), where, c.dataset.ev]
+        .filter(Boolean).join(' · ');
+      tip.hidden = false;
+      var r = c.getBoundingClientRect(), w = tip.offsetWidth, o = wk.getBoundingClientRect();
+      tip.style.left = Math.max(0, Math.min(r.left + r.width / 2 - w / 2, document.documentElement.clientWidth - w - 8) - o.left) + 'px';
+      tip.style.top = r.bottom - o.top + 8 + 'px';
+    };
+    var grid = wk.querySelector('.wk-grid');
+    grid.addEventListener('mouseover', function (e) { if (matchMedia('(hover: hover)').matches) show(e.target); });
+    grid.addEventListener('mouseleave', function () { tip.hidden = true; });
+    grid.addEventListener('click', function (e) { show(e.target); });
+    document.addEventListener('click', function (e) { if (!grid.contains(e.target)) tip.hidden = true; });
+
+    // Grid / timeline switch, remembered per browser
+    var setView = function (v) {
+      wk.dataset.view = v;
+      each('.wk-switch button', function (btn) { btn.setAttribute('aria-pressed', btn.dataset.v === v); }, wk);
+    };
+    setView(localStorage.getItem('weeks-view') || wk.dataset.view);
+    each('.wk-switch button', function (btn) {
+      btn.addEventListener('click', function () { setView(btn.dataset.v); localStorage.setItem('weeks-view', btn.dataset.v); });
+    }, wk);
+
+    // #ev-YYYY-MM-DD (from search or the timeline) → grid view, flash that week
+    var jump = function () {
+      var h = decodeURIComponent(location.hash.slice(1));
+      if (h.indexOf('ev-') !== 0) return;
+      setView('grid');
+      var cell = wk.querySelector('[data-k~="' + h + '"]'); if (!cell) return;
+      cell.classList.remove('hit'); void cell.offsetWidth; cell.classList.add('hit');
+      setTimeout(function () { cell.scrollIntoView({ block: 'center', behavior: 'smooth' }); show(cell); }, 60);
+    };
+    window.addEventListener('hashchange', jump); jump();
+  }
 })();
+

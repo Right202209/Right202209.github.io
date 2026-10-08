@@ -1,0 +1,14 @@
+{%- comment -%} Pluggable: drop {% include weeks/entry.html %} into any page. One post-list row: today | the weeks page. {%- endcomment -%}
+{%- include lang.html -%}
+{%- if site.data.weeks and site.data.weeks.enabled != false and site.data.weeks.entry != false -%}
+{%- include weeks/setup.html -%}
+{%- assign wpage = site.pages | where: "ref", "weeks" | where: "lang", L | first -%}
+{%- assign lived = w_today | minus: w_born | divided_by: WK | floor | plus: 1 -%}
+{%- assign total = w_years | times: 52.1775 | round -%}
+<ul class="rows weeks-entry" data-weeks-entry data-born="{{ w_bd }}" data-total="{{ total }}" data-lang="{{ L }}">
+  <li>
+    <time datetime="{{ site.time | date: '%Y-%m-%d' }}">{{ site.time | date: t.date_short }}</time>
+    <a href="{{ wpage.url | relative_url }}">{{ t.weeks_title }}<span class="note">{{ t.weeks_count | replace: "{n}", lived | replace: "{total}", total }}</span></a>
+  </li>
+</ul>
+{%- endif -%}

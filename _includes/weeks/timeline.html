@@ -1,0 +1,45 @@
+{%- comment -%}
+  Horizontal timeline: birth, every event, now, life expectancy. --p is the position along
+  the life (0–100), --i the stagger index for the fade-in. Built here; main.js only nudges "now".
+{%- endcomment -%}
+{%- assign now_p = w_today | minus: w_born | times: 100.0 | divided_by: w_span | round: 2 -%}
+{%- if now_p > 100 -%}{%- assign now_p = 100 -%}{%- endif -%}
+{%- assign i = 0 -%}{%- assign j = 0 -%}
+{%- assign now_done = false -%}
+<div class="wk-tlwrap">
+<ol class="wk-tl" style="--now:{{ now_p }}" data-born="{{ w_bd }}" data-end="{{ w_end | date: '%Y-%m-%d' }}">
+  <li class="wk-axis" aria-hidden="true"><i></i></li>
+  {%- assign ticks = w_years | divided_by: 10 | floor -%}
+  {%- for d in (1..ticks) -%}
+    {%- assign tp = d | times: 1000.0 | divided_by: w_years | round: 2 -%}
+    {%- if tp < 100 -%}<li class="wk-tick" style="--p:{{ tp }}" aria-hidden="true"><span>{{ d | times: 10 }}</span></li>{%- endif -%}
+  {%- endfor -%}
+  <li class="wk-node is-past is-edge is-start up" style="--p:0;--i:0"><span class="wk-dot"></span><span class="wk-cap"><time datetime="{{ w_bd }}">{{ w_bd | date: t.date_short }}</time><span>🐣 {{ t.weeks_born }}</span></span></li>
+  {%- for e in w_events -%}
+    {%- assign tt = w_ev_ts[forloop.index0] | plus: 0 -%}
+    {%- if tt < w_born or tt > w_end -%}{%- continue -%}{%- endif -%}
+    {%- if now_done == false and tt > w_today -%}
+      {%- assign i = i | plus: 1 -%}
+      <li class="wk-node is-now wk-today {% assign side = j | modulo: 4 %}{% assign j = j | plus: 1 %}{% case side %}{% when 0 %}down{% when 1 %}up far{% when 2 %}down far{% else %}up{% endcase %}" style="--p:{{ now_p }};--i:{{ i }}"><span class="wk-dot"></span><span class="wk-cap"><time datetime="{{ site.time | date: '%Y-%m-%d' }}">{{ site.time | date: t.date_short }}</time><span>{{ t.weeks_now }}</span></span></li>
+      {%- assign now_done = true -%}
+    {%- endif -%}
+    {%- assign i = i | plus: 1 -%}
+    {%- assign p = tt | minus: w_born | times: 100.0 | divided_by: w_span | round: 2 -%}
+    {%- assign d = e.date | date: "%Y-%m-%d" -%}
+    {%- assign recent = w_today | minus: WK -%}
+    {%- assign cur = false -%}
+    {%- if now_done == false and tt > recent and tt <= w_today -%}{%- assign cur = true -%}{%- assign now_done = true -%}{%- endif -%}
+    {%- if e.private -%}
+      <li class="wk-node pv{% if tt > w_today %} is-future{% else %} is-past{% endif %}" style="--p:{{ p }};--i:{{ i }}" data-d="{{ d }}"><span class="wk-dot"></span></li>
+    {%- else -%}
+      <li class="wk-node{% if tt > w_today %} is-future{% else %} is-past{% endif %}{% if e.line %} mk{% endif %}{% if cur %} is-now{% endif %} {% assign side = j | modulo: 4 %}{% assign j = j | plus: 1 %}{% case side %}{% when 0 %}down{% when 1 %}up far{% when 2 %}down far{% else %}up{% endcase %}" style="--p:{{ p }};--i:{{ i }}" data-d="{{ d }}"><a class="wk-dot" href="#ev-{{ d }}" aria-label="{{ d }}"></a><span class="wk-cap"><time datetime="{{ d }}">{{ e.date | date: t.date_short }}</time><span>{% if e.emoji %}{{ e.emoji }} {% endif %}{% if L == "en" %}{{ e.en | default: e.zh }}{% else %}{{ e.zh | default: e.en }}{% endif %}</span></span></li>
+    {%- endif -%}
+  {%- endfor -%}
+  {%- unless now_done -%}
+    {%- assign i = i | plus: 1 -%}
+    <li class="wk-node is-now wk-today {% assign side = j | modulo: 4 %}{% assign j = j | plus: 1 %}{% case side %}{% when 0 %}down{% when 1 %}up far{% when 2 %}down far{% else %}up{% endcase %}" style="--p:{{ now_p }};--i:{{ i }}"><span class="wk-dot"></span><span class="wk-cap"><time datetime="{{ site.time | date: '%Y-%m-%d' }}">{{ site.time | date: t.date_short }}</time><span>{{ t.weeks_now }}</span></span></li>
+  {%- endunless -%}
+  {%- assign i = i | plus: 1 -%}
+  <li class="wk-node is-future is-edge is-end down" style="--p:100;--i:{{ i }}"><span class="wk-dot"></span><span class="wk-cap"><time datetime="{{ w_end | date: '%Y-%m-%d' }}">{{ w_end | date: t.date_short }}</time><span>☠️ {{ t.weeks_end }}</span></span></li>
+</ol>
+</div>

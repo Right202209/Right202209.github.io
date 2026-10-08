@@ -1,0 +1,167 @@
+// ─── Life in Weeks · 人生周历 ─────────────────────────────────
+// Ported from weeks.ginatrapani.org. Pure CSS Grid, no framework.
+
+.weeks-entry { margin-top: 2.5rem; }
+.weeks-entry .note { font-family: var(--sans); }
+.weeks-intro { margin-bottom: 1.6rem; }
+
+.weeks {
+  --wk-gap: 2px;
+  --spring: #9cc59a; --summer: #e8c170; --autumn: var(--accent); --winter: #8eb2d6;
+  position: relative;
+}
+
+// Sticky bar: decade jumps + view switch
+.wk-bar {
+  position: sticky; top: 65px; z-index: 5; background: var(--bg);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: .6rem 0 .45rem; margin-bottom: 1rem; border-bottom: 1px solid var(--accent);
+  font: 500 .82rem/1.4 var(--sans);
+}
+.wk-nav { display: flex; flex-wrap: wrap; gap: .15rem .9rem; }
+.wk-nav a { color: var(--accent); text-decoration: none; }
+.wk-nav a:hover { text-decoration: underline; }
+.wk-switch { display: none; flex: none; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+.js-weeks .wk-switch { display: inline-flex; }
+.wk-switch button {
+  border: 0; background: none; color: var(--muted); font: inherit; font-size: .78rem;
+  padding: .2em .8em; border-radius: 999px; cursor: var(--cursor-pointer);
+}
+.wk-switch button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.weeks[data-view="timeline"] .wk-nav { visibility: hidden; }
+.weeks[data-view="timeline"] .wk-grid,
+.weeks[data-view="timeline"] .wk-legend,
+.weeks[data-view="grid"] .wk-tlwrap { display: none; }
+
+// Legend
+.wk-legend { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-bottom: 1.4rem; font: .78rem/1.4 var(--sans); color: var(--muted); }
+.wk-key { display: inline-flex; align-items: center; gap: .4em; }
+.wk-key::before { content: ""; width: 11px; height: 11px; border-radius: 2px; background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg)); }
+.wk-key-place::before { background: none; box-shadow: inset 0 0 0 1.5px var(--place); }
+.wk-key-season::before { display: none; }
+.wk-key-season i { position: relative; width: 4px; height: 11px; }
+
+// Grid: one row per year
+.wk-dec { scroll-margin-top: 130px; }
+.wk-dec + .wk-dec { margin-top: .9rem; }
+.wk-yr { display: grid; grid-template-columns: 5.2em minmax(0, 1fr) 8.5em; gap: 10px; align-items: center; margin: 0 0 var(--wk-gap); }
+.wk-age { font: .7rem/1 var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wk-cells { display: grid; grid-template-columns: repeat(53, minmax(0, 1fr)); gap: var(--wk-gap); }
+.wk-cells i {
+  position: relative; aspect-ratio: 1; border-radius: 2px; cursor: var(--cursor-pointer);
+  background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg));
+  box-shadow: inset 0 0 0 1px var(--place, transparent);
+  transition: transform .15s;
+}
+.wk-cells i:hover { transform: scale(1.7); z-index: 2; background: var(--accent); box-shadow: none; }
+.wk-cells i.f { background: transparent; box-shadow: inset 0 0 0 1px var(--line); opacity: .7; cursor: default; }
+.wk-cells i.f:hover { transform: none; background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+.wk-cells i.now { background: var(--accent); box-shadow: none; animation: wk-pulse 2.4s ease-in-out infinite; }
+.wk-cells i.ev::after { content: ""; position: absolute; inset: 28%; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--accent); }
+.wk-cells i.pv::after { box-shadow: none; background: var(--ink); }   // private: a solid dot, nothing else
+.wk-cells i.hit { animation: wk-hit 1.2s ease-in-out 3; z-index: 3; }
+
+// Seasons: a faint tick at the first week of each season
+.wk-cells i[class*=" s"]::before, .wk-key-season i::before {
+  content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 1px; opacity: .55; pointer-events: none;
+}
+.wk-cells i.s0::before, .wk-key-season i.s0::before { background: var(--winter); }
+.wk-cells i.s1::before, .wk-key-season i.s1::before { background: var(--spring); }
+.wk-cells i.s2::before, .wk-key-season i.s2::before { background: var(--summer); }
+.wk-cells i.s3::before, .wk-key-season i.s3::before { background: var(--autumn); }
+.wk-key-season i::before { left: 1px; top: 0; bottom: 0; opacity: .9; }
+
+.wk-notes { font: .72rem/1.3 var(--sans); color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; align-content: center; gap: 0 .6em; min-width: 0; height: 0; overflow: visible; }
+.wk-notes a { text-decoration: none; white-space: nowrap; scroll-margin-top: 140px; }
+.wk-notes a:target { color: var(--accent); }
+.wk-pdot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); align-self: center; }
+.wk-last { grid-template-columns: 5.2em minmax(0, 1fr); }
+.wk-last.f { opacity: .6; }
+
+.wk-tip {
+  position: absolute; z-index: 20; max-width: min(320px, 90vw);
+  background: var(--accent); color: #fff; padding: 6px 10px; border-radius: 6px;
+  font: 500 .78rem/1.4 var(--sans); pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,.15);
+}
+.wk-tip[hidden] { display: none; }
+
+// Timeline
+.wk-tlwrap { overflow-x: auto; padding: 0 0 .5rem; }
+.wk-tl { position: relative; list-style: none; margin: 0 16px; padding: 0; height: 330px; min-width: 760px; }
+.wk-axis { position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: var(--line); border-radius: 2px; }
+.wk-axis i { display: block; height: 100%; width: calc(var(--now) * 1%); background: var(--accent); border-radius: inherit; transform-origin: left; animation: wk-grow 1.2s cubic-bezier(.2,.7,.2,1) both; }
+.wk-tick { position: absolute; top: 50%; left: calc(var(--p) * 1%); width: 1px; height: 7px; background: var(--muted); opacity: .45; }
+.wk-tick span { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font: .65rem var(--sans); color: var(--muted); }
+.wk-node {
+  position: absolute; left: calc(var(--p) * 1%); top: 50%; width: 0; height: 0;
+  opacity: 0; animation: wk-in .55s ease forwards; animation-delay: calc(var(--i) * 80ms);
+}
+.wk-dot {
+  position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--accent); z-index: 2;
+  transition: transform .2s, box-shadow .2s; cursor: var(--cursor-pointer);
+}
+.is-past .wk-dot { background: var(--accent); }
+.is-future .wk-dot { border-color: var(--muted); border-style: dashed; }
+.wk-node:hover .wk-dot, .wk-dot:focus-visible {
+  transform: scale(1.6); outline: none;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 18px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.is-now .wk-dot { left: -8px; top: -8px; width: 16px; height: 16px; background: var(--accent); animation: wk-pulse 2.4s ease-in-out infinite; }
+.pv .wk-dot { left: -4px; top: -4px; width: 8px; height: 8px; background: var(--ink); border: 0; }   // private: dot only
+.wk-cap {
+  position: absolute; left: 0; transform: translateX(-50%); width: max-content; max-width: 9.5em;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1px;
+  font: .8rem/1.35 var(--sans); transition: transform .2s;
+}
+.up .wk-cap { bottom: 18px; }
+.down .wk-cap { top: 18px; }
+.wk-cap time { font-size: .7rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.is-now .wk-cap { color: var(--accent); font-weight: 500; }
+.is-future .wk-cap { color: var(--muted); }
+.wk-node:hover .wk-cap { transform: translateX(-50%) translateY(var(--lift, -2px)); }
+.down:hover .wk-cap { --lift: 2px; }
+.mk::before {   // optional vertical event marker
+  content: ""; position: absolute; left: 0; top: -130px; height: 260px; border-left: 1px dashed var(--accent); opacity: .55;
+}
+.up.far .wk-cap { bottom: 64px; }
+.down.far .wk-cap { top: 64px; }
+.far .wk-cap::before { content: ""; position: absolute; left: 50%; width: 1px; height: 40px; background: var(--line); }
+.up.far .wk-cap::before { top: 100%; margin-top: 4px; }
+.down.far .wk-cap::before { bottom: 100%; margin-bottom: 4px; }
+.is-start .wk-cap { transform: translateX(-12px); align-items: flex-start; text-align: left; }
+.is-end .wk-cap { transform: translateX(calc(-100% + 12px)); align-items: flex-end; text-align: right; }
+.is-start:hover .wk-cap { transform: translateX(-12px) translateY(-2px); }
+.is-end:hover .wk-cap { transform: translateX(calc(-100% + 12px)) translateY(2px); }
+
+@keyframes wk-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 22%, transparent); } }
+@keyframes wk-hit { 50% { transform: scale(2.2); background: var(--accent); } }
+@keyframes wk-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+@keyframes wk-grow { from { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .wk-node, .wk-axis i, .wk-cells i.now, .is-now .wk-dot, .wk-cells i.hit { animation: none; opacity: 1; }
+}
+
+@media (max-width: 720px) {
+  .wk-bar { flex-direction: column; align-items: flex-start; gap: .4rem; }
+  .weeks[data-view="timeline"] .wk-nav { display: none; }
+  .wk-yr { grid-template-columns: 3.6em minmax(0, 1fr); gap: 6px; }
+  .wk-notes { grid-column: 2; }
+  .wk-notes:empty { display: none; }
+  .wk-age { font-size: .62rem; }
+  .weeks { --wk-gap: 1px; }
+  // Timeline turns vertical on phones
+  .wk-tlwrap { overflow: visible; }
+  .wk-tl { height: auto; min-width: 0; margin: 0; padding: 4px 0 4px 26px; }
+  .wk-axis { left: 7px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; margin: 0; }
+  .wk-axis i { display: none; }
+  .wk-tick { display: none; }
+  .wk-node { position: relative; left: auto; top: auto; width: auto; height: auto; padding: .55rem 0; min-height: 2.2rem; }
+  .wk-dot { left: -25px; top: .9rem; }
+  .is-now .wk-dot { left: -27px; top: .8rem; }
+  .pv .wk-dot { left: -23px; top: 1.05rem; }
+  .wk-cap, .up .wk-cap, .down .wk-cap, .far .wk-cap, .is-start .wk-cap, .is-end .wk-cap { position: static; transform: none; width: auto; max-width: none; align-items: flex-start; text-align: left; }
+  .wk-node:hover .wk-cap, .is-start:hover .wk-cap, .is-end:hover .wk-cap { transform: translateX(3px); }
+  .far .wk-cap::before { display: none; }
+  .mk::before { left: -26px; top: auto; bottom: 0; height: 0; width: calc(100% + 26px); border-left: 0; border-top: 1px dashed var(--accent); }
+}

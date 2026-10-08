@@ -381,6 +381,67 @@ description: 屏幕熄灭后，留下的那些。
 
 ---
 
+### 人生周历（Life in Weeks）
+
+一个可插拔模块，移植自 [weeks.ginatrapani.org](https://weeks.ginatrapani.org)。不用 Bootstrap 和 jQuery，只靠 CSS Grid；脚本几十行，并在 `assets/js/main.js` 里。周序号、年龄、十年分段、阶段、住处、季节和事件都在构建时用 Liquid 算好，页面不依赖任何运行时库。
+
+**开关与插拔**：所有设置和数据都在 `_data/weeks.yml`。
+
+| 设置 | 作用 |
+| --- | --- |
+| `enabled: false` | 关掉整个模块：入口行、周历页、搜索条目全部消失（周历页会跳回生活页） |
+| `entry: false` | 只隐藏生活页的入口行 |
+| `view: grid` / `timeline` | 默认视图。访客切换后，浏览器会记住他的选择 |
+| `hemisphere: north` / `south` | 季节刻度按北半球还是南半球算 |
+
+两个 include 可以放进任何页面：
+
+- `{% include weeks/entry.html %}`：一行文章列表样式的入口，左边是今天的日期，右边是「人生周历 · 第 N 周」
+- `{% include weeks/view.html %}`：完整模块，包括格子、时间轴和切换按钮
+
+想彻底移除，删掉 `_data/weeks.yml`、`_includes/weeks/`、`_layouts/weeks.html`、`_sass/_weeks.scss`、`life/weeks.md`、`en/life/weeks.md`，再去掉 `main.scss` 里的 `@import "weeks"` 即可。
+
+**格子视图**：每年一行，每周一格（53 列）。
+
+- 底色代表人生阶段（`eras`），边框代表住处（`places`）
+- 每个季节的第一周左侧有一条淡淡的刻度线：冬蓝、春绿、夏黄、秋陶土
+- 本周高亮，未来的格子留空
+- 悬停或点按格子，显示「日期 · 几岁第几周 · 阶段，在某地 · 事件」
+- 当年的事件写在行尾
+
+**时间轴视图**：一条横向的人生轴，节点包括出生、各个事件、现在和预期寿命。
+
+- 每个节点有圆点和日期标签，标签上下交错、远近错开，避免互相挤压
+- 「现在」节点自动高亮；如果某个事件就在本周，高亮的就是那个事件
+- 悬停时圆点放大发光；点击事件圆点会切回格子视图，并跳到那一周
+- 给事件加 `line: true`，会多一条竖线标记
+- 节点依次淡入；在手机上自动变成竖向时间线
+
+**事件**：
+
+```yaml
+events:
+  - { date: 2017-06-30, emoji: "🎓", zh: 大学毕业, en: Graduated, line: true }
+  - { date: 2021-04-02, private: true }   # 只显示成一个实心点，没有文字，也不进搜索
+```
+
+`zh` 和 `en` 分别给中文页和 `/en/` 使用，缺了哪个就用另一个。
+
+**搜索**：每个公开事件都写进了 `search.json`。按 ⌘K 搜「毕业」，会直接跳到那一周，格子闪三下。
+
+`eras` 和 `places` 可以用 `age:`（岁）开始，也可以用 `start:`（日期）开始：
+
+```yaml
+eras:
+  - { age: 0, zh: 还很小, en: I was tiny, color: "#f3ece0" }
+  - { start: 2017-07-01, zh: 工作, en: Working, color: "#ece3ef" }
+places:
+  - { age: 0, zh: 家乡, en: Hometown, color: "#b9a68a" }
+  - { start: 2017-07-01, zh: 上海, en: Shanghai, color: "#8eb2d6" }
+```
+
+> 注意：生日和非私密事件都会公开显示。`_data/weeks.yml` 里的事件只是示例，记得换成你自己的。
+
 ## 9. 社交页
 
 编辑 `_data/social.yml`。社交链接不区分语言，只有 `note` 可以分语言写。
