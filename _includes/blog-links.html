@@ -1,0 +1,8 @@
+{%- comment -%} Small links to the optional archive/tags pages, shown only for the ones switched on. {%- endcomment -%}
+{%- include lang.html -%}
+{%- if site.archive_page or site.tags_page -%}
+<p class="sub-nav">
+  {%- if site.archive_page -%}{%- assign _a = site.pages | where: "ref", "archive" | where: "lang", L | first -%}<a href="{{ _a.url | relative_url }}">{{ t.archive }}</a>{%- endif -%}
+  {%- if site.tags_page -%}{%- assign _g = site.pages | where: "ref", "tags" | where: "lang", L | first -%}<a href="{{ _g.url | relative_url }}">{{ t.tags }}</a>{%- endif -%}
+</p>
+{%- endif -%}

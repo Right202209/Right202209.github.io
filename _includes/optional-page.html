@@ -1,0 +1,11 @@
+{%- comment -%}
+  Guard for optional pages (tags, archive). include.on is the switch from _config.yml.
+  Switched off: send visitors to the post list and keep the page out of search engines.
+{%- endcomment -%}
+{%- include lang.html -%}
+{%- unless include.on -%}
+{%- assign _bl = site.pages | where: "ref", "blog" | where: "lang", L | first -%}
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url={{ _bl.url | relative_url }}">
+<p class="fine"><a href="{{ _bl.url | relative_url }}">←</a></p>
+{%- endunless -%}

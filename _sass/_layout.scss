@@ -141,3 +141,21 @@ main.wrap { padding-top: 72px; padding-bottom: 96px; min-height: 70vh; }
   .card:hover, .social-item:hover { transform: none; }
 }
 a, button { touch-action: manipulation; }
+
+// Archive / tags (optional pages) and the small links to them on the post list
+.sub-nav { display: flex; gap: 18px; margin: -8px 0 40px; font-size: .9rem; }
+.sub-nav a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+.sub-nav a:hover { color: var(--accent); border-color: var(--accent); }
+.archive-sum { color: var(--muted); margin: -8px 0 40px; }
+.year .count { font: .85rem var(--sans); color: var(--muted); margin-left: 12px; vertical-align: middle; }
+.month { font: 500 .78rem var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; }
+.tag-cloud { list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-wrap: wrap; gap: 10px; }
+.tag-cloud a { display: inline-flex; align-items: baseline; gap: 8px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; font-size: .92rem; }
+.tag-cloud a:hover { border-color: var(--accent); color: var(--accent); }
+.tag-cloud .count { color: var(--muted); font-size: .78rem; }
+.tag-group { scroll-margin-top: calc(var(--header-h) + 16px); }
+a.tag { text-decoration: none; }
+a.tag:hover { text-decoration: underline; }
+@media (max-width: 720px) { .sub-nav, .archive-sum { margin-bottom: 28px; } }
+.archive-year .year, .tag-group .year { margin-top: 48px; }
+.tag-cloud + .tag-group .year { margin-top: 36px; }

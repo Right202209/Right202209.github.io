@@ -1,0 +1,33 @@
+---
+ref: archive
+layout: page
+title: 归档
+description: 按年月排好，一篇不落。
+permalink: /archive/
+---
+{% include lang.html %}{% assign MF = "%-m 月" %}
+{% include optional-page.html on=site.archive_page %}
+{% if site.archive_page %}
+{% assign ps = site.posts | where: "lang", L %}
+{% if ps.size > 0 %}
+{% assign first = ps | last %}{% assign y0 = first.date | date: "%Y" %}
+<p class="archive-sum">{{ t.archive_sum | replace: "{n}", ps.size | replace: "{y}", y0 }}</p>
+{% assign years = ps | group_by_exp: "p", "p.date | date: '%Y'" %}
+{% for y in years %}
+<section class="archive-year">
+  <h2 class="year">{{ y.name }}<span class="count">{{ t.posts_n | replace: "{n}", y.items.size }}</span></h2>
+  {% assign months = y.items | group_by_exp: "p", "p.date | date: '%m'" %}
+  {% for m in months %}
+  <div class="archive-month">
+    <h3 class="month">{{ m.items[0].date | date: MF }}</h3>
+    <ul class="rows">
+      {% for post in m.items %}
+      <li><time>{{ post.date | date: t.date_month }}</time><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</section>
+{% endfor %}
+{% endif %}
+{% endif %}

@@ -1,0 +1,6 @@
+{%- comment -%} A post tag: a link to the tags page when it is on (tags_page in _config.yml), plain text otherwise. {%- endcomment -%}
+{%- include lang.html -%}
+{%- if site.tags_page -%}
+{%- assign _tp = site.pages | where: "ref", "tags" | where: "lang", L | first -%}
+<a class="tag" href="{{ _tp.url | relative_url }}#{{ include.tag | replace: ' ', '-' | uri_escape }}">{{ include.tag }}</a>
+{%- else -%}<span class="tag">{{ include.tag }}</span>{%- endif -%}

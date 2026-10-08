@@ -6,8 +6,8 @@ layout: default
   <header class="page-head">
     <p class="meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: t.date_long }}</time>
-      · {{ content | number_of_words | divided_by: 220 | plus: 1 }} {{ t.minutes }}
-      {% for tag in page.tags %}· <span class="tag">{{ tag }}</span>{% endfor %}
+      · {% include reading-time.html text=content %} {{ t.minutes }}
+      {% for tag in page.tags %}· {% include tag-link.html tag=tag %}{% endfor %}
     </p>
     <h1 class="display">{{ page.title }}</h1>
     {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}

@@ -5,6 +5,7 @@ title: 文章
 description: 思想的草稿，按时间排列。
 ---
 {% include lang.html %}
+{% include blog-links.html %}
 {% assign years = site.posts | where: "lang", L | group_by_exp: "p", "p.date | date: '%Y'" %}
 {% for y in years %}
 <h2 class="year">{{ y.name }}</h2>

@@ -16,6 +16,6 @@
       document.documentElement.setAttribute('data-theme', t);
     })();
   </script>
-  {% feed_meta %}
+  {% include lang.html %}<link rel="alternate" type="application/atom+xml" hreflang="{{ L }}" title="{{ site.title | escape }}{% if L != site.lang %} ({{ t.label }}){% endif %}" href="{{ t.feed | relative_url }}">
   {% seo %}
 </head>

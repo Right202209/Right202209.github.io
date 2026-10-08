@@ -1,7 +1,17 @@
 ---
 layout: page
 ref: notfound
-title: Not here
+title: 走丢了
+description: 你要找的这一页，不在这里。
 permalink: /404.html
+sitemap: false
 ---
-Some pages exist only as intentions. [Return home]({{ '/' | relative_url }}).
+<script>
+  // GitHub Pages serves this one file for every missing URL. Missing English pages get the English version.
+  (function () {
+    var b = '{{ site.baseurl }}', p = location.pathname;
+    if (p.indexOf(b + '/en/') === 0 && p !== b + '/en/404.html') location.replace(b + '/en/404.html');
+  })();
+</script>
+<p>有些页面只存在于念头里。可以<a href="{{ '/' | relative_url }}">回到首页</a>，或者<a href="#" data-search-open>搜一搜</a>。</p>
+<p class="fine" lang="en">Page not found. <a href="{{ '/en/' | relative_url }}">English home →</a></p>

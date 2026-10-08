@@ -836,3 +836,14 @@ Settings → Actions → General → Workflow permissions，选 **Read and write
 ## 插画（Droit 白狗）
 
 文字优先，每个页面只出现一张插画，统一放在文字之后，作为页尾的收尾小图。首页的头图例外：宽屏放在简介右侧，手机上放在简介之后。规则和每张图的 key 见 `_data/droit.yml` 顶部注释和 README.zh.md 的「Droit 白狗插画」一节。
+
+
+## 订阅、阅读时长、404、标签与归档
+
+- **订阅（RSS / Atom）**：每种语言各一份。中文在 `/feed.xml`，英文在 `/en/feed.xml`，各自只收本语言的文章，最多 `feed_limit` 篇（默认 20）。模板在 `_includes/feed.xml`。页面 `<head>` 和社交页的 RSS 链接会自动指向当前语言的那一份。不再依赖 jekyll-feed 插件。
+- **阅读时长**：`_config.yml` 的 `reading_speed` 按语言设置速度。中文按字数算，默认每分钟 400 字（`number_of_words: "cjk"`）；英文按词数算，默认每分钟 220 词。结果向上取整，最少 1 分钟。计算逻辑在 `_includes/reading-time.html`。
+- **404**：`404.html` 是中文版，`en/404.html` 是英文版。GitHub Pages 遇到任何不存在的地址都只会返回根目录的 `404.html`；如果访问的地址在 `/en/` 下，页面会自动跳到英文版。两版都附了另一种语言的一行提示，也都有一个“搜一搜”链接，点了会打开搜索。
+- **标签页 / 归档页**：`_config.yml` 里的 `tags_page` 和 `archive_page` 是开关，默认都打开。
+  - 打开时：文章列表页标题下面会出现「归档 · 标签」两个小链接，文章顶部的标签也会变成链接，点了直接跳到标签页里对应的那一组。
+  - 关掉（改成 `false`）时：这些链接会消失；访问 `/tags/` 或 `/archive/` 的人会被送回文章列表，页面带 `noindex`，不会被搜索引擎收录。
+  - 页面文件：`tags/index.html`、`archive/index.html`，英文版在 `en/` 下。

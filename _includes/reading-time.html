@@ -1,0 +1,12 @@
+{%- comment -%}
+  Minutes to read include.text. Speeds live in _config.yml (reading_speed).
+  Chinese/Japanese count characters with number_of_words: "cjk"; other languages count words.
+{%- endcomment -%}
+{%- include lang.html -%}
+{%- assign _sp = site.reading_speed[L] | default: 220 -%}
+{%- assign _l2 = L | slice: 0, 2 -%}
+{%- assign _txt = include.text | strip_html -%}
+{%- if _l2 == "zh" or _l2 == "ja" -%}{%- assign _n = _txt | number_of_words: "cjk" -%}{%- else -%}{%- assign _n = _txt | number_of_words -%}{%- endif -%}
+{%- assign _m = _n | plus: _sp | minus: 1 | divided_by: _sp | floor -%}
+{%- if _m < 1 -%}{%- assign _m = 1 -%}{%- endif -%}
+{{- _m -}}
