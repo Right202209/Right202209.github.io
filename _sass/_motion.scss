@@ -1,0 +1,133 @@
+// ─── Motion · 过场动画 ────────────────────────────────────────
+// Page-to-page View Transitions, theme reveal, search & lightbox enter/exit, weeks view swap.
+// Everything is progressive: browsers without support keep the old behaviour.
+// To turn it all off, remove `@import "motion";` from assets/css/main.scss.
+// Notes: docs/zh-CN/transitions.md
+
+:root {
+  --dur-1: 120ms;  // colours, hover
+  --dur-2: 200ms;  // overlays, old page out
+  --dur-3: 320ms;  // new page in, indicators
+  --dur-4: 520ms;  // theme reveal
+  --ease-out: cubic-bezier(.2, .7, .2, 1);
+  --ease-in: cubic-bezier(.4, 0, 1, 1);
+  --ease-inout: cubic-bezier(.65, 0, .35, 1);
+}
+
+// Keep room for the scrollbar so opening search / the lightbox (overflow: hidden) doesn't shift the page sideways.
+html { scrollbar-gutter: stable; }
+
+// ── 1. Page to page ──────────────────────────────────────────
+@view-transition { navigation: auto; }
+
+.site-header { view-transition-name: site-header; }
+::view-transition-group(site-header) { animation-duration: var(--dur-3); animation-timing-function: var(--ease-out); }
+
+::view-transition-old(root) { animation: vt-out var(--dur-2) var(--ease-in) both; }
+::view-transition-new(root) { animation: vt-in var(--dur-3) var(--ease-out) 40ms both; }
+@keyframes vt-out { to   { opacity: 0; transform: translateY(-6px); } }
+@keyframes vt-in  { from { opacity: 0; transform: translateY(10px); } }
+
+// Going back (back link, browser Back): the motion runs the other way.
+html:active-view-transition-type(back)::view-transition-old(root) { animation-name: vt-out-back; }
+html:active-view-transition-type(back)::view-transition-new(root) { animation-name: vt-in-back; }
+@keyframes vt-out-back { to   { opacity: 0; transform: translateY(6px); } }
+@keyframes vt-in-back  { from { opacity: 0; transform: translateY(-10px); } }
+
+// Switching language: every word changes, so a plain cross-fade.
+html:active-view-transition-type(lang)::view-transition-old(root) { animation: vt-fade-out 240ms var(--ease-in) both; }
+html:active-view-transition-type(lang)::view-transition-new(root) { animation: vt-fade-in 360ms var(--ease-out) 80ms both; }
+@keyframes vt-fade-out { to   { opacity: 0; } }
+@keyframes vt-fade-in  { from { opacity: 0; } }
+
+// Post title: the row in a list flies into the article's heading (names are set inline in the templates).
+.vt-title { display: inline-block; }
+::view-transition-group(*.vt-title) { animation-duration: var(--dur-3); animation-timing-function: var(--ease-out); }
+
+// Firefox and older browsers: a gentle fade-in of the content instead.
+.no-vt main.wrap { animation: page-in var(--dur-3) var(--ease-out) both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } }
+
+// ── 2. Mobile nav indicator: slides to the new tab ───────────
+.nav-ind { display: none; }
+@media (max-width: 720px) {
+  .nav-links a.active::after { display: none; }
+  .nav-ind {
+    display: block; position: absolute; left: 0; right: 0; bottom: 5px; height: 2px; border-radius: 2px;
+    background: var(--accent); view-transition-name: nav-ind;
+  }
+}
+::view-transition-group(nav-ind) { animation-duration: var(--dur-3); animation-timing-function: var(--ease-out); }
+
+// ── 3. Theme: a circle opens from the toggle (main.js drives the clip-path) ─
+.vt-theme body { transition: none; }
+.vt-theme .site-header, .vt-theme .nav-ind { view-transition-name: none; }
+.vt-theme::view-transition-old(root),
+.vt-theme::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+.vt-theme::view-transition-new(root) { z-index: 2; }
+
+// ── 4. ⌘K search: fade + drop in, fade out ───────────────────
+.search {
+  opacity: 1;
+  transition: opacity var(--dur-2) var(--ease-out), display var(--dur-2) allow-discrete;
+}
+.search[hidden] { display: none; opacity: 0; }
+.search-panel { transition: transform var(--dur-2) var(--ease-out), opacity var(--dur-2) var(--ease-out); }
+.search[hidden] .search-panel { opacity: 0; transform: translateY(-4px) scale(.99); }
+@starting-style {
+  .search:not([hidden]) { opacity: 0; }
+  .search:not([hidden]) .search-panel { opacity: 0; transform: translateY(-8px) scale(.98); }
+}
+@media (max-width: 720px) {
+  .search[hidden] .search-panel { transform: translateY(-24px); }
+}
+@media (max-width: 720px) {
+  @starting-style {
+    .search:not([hidden]) .search-panel { opacity: 1; transform: translateY(-100%); }
+  }
+}
+
+// ── 5. Life in Weeks: grid ⇄ timeline cross-fade ─────────────
+.vt-swap::view-transition-old(root) { animation: vt-fade-out 160ms var(--ease-in) both; }
+.vt-swap::view-transition-new(root) { animation: vt-fade-in 240ms var(--ease-out) both; }
+
+// ── 6. Album lightbox ────────────────────────────────────────
+// Open / close without the zoom (no View Transitions, or reduced motion handled below).
+.ph-lb, .ph-lb::backdrop {
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease-out),
+              display var(--dur-2) allow-discrete,
+              overlay var(--dur-2) allow-discrete;
+}
+.ph-lb[open], .ph-lb[open]::backdrop { opacity: 1; }
+.ph-lb-fig { transition: transform var(--dur-3) var(--ease-out); }
+.ph-lb:not([open]) .ph-lb-fig { transform: scale(.97); }
+@starting-style {
+  .ph-lb[open], .ph-lb[open]::backdrop { opacity: 0; }
+  .ph-lb[open] .ph-lb-fig { transform: scale(.96); }
+}
+
+// Zoom from the thumbnail (main.js names both images ph-zoom during the switch).
+.vt-photo .ph-lb, .vt-photo .ph-lb::backdrop, .vt-photo .ph-lb-fig { transition: none; }
+.vt-photo .site-header, .vt-photo .nav-ind { view-transition-name: none; }
+.vt-photo::view-transition-old(root) { animation: vt-fade-out 200ms var(--ease-in) both; }
+.vt-photo::view-transition-new(root) { animation: vt-fade-in 240ms var(--ease-out) both; }
+::view-transition-group(ph-zoom) { animation-duration: 380ms; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
+
+// Next / previous: the new photo slides in from the side you're heading to.
+.ph-lb-fig img { transition: opacity .2s, transform var(--dur-2) var(--ease-out); }
+.ph-lb-fig img.loading { opacity: .6; }
+.ph-lb-fig img.in-next { animation: ph-from-right 280ms var(--ease-out) both; }
+.ph-lb-fig img.in-prev { animation: ph-from-left 280ms var(--ease-out) both; }
+@keyframes ph-from-right { from { opacity: 0; transform: translateX(28px); } }
+@keyframes ph-from-left  { from { opacity: 0; transform: translateX(-28px); } }
+
+// ── 7. Reduced motion: switch everything off ─────────────────
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  .no-vt main.wrap { animation: none; }
+  .search, .search-panel { transition: none; }
+  .ph-lb, .ph-lb::backdrop, .ph-lb-fig, .ph-lb-fig img { transition: none; }
+  .ph-lb-fig img.in-next, .ph-lb-fig img.in-prev { animation: none; }
+}

@@ -7,13 +7,40 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  <link rel="expect" href="#main" blocking="render">
   <link rel="icon" href="{{ '/assets/img/favicon.svg' | relative_url }}" type="image/svg+xml">
   {% capture droit_touch %}{% include droit.html key="touch_icon" url_only="1" %}{% endcapture %}{% if droit_touch != "" %}<link rel="apple-touch-icon" href="{{ droit_touch | strip }}">{% endif %}
   <script>
     (function () {
-      var t = localStorage.getItem('theme') ||
-        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-theme', t);
+      var apply = function () {
+        var t = localStorage.getItem('theme') ||
+          (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      };
+      apply();
+      // A prerendered page (speculation rules) may be shown after the theme was toggled: read it again.
+      if (document.prerendering) document.addEventListener('prerenderingchange', apply, { once: true });
+    })();
+  </script>
+  <script>
+    // Page transitions (_sass/_motion.scss): tag back / language navigations so the motion can differ.
+    // Must run before first render, so it stays inline here rather than in main.js.
+    (function () {
+      var root = document.documentElement;
+      if (!('CSSViewTransitionRule' in window) && !('onpagereveal' in window)) root.classList.add('no-vt');
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[data-vt]');
+        if (a) try { sessionStorage.setItem('vt', a.dataset.vt); } catch (_) {}
+      }, true);
+      window.addEventListener('pagereveal', function (e) {
+        if (!e.viewTransition || !e.viewTransition.types) return;
+        var t = null;
+        try { t = sessionStorage.getItem('vt'); sessionStorage.removeItem('vt'); } catch (_) {}
+        var act = window.navigation && navigation.activation;
+        if (!t && act && act.navigationType === 'traverse' && act.from && act.entry &&
+            act.entry.index < act.from.index) t = 'back';
+        if (t) e.viewTransition.types.add(t);
+      });
     })();
   </script>
   {% include lang.html %}<link rel="alternate" type="application/atom+xml" hreflang="{{ L }}" title="{{ site.title | escape }}{% if L != site.lang %} ({{ t.label }}){% endif %}" href="{{ t.feed | relative_url }}">

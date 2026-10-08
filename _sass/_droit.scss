@@ -18,6 +18,10 @@
 .droit-coda.droit-landscape { width: min(520px, 100%); }
 .droit-coda img { opacity: 0; transform: translateY(8px); animation: droit-in .9s .15s cubic-bezier(.2,.7,.2,1) forwards; }
 @keyframes droit-in { to { opacity: 1; transform: none; } }
+// Where scroll-driven animation exists, the vignette rises as it scrolls into view instead of on page load.
+@supports (animation-timeline: view()) {
+  .droit-coda img { animation: droit-in auto linear both; animation-timeline: view(); animation-range: entry 10% cover 30%; }
+}
 .post .droit-coda + .pager { margin-top: 56px; }
 .wk-coda .droit-coda { margin-top: 72px; }
 
