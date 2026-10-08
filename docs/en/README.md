@@ -829,3 +829,19 @@ The whole site has been checked on phones first. At widths of 360, 390, 768 and 
 ## Illustrations (Droit the white dog)
 
 Words come first, and each page shows exactly one illustration: a closing vignette placed after the text. The home hero is the one exception. It sits beside the intro on wide screens and below it on phones. The rules and the list of keys are in the header comment of `_data/droit.yml`.
+
+
+## Feeds, reading time, 404, tags and archive
+
+- **Feeds (Atom):** there is one feed per language. The Chinese one is `/feed.xml` and the English one is `/en/feed.xml`. Each holds only its own language's posts, up to `feed_limit` (default 20). The template is `_includes/feed.xml`. The `<head>` link and the RSS link on the Social page point to the current language's feed. jekyll-feed is no longer used.
+- **Reading time:** `reading_speed` in `_config.yml` is set per language.
+  - Chinese counts characters, 400 a minute by default (`number_of_words: "cjk"`).
+  - English counts words, 220 a minute by default.
+  - The result rounds up, with a minimum of 1 minute. The logic is in `_includes/reading-time.html`.
+- **404:** `404.html` is Chinese and `en/404.html` is English.
+  - GitHub Pages serves the root `404.html` for every missing URL, so missing URLs under `/en/` jump to the English version.
+  - Each version has a one-line note in the other language and a "try a search" link that opens search.
+- **Tags and archive pages:** both are switched on and off in `_config.yml` with `tags_page` and `archive_page`, and both default to on.
+  - When on, the post list shows small "Archive · Tags" links, and the tags on a post link to their group on the tags page.
+  - When off (`false`), those links go away. `/tags/` and `/archive/` send visitors back to the post list and are marked `noindex`.
+  - The page files are `tags/index.html` and `archive/index.html`, with English copies under `en/`.

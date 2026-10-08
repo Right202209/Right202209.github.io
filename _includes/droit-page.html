@@ -17,6 +17,8 @@
     {%- if _a == nil or _a.show == false -%}{%- assign _k = "post_end" -%}{%- endif -%}
   {%- elsif page.layout == "reading" -%}
     {%- assign _k = "reading_item" -%}
+  {%- elsif page.ref == "archive" or page.ref == "tags" -%}
+    {%- assign _k = "blog" -%}
   {%- elsif page.ref == "blog" -%}
     {%- assign _n = site.posts | where: "lang", L | size -%}
     {%- if _n == 0 -%}{%- assign _k = "empty" -%}{%- else -%}{%- assign _k = "blog" -%}{%- endif -%}

@@ -55,6 +55,9 @@
   }
 
   document.getElementById('search-open').addEventListener('click', open);
+  document.querySelectorAll('[data-search-open]').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); open(); });
+  });
   var closeBtn = document.getElementById('search-close');
   if (closeBtn) closeBtn.addEventListener('click', close);
   list.addEventListener('click', function (e) { if (e.target.closest('a')) close(); });

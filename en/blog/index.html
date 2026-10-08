@@ -5,6 +5,7 @@ title: Writing
 description: Drafts of a mind, in chronological order.
 ---
 {% include lang.html %}
+{% include blog-links.html %}
 {% assign years = site.posts | where: "lang", L | group_by_exp: "p", "p.date | date: '%Y'" %}
 {% for y in years %}
 <h2 class="year">{{ y.name }}</h2>

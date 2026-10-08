@@ -1,0 +1,7 @@
+---
+layout: null
+permalink: /en/feed.xml
+sitemap: false
+---
+<?xml version="1.0" encoding="utf-8"?>
+{% include feed.xml %}

@@ -15,6 +15,12 @@ zh-CN:
   notes: 随记
   latest: 最近的文字
   minutes: 分钟
+  feed: /feed.xml
+  tags: 标签
+  archive: 归档
+  posts_n: "{n} 篇"
+  archive_sum: "共 {n} 篇，从 {y} 年写起。"
+  tags_sum: "{n} 个标签。"
   search_placeholder: "寻找一个念头…"
   search_empty: "还没。也许这就是答案。"
   search_close: 取消
@@ -57,6 +63,12 @@ en:
   notes: Notes
   latest: Latest writing
   minutes: min
+  feed: /en/feed.xml
+  tags: Tags
+  archive: Archive
+  posts_n: "{n} posts"
+  archive_sum: "{n} posts, written since {y}."
+  tags_sum: "{n} tags."
   search_placeholder: "Search for a thought…"
   search_empty: "Nothing yet. Perhaps that is the answer."
   search_close: Cancel

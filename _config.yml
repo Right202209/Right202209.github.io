@@ -21,6 +21,20 @@ home:
 
 permalink: /blog/:year/:title/
 
+# Reading time on posts ("N 分钟" / "N min"), per language.
+# Chinese counts characters (about 400 a minute); other languages count words.
+reading_speed:
+  zh-CN: 400
+  en: 220
+
+# One Atom feed per language: /feed.xml (中文) and /en/feed.xml (English).
+feed_limit: 20
+
+# Optional pages. Set one to false to switch it off: its links disappear and its URL
+# sends visitors back to the post list.
+tags_page: true      # /tags/    and /en/tags/
+archive_page: true   # /archive/ and /en/archive/
+
 # "Reading" works like posts: one Markdown file per piece in _reading/ (English in _reading/en/).
 collections:
   reading:
@@ -49,7 +63,6 @@ kramdown:
     disable: false
 
 plugins:
-  - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
 
