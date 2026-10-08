@@ -11,11 +11,13 @@ permalink: /archive/
 {% assign ps = site.posts | where: "lang", L %}
 {% if ps.size > 0 %}
 {% assign first = ps | last %}{% assign y0 = first.date | date: "%Y" %}
-<p class="archive-sum">{{ t.archive_sum | replace: "{n}", ps.size | replace: "{y}", y0 }}</p>
+{% assign n_ph = "{n}" %}
+{% assign y_ph = "{y}" %}
+<p class="archive-sum">{{ t.archive_sum | replace: n_ph, ps.size | replace: y_ph, y0 }}</p>
 {% assign years = ps | group_by_exp: "p", "p.date | date: '%Y'" %}
 {% for y in years %}
 <section class="archive-year">
-  <h2 class="year">{{ y.name }}<span class="count">{{ t.posts_n | replace: "{n}", y.items.size }}</span></h2>
+  <h2 class="year">{{ y.name }}<span class="count">{{ t.posts_n | replace: n_ph, y.items.size }}</span></h2>
   {% assign months = y.items | group_by_exp: "p", "p.date | date: '%m'" %}
   {% for m in months %}
   <div class="archive-month">
