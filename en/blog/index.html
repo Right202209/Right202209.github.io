@@ -11,7 +11,7 @@ description: Drafts of a mind, in chronological order.
 <h2 class="year">{{ y.name }}</h2>
 <ul class="rows">
   {% for post in y.items %}
-  <li><time>{{ post.date | date: t.date_month }}</time><a href="{{ post.url | relative_url }}">{{ post.title }}{% if post.description %}<span class="note">{{ post.description }}</span>{% endif %}</a></li>
+  <li><time>{{ post.date | date: t.date_month }}</time><a href="{{ post.url | relative_url }}"><span class="vt-title" style="view-transition-name: p-{{ post.url | slugify }}; view-transition-class: vt-title">{{ post.title }}</span>{% if post.description %}<span class="note">{{ post.description }}</span>{% endif %}</a></li>
   {% endfor %}
 </ul>
 {% endfor %}

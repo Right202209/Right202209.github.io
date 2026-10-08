@@ -9,7 +9,7 @@ layout: default
       · {% include reading-time.html text=content %} {{ t.minutes }}
       {% for tag in page.tags %}· {% include tag-link.html tag=tag %}{% endfor %}
     </p>
-    <h1 class="display">{{ page.title }}</h1>
+    <h1 class="display"><span class="vt-title" style="view-transition-name: p-{{ page.url | slugify }}; view-transition-class: vt-title">{{ page.title }}</span></h1>
     {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
   </header>
   <div class="prose">{{ content }}</div>

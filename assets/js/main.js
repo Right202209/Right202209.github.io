@@ -1,10 +1,29 @@
 (function () {
   var root = document.documentElement;
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  var canVT = function () { return !!document.startViewTransition && !reduce.matches; };
+  // Run fn inside a same-document View Transition; cls on <html> picks its motion in _motion.scss.
+  var withVT = function (cls, fn) {
+    if (!canVT()) { fn(); return null; }
+    root.classList.add(cls);
+    var t = document.startViewTransition(fn);
+    t.finished.finally(function () { root.classList.remove(cls); });
+    return t;
+  };
+
+  // Theme: the new colours open as a circle from the toggle.
   var toggle = document.getElementById('theme-toggle');
+  var applyTheme = function (next) { root.setAttribute('data-theme', next); localStorage.setItem('theme', next); };
   if (toggle) toggle.addEventListener('click', function () {
     var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
+    var r = toggle.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    var t = withVT('vt-theme', function () { applyTheme(next); });
+    if (!t) return;
+    var end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    t.ready.then(function () {
+      root.animate({ clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + end + 'px at ' + x + 'px ' + y + 'px)'] },
+        { duration: 520, easing: 'cubic-bezier(.65,0,.35,1)', pseudoElement: '::view-transition-new(root)' });
+    }).catch(function () {});
   });
 
   // Small screens: the two-row header slides away while reading down and returns on the way up.
@@ -19,9 +38,7 @@
       ticking = false;
     });
   }, { passive: true });
-  // Keep the active tab in view in the scrolling nav row.
-  var act = document.querySelector('.nav-links a.active');
-  if (act && small.matches) act.parentNode.scrollLeft = act.offsetLeft - (act.parentNode.clientWidth - act.offsetWidth) / 2;
+  // (The active tab is centred in the nav row by an inline script in header.html, before first paint.)
 
   var modal = document.getElementById('search');
   var input = document.getElementById('search-input');
@@ -176,7 +193,10 @@
     };
     setView(localStorage.getItem('weeks-view') || wk.dataset.view);
     each('.wk-switch button', function (btn) {
-      btn.addEventListener('click', function () { setView(btn.dataset.v); localStorage.setItem('weeks-view', btn.dataset.v); });
+      btn.addEventListener('click', function () {
+        if (wk.dataset.view !== btn.dataset.v) withVT('vt-swap', function () { setView(btn.dataset.v); });
+        localStorage.setItem('weeks-view', btn.dataset.v);
+      });
     }, wk);
 
     // Scroll progress: the thin line under the sticky bar fills as the module scrolls past.
@@ -211,44 +231,110 @@
 
 // ─── Album lightbox ──────────────────────────────────────────
 // Each [data-photo] link opens the full image in the dialog; ← → / swipe to move, Esc to close.
+// Where View Transitions exist, the thumbnail zooms into the lightbox and back (motion in _motion.scss).
 // Without JS the links still open the image on its own.
 (function () {
   var grid = document.querySelector('[data-photos]'), lb = document.querySelector('.ph-lb');
   if (!grid || !lb || typeof lb.showModal !== 'function') return;
+  var root = document.documentElement, reduce = matchMedia('(prefers-reduced-motion: reduce)');
   var links = Array.prototype.slice.call(grid.querySelectorAll('[data-photo]'));
   var img = lb.querySelector('img'), tt = lb.querySelector('.ph-title'), mt = lb.querySelector('.ph-meta'), nn = lb.querySelector('.ph-n');
-  var cur = 0;
+  var cur = 0, busy = false;
   if (links.length < 2) lb.classList.add('single');
+  var canVT = function () { return !!document.startViewTransition && !reduce.matches; };
+  var thumbOf = function (i) { return links[i].querySelector('img'); };
+  var inView = function (el) { var r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 0; };
   var preload = function (i) { var a = links[(i + links.length) % links.length]; if (a) { var p = new Image(); p.src = a.href; } };
-  var show = function (i) {
+  // Wait until the full image is decoded (at most 300ms) so the zoom never lands on an empty frame.
+  var ready = function (src) {
+    var p = new Image(); p.src = src;
+    return Promise.race([p.decode ? p.decode().catch(function () {}) : Promise.resolve(),
+                         new Promise(function (r) { setTimeout(r, 300); })]);
+  };
+  var show = function (i, dir) {
     cur = (i + links.length) % links.length;
     var a = links[cur];
+    img.classList.remove('in-next', 'in-prev');
+    img.onload = function () {
+      img.classList.remove('loading');
+      if (dir && !reduce.matches) { void img.offsetWidth; img.classList.add('in-' + dir); }
+    };
     img.classList.add('loading');
-    img.onload = function () { img.classList.remove('loading'); };
     img.src = a.href; img.alt = a.dataset.title || '';
+    if (img.complete && img.naturalWidth) img.onload();
     tt.textContent = a.dataset.title || ''; mt.textContent = a.dataset.meta || '';
     nn.textContent = links.length > 1 ? (cur + 1) + ' / ' + links.length : '';
     preload(cur + 1); preload(cur - 1);
   };
+  var finish = function (t, el) {
+    t.finished.finally(function () { if (el) el.style.viewTransitionName = ''; root.classList.remove('vt-photo'); busy = false; });
+  };
+  var openAt = function (i) {
+    if (busy || lb.open) return;
+    var doOpen = function () { show(i); lb.showModal(); root.style.overflow = 'hidden'; };
+    if (!canVT()) return doOpen();
+    busy = true;
+    var th = thumbOf(i);
+    ready(links[i].href).then(function () {
+      th.style.viewTransitionName = 'ph-zoom';
+      root.classList.add('vt-photo');
+      var t = document.startViewTransition(function () {
+        th.style.viewTransitionName = '';
+        img.style.viewTransitionName = 'ph-zoom';
+        doOpen();
+      });
+      finish(t, img);
+    });
+  };
+  var closeLb = function () {
+    if (!lb.open || busy) return;
+    var th = thumbOf(cur);
+    if (!canVT() || !th) return lb.close();
+    if (!inView(th)) th.scrollIntoView({ block: 'nearest' });   // never fly back from off-screen
+    busy = true;
+    img.style.viewTransitionName = 'ph-zoom';
+    root.classList.add('vt-photo');
+    var t = document.startViewTransition(function () {
+      img.style.viewTransitionName = '';
+      th.style.viewTransitionName = 'ph-zoom';
+      lb.close();
+    });
+    finish(t, th);
+  };
   links.forEach(function (a, i) {
     a.addEventListener('click', function (e) {
       if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-      e.preventDefault(); show(i); lb.showModal(); document.documentElement.style.overflow = 'hidden';
+      e.preventDefault(); openAt(i);
     });
   });
-  lb.addEventListener('close', function () { document.documentElement.style.overflow = ''; links[cur].focus({ preventScroll: true }); });
-  lb.querySelector('.ph-prev').addEventListener('click', function () { show(cur - 1); });
-  lb.querySelector('.ph-next').addEventListener('click', function () { show(cur + 1); });
-  lb.querySelector('.ph-close').addEventListener('click', function () { lb.close(); });
-  lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });   // tap the dark backdrop
+  lb.addEventListener('close', function () { root.style.overflow = ''; links[cur].focus({ preventScroll: true }); });
+  lb.addEventListener('cancel', function (e) { e.preventDefault(); closeLb(); });   // Esc closes with the same motion
+  lb.querySelector('.ph-prev').addEventListener('click', function () { show(cur - 1, 'prev'); });
+  lb.querySelector('.ph-next').addEventListener('click', function () { show(cur + 1, 'next'); });
+  lb.querySelector('.ph-close').addEventListener('click', closeLb);
+  lb.addEventListener('click', function (e) { if (e.target === lb) closeLb(); });   // tap the dark backdrop
   lb.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowLeft') { e.preventDefault(); show(cur - 1); }
-    if (e.key === 'ArrowRight') { e.preventDefault(); show(cur + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(cur - 1, 'prev'); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); show(cur + 1, 'next'); }
   });
+  // Swipe: the photo follows the finger, then either moves on or springs back.
   var x0 = null;
-  lb.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  var release = function () { img.style.transition = ''; img.style.transform = ''; img.style.opacity = ''; };
+  lb.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) { x0 = null; return; }
+    x0 = e.touches[0].clientX; img.classList.remove('in-next', 'in-prev');
+  }, { passive: true });
+  lb.addEventListener('touchmove', function (e) {
+    if (x0 === null || reduce.matches) return;
+    var dx = e.touches[0].clientX - x0;
+    img.style.transition = 'none';
+    img.style.transform = 'translateX(' + dx + 'px)';
+    img.style.opacity = String(1 - Math.min(Math.abs(dx) / 400, .4));
+  }, { passive: true });
   lb.addEventListener('touchend', function (e) {
     if (x0 === null) return; var dx = e.changedTouches[0].clientX - x0; x0 = null;
-    if (Math.abs(dx) > 45) show(cur + (dx < 0 ? 1 : -1));
+    release();
+    if (Math.abs(dx) > 45) show(cur + (dx < 0 ? 1 : -1), dx < 0 ? 'next' : 'prev');
   }, { passive: true });
+  lb.addEventListener('touchcancel', function () { x0 = null; release(); }, { passive: true });
 })();

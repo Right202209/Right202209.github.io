@@ -47,10 +47,10 @@
   background: transparent; color: #faf9f5; overflow: hidden;
 }
 .ph-lb::backdrop { background: rgba(14, 13, 12, .94); }
-.ph-lb[open] { display: grid; place-items: center; animation: ph-in .25s ease; }
+.ph-lb[open] { display: grid; place-items: center; }
 .ph-lb-fig { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 92vw; }
-.ph-lb-fig img { max-width: 92vw; max-height: calc(100vh - 140px); object-fit: contain; border-radius: 4px; transition: opacity .2s; }
-.ph-lb-fig img.loading { opacity: .25; }
+.ph-lb-fig img { max-width: 92vw; max-height: calc(100vh - 140px); object-fit: contain; border-radius: 4px; }
+// Open / close / next / previous motion lives in _motion.scss.
 .ph-lb figcaption { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 4px 12px; text-align: center; }
 .ph-lb .ph-title { font-size: 1.05rem; }
 .ph-lb .ph-meta, .ph-lb .ph-n { color: rgba(250, 249, 245, .6); }
@@ -71,5 +71,4 @@
   .ph-lb-fig img { max-height: calc(100vh - 190px); }
   .ph-close { top: 14px; right: 14px; }
 }
-@keyframes ph-in { from { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .ph-lb[open] { animation: none; } .ph-link img, .ph-stack img { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ph-link img, .ph-stack img { transition: none; } }

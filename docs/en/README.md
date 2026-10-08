@@ -870,3 +870,11 @@ Words come first, and each page shows exactly one illustration: a closing vignet
 - The grid is a masonry layout that keeps each photo's shape. Clicking a photo opens a lightbox: use the arrow keys or swipe to move, and Esc or tap outside to close.
 - Keep photos under about 2000px on the long side, or give each a small `thumb`, so the grid loads fast.
 - The page is `life/photos.html`, the includes are in `_includes/photos/`, and the styles are in `_sass/_photos.scss`.
+
+## Transitions
+
+Page navigation, theme switching, ⌘K search, the life calendar week view, and the gallery lightbox now all have transitions. Unsupported browsers stay as they are, and everything is disabled when the system has “Reduce Motion” enabled.
+
+- Styles are centralized in `_sass/_motion.scss`. To disable them entirely, remove `@import "motion";` from `assets/css/main.scss`.
+- Scripts: There is an inline script in `head.html` that distinguishes between the two kinds of page navigation, “back” and “switch language”; an inline script at the bottom of `header.html` centers the active item in the mobile navigation; `main.js` handles the circular theme reveal, week calendar switching, and the lightbox.
+- Titles in post lists fly into the large title on the post page. If the same post appears twice in a list you wrote yourself, don’t add `vt-title` to it, otherwise the names will be duplicated and the full-page transition will fail.

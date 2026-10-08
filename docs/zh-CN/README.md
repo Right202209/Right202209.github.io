@@ -871,3 +871,12 @@ Settings → Actions → General → Workflow permissions，选 **Read and write
 - 相册是按原图比例排的瀑布流，点开是灯箱：键盘方向键、手机左右滑可以翻页，Esc 或点空白处关闭。
 - 图片尽量先压缩到长边 2000px 以内，或者给 `thumb` 一张小图，网格加载会快很多。
 - 页面文件在 `life/photos.html`，模板在 `_includes/photos/`，样式在 `_sass/_photos.scss`。
+
+
+## 过场动画
+
+换页、切换主题、⌘K 搜索、人生周历视图、相册灯箱都已经加上过场动画。不支持的浏览器保持原样，系统开了“减弱动态效果”时会全部关掉。
+
+- 样式集中在 `_sass/_motion.scss`。想整体关掉，删掉 `assets/css/main.scss` 里的 `@import "motion";`。
+- 脚本：`head.html` 里有一段内联脚本，区分“返回”和“切换语言”两种换页；`header.html` 底部的内联脚本让手机导航里的当前项居中；`main.js` 负责主题圆形展开、周历切换和灯箱。
+- 文章列表里的标题会飞成文章页的大标题。如果你自己写的列表里同一篇文章会出现两次，不要给它加 `vt-title`，否则名字重复，整页过渡会失效。

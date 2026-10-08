@@ -25,7 +25,7 @@ permalink: /en/archive/
     <h3 class="month">{{ m.items[0].date | date: MF }}</h3>
     <ul class="rows">
       {% for post in m.items %}
-      <li><time>{{ post.date | date: t.date_month }}</time><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+      <li><time>{{ post.date | date: t.date_month }}</time><a href="{{ post.url | relative_url }}"><span class="vt-title" style="view-transition-name: p-{{ post.url | slugify }}; view-transition-class: vt-title">{{ post.title }}</span></a></li>
       {% endfor %}
     </ul>
   </div>

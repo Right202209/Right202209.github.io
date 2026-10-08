@@ -2,5 +2,5 @@
 {%- if page.back -%}
 {%- include lang.html -%}
 {%- assign _bp = site.pages | where: "ref", page.back | where: "lang", L | first -%}
-{%- if _bp -%}<a class="back-link" href="{{ _bp.url | relative_url }}"><span aria-hidden="true">←</span> {{ _bp.title }}</a>{%- endif -%}
+{%- if _bp -%}<a class="back-link" data-vt="back" href="{{ _bp.url | relative_url }}"><span aria-hidden="true">←</span> {{ _bp.title }}</a>{%- endif -%}
 {%- endif -%}
