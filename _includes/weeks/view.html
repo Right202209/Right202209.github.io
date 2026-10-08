@@ -3,6 +3,7 @@
   on any page. Settings and data live in _data/weeks.yml; `enabled: false` turns it off.
 {%- endcomment -%}
 {%- include lang.html -%}
+{%- assign placeholder_n = "{n}" -%}
 {%- if site.data.weeks and site.data.weeks.enabled != false -%}
 {%- include weeks/setup.html -%}
 <style>
@@ -14,7 +15,7 @@
     <nav class="wk-nav" aria-label="decades">
       {%- assign decs = w_years | divided_by: 10 | floor -%}
       {%- for d in (0..decs) -%}{%- assign a = d | times: 10 -%}
-        <a href="#decade-{{ a }}">{% if a == 0 %}{{ t.weeks_born }}{% elsif a == 10 %}{{ t.weeks_teens }}{% else %}{{ t.weeks_decade | replace: "{n}", a }}{% endif %}</a>
+        <a href="#decade-{{ a }}">{% if a == 0 %}{{ t.weeks_born }}{% elsif a == 10 %}{{ t.weeks_teens }}{% else %}{{ t.weeks_decade | replace: placeholder_n, a }}{% endif %}</a>
       {%- endfor -%}
     </nav>
     <div class="wk-switch" role="group">
