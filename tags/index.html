@@ -1,4 +1,5 @@
 ---
+back: blog
 ref: tags
 layout: page
 title: 标签
@@ -6,15 +7,14 @@ description: 同一类念头，放在一起。
 permalink: /tags/
 ---
 {% include lang.html %}
-{% include optional-page.html on=site.tags_page %}
+{% include optional-page.html on=site.tags_page strict=1 %}
 {% if site.tags_page %}
 {% assign ps = site.posts | where: "lang", L %}
 {% assign all = "" | split: "" %}
 {% for p in ps %}{% if p.tags %}{% assign all = all | concat: p.tags %}{% endif %}{% endfor %}
 {% assign all = all | uniq | sort %}
 {% if all.size > 0 %}
-{% assign n_ph = "{n}" %}
-<p class="archive-sum">{{ t.tags_sum | replace: n_ph, all.size }}</p>
+<p class="archive-sum">{{ t.tags_sum | replace: "{n}", all.size }}</p>
 <ul class="tag-cloud">
   {% for tag in all %}{% assign n = ps | where_exp: "p", "p.tags contains tag" | size %}
   <li><a href="#{{ tag | replace: ' ', '-' | uri_escape }}">{{ tag }}<span class="count">{{ n }}</span></a></li>

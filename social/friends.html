@@ -1,0 +1,10 @@
+---
+layout: page
+ref: friends
+back: social
+title: 友链
+description: 路过的、常去的、想念的。
+permalink: /social/friends/
+---
+{% include optional-page.html on=site.data.friends.enabled to="social" %}
+{% if site.data.friends.enabled != false %}{% include friends/list.html %}{% endif %}

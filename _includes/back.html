@@ -1,0 +1,6 @@
+{%- comment -%} "← Parent" above a page title. Set `back: <ref>` in front matter (life, social, blog…). {%- endcomment -%}
+{%- if page.back -%}
+{%- include lang.html -%}
+{%- assign _bp = site.pages | where: "ref", page.back | where: "lang", L | first -%}
+{%- if _bp -%}<a class="back-link" href="{{ _bp.url | relative_url }}"><span aria-hidden="true">←</span> {{ _bp.title }}</a>{%- endif -%}
+{%- endif -%}

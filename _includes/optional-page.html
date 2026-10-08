@@ -1,11 +1,13 @@
 {%- comment -%}
-  Guard for optional pages (tags, archive). include.on is the switch from _config.yml.
+  Guard for optional pages (tags, archive, friends). include.on is the switch; include.to is the ref to fall back to (default blog).
   Switched off: send visitors to the post list and keep the page out of search engines.
 {%- endcomment -%}
 {%- include lang.html -%}
-{%- unless include.on -%}
-{%- assign _bl = site.pages | where: "ref", "blog" | where: "lang", L | first -%}
+{%- assign _to = include.to | default: "blog" -%}
+{%- if include.on == false or include.on == nil and include.strict -%}{%- assign _off = true -%}{%- else -%}{%- assign _off = false -%}{%- endif -%}
+{%- if _off -%}
+{%- assign _bl = site.pages | where: "ref", _to | where: "lang", L | first -%}
 <meta name="robots" content="noindex">
 <meta http-equiv="refresh" content="0; url={{ _bl.url | relative_url }}">
 <p class="fine"><a href="{{ _bl.url | relative_url }}">←</a></p>
-{%- endunless -%}
+{%- endif -%}

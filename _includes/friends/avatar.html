@@ -1,0 +1,8 @@
+{%- comment -%} One round avatar: include.f is a friend entry. Falls back to the first letter of the name. {%- endcomment -%}
+{%- assign _f = include.f -%}
+{%- assign _src = _f.avatar -%}
+{%- if _src == nil and _f.github -%}{%- capture _src -%}https://github.com/{{ _f.github }}.png?size=160{%- endcapture -%}{%- endif -%}
+{%- if _src -%}{%- assign _c0 = _src | slice: 0 -%}{%- if _c0 == "/" -%}{%- assign _src = _src | relative_url -%}{%- endif -%}{%- endif -%}
+<span class="fr-av{% if include.size %} fr-av-{{ include.size }}{% endif %}" data-initial="{{ _f.name | slice: 0 | upcase }}" aria-hidden="true">
+  {%- if _src -%}<img src="{{ _src }}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">{%- endif -%}
+</span>

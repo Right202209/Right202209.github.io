@@ -21,6 +21,10 @@ zh-CN:
   posts_n: "{n} 篇"
   archive_sum: "共 {n} 篇，从 {y} 年写起。"
   tags_sum: "{n} 个标签。"
+  friends: 友链
+  friends_count: "{n} 位朋友，点进去看看"
+  friends_apply: 交换友链
+  friends_apply_note: "想互相链接的话，把你的站点信息发到我的邮箱。我这边的信息是："
   search_placeholder: "寻找一个念头…"
   search_empty: "还没。也许这就是答案。"
   search_close: 取消
@@ -69,6 +73,10 @@ en:
   posts_n: "{n} posts"
   archive_sum: "{n} posts, written since {y}."
   tags_sum: "{n} tags."
+  friends: Friends
+  friends_count: "{n} friends, come and see"
+  friends_apply: Swap links
+  friends_apply_note: "To link to each other, email me your site details. Here are mine:"
   search_placeholder: "Search for a thought…"
   search_empty: "Nothing yet. Perhaps that is the answer."
   search_close: Cancel

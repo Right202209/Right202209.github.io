@@ -1,0 +1,17 @@
+{%- comment -%} Entry card to the friends page, for the Social page. Hidden when the module is off or the list is empty. {%- endcomment -%}
+{%- include lang.html -%}
+{%- assign _fd = site.data.friends -%}
+{%- if _fd and _fd.enabled != false -%}
+{%- assign _fl = _fd.list | where_exp: "f", "f.hidden != true" -%}
+{%- assign _fp = site.pages | where: "ref", "friends" | where: "lang", L | first -%}
+{%- if _fl.size > 0 and _fp -%}
+<a class="fr-entry" href="{{ _fp.url | relative_url }}">
+  <span class="fr-stack">{% for f in _fl limit: 5 %}{% include friends/avatar.html f=f size="sm" %}{% endfor %}</span>
+  <span class="fr-entry-text">
+    <strong>{{ t.friends }}</strong>
+    <span>{{ t.friends_count | replace: "{n}", _fl.size }}</span>
+  </span>
+  <span class="fr-arrow" aria-hidden="true">→</span>
+</a>
+{%- endif -%}
+{%- endif -%}

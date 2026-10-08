@@ -845,3 +845,15 @@ Words come first, and each page shows exactly one illustration: a closing vignet
   - When on, the post list shows small "Archive · Tags" links, and the tags on a post link to their group on the tags page.
   - When off (`false`), those links go away. `/tags/` and `/archive/` send visitors back to the post list and are marked `noindex`.
   - The page files are `tags/index.html` and `archive/index.html`, with English copies under `en/`.
+
+
+## Friends and back links
+
+- **Friends:** a module you can switch off as a whole. The data is in `_data/friends.yml`.
+  - With `enabled: false`, the friends card on the Social page disappears and `/social/friends/` sends visitors back to Social.
+  - Each friend needs a `name` and a `url`, plus either an `avatar` (an image URL) or a `github` username (which uses the GitHub avatar).
+  - `desc` is one line per language. `hidden: true` hides an entry for now.
+  - When there is no avatar, or it fails to load, the first letter of the name is shown.
+  - `me` holds this site's own details, shown under "Swap links".
+  - The page files are `social/friends.html` and `en/social/friends.html`. The includes are in `_includes/friends/`.
+- **Back links:** add `back: <ref>` to any page's front matter to show "← <that page's title>" above the title. Weeks uses `back: life`, Friends uses `back: social`, and Tags and Archive use `back: blog`.
