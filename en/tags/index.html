@@ -14,7 +14,8 @@ permalink: /en/tags/
 {% for p in ps %}{% if p.tags %}{% assign all = all | concat: p.tags %}{% endif %}{% endfor %}
 {% assign all = all | uniq | sort %}
 {% if all.size > 0 %}
-<p class="archive-sum">{{ t.tags_sum | replace: "{n}", all.size }}</p>
+{% assign n_placeholder = "{n}" %}
+<p class="archive-sum">{{ t.tags_sum | replace: n_placeholder, all.size }}</p>
 <ul class="tag-cloud">
   {% for tag in all %}{% assign n = ps | where_exp: "p", "p.tags contains tag" | size %}
   <li><a href="#{{ tag | replace: ' ', '-' | uri_escape }}">{{ tag }}<span class="count">{{ n }}</span></a></li>
