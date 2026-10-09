@@ -1,0 +1,90 @@
+# ------------------------------------------------------------
+#  故事手书 / Storybook —— 可插拔模块（和相册、人生周历一样）
+#  · enabled: false  → 生活页的入口消失，/life/story/ 退回生活页
+#  · entry: false    → 只隐藏生活页的入口卡，故事页照常可以访问
+#  · 每一页的文字都在 pages 里，按语言写 { zh-CN: ..., en: ... }
+#      line   页面上的正文（进入这一页时一个字一个字浮上来，鼠标碰到会跳）
+#      after  完成这一页的小互动之后才出现的下一句
+#      hint   页角的铅笔小字，告诉读者可以做什么
+#  · 插画是 assets/js/story.js 里手写的 SVG，每一页都能玩：
+#      封面跟着鼠标倾斜 · 衬纸签名 · 摘苹果叫醒 Droit · 追一张会躲的纸
+#      · 撑伞挡雨、点云打雷 · 摇海浪放小鱼 · 连星星 · 自己画那一页并装订 · 盖爪印 · 扫条形码
+#  · 读者签的名字、画的那一页、盖的爪印都只存在读者自己的浏览器里（localStorage），不会上传。
+# ------------------------------------------------------------
+enabled: true
+entry: true
+
+title: { zh-CN: 故事手书, en: Storybook }
+book: { zh-CN: Droit 与丢失的那一页, en: Droit and the Missing Page }
+entry_sub: { zh-CN: 一本会动的小书：摘苹果、追纸片、连星星，最后一页由你来画。, en: "A little book that moves: pick an apple, chase a page, join the stars, then draw the last page yourself." }
+
+pages:
+  cover:
+    line: { zh-CN: 一本手绘的小故事, en: A hand-drawn little story }
+    hint: { zh-CN: 点封面，或者拖动右边的书角, en: "Tap the cover, or drag the corner" }
+  endpaper:
+    line: { zh-CN: 这本书属于, en: This book belongs to }
+    after: { zh-CN: 好，我们出发吧。, en: "Right. Let's go." }
+    hint: { zh-CN: 在横线上写下你的名字，点一点衬纸上的爪印, en: "Write your name on the line, poke the paw prints" }
+  tree:
+    line: { zh-CN: 从前，有一本书少了一页。书里的白狗 Droit 睡在树下，什么也不知道。, en: "Once upon a time, a book lost one of its pages. Droit, the white dog who lived inside it, was asleep under a tree and knew nothing at all." }
+    after: { zh-CN: 苹果砸醒了它。Droit 闻了闻空掉的书脊，决定出门去找。, en: "An apple woke him up. Droit sniffed the empty spine and decided to go and look." }
+    hint: { zh-CN: 摘下那颗苹果 · 摇一摇树, en: "Pick the apple · shake the tree" }
+  wind:
+    line: { zh-CN: 风说，那页纸往北飞走了。它飞得很轻，像一个不想被抓住的念头。, en: "The wind said the page had flown north, light as a thought that doesn't want to be caught." }
+    after: { zh-CN: 抓不住也没关系，跟着走就好。, en: "You don't have to catch it. Following is enough." }
+    hint: { zh-CN: 去追那张纸（它会躲）· 点草地种花, en: "Chase the page (it dodges) · tap the grass to plant flowers" }
+  rain:
+    line: { zh-CN: 路过一场雨。雨点敲在伞上，像有人在小声念书。, en: "They walked through rain. Drops tapped on the umbrella like someone reading aloud, very quietly." }
+    after: { zh-CN: 雷声说：再往前一点，就到海边了。, en: "The thunder said: a little further, and you'll reach the sea." }
+    hint: { zh-CN: 移动雨伞 · 点乌云听雷 · 点地面踩水洼, en: "Move the umbrella · tap the cloud for thunder · tap the ground to splash" }
+  sea:
+    line: { zh-CN: 它坐上一只纸船。海是旧墨水做的，摇一摇，就有新的字浮上来。, en: "He sailed off in a paper boat. The sea was made of old ink; rock it, and new words float up." }
+    after: { zh-CN: 小鱼们说，它们见过那页纸，上面画满了星星。, en: "The little fish said they had seen the page. It was covered in stars." }
+    hint: { zh-CN: 上下移动让浪变大 · 点海面放出小鱼 · 点小船, en: "Move up and down to raise the waves · tap the water for fish · tap the boat" }
+  stars:
+    line: { zh-CN: 夜里，星星排成了一条线索。, en: "At night, the stars lined up into a clue." }
+    after: { zh-CN: 星星画出了那一页的形状。原来，它从来没有飞远。, en: "The stars drew the shape of the page. It had never gone far at all." }
+    hint: { zh-CN: 从闪得最亮的那颗开始，把星星连起来, en: "Start with the brightest star and join them up" }
+  draw:
+    line: { zh-CN: 丢失的那一页，一直在读这本书的你手里。, en: "The missing page was in your hands all along, the one reading this book." }
+    after: { zh-CN: 装订好了。这本书终于完整了。, en: "Bound in. The book is whole again." }
+    hint: { zh-CN: 把它画出来，然后点「装订」, en: "Draw it, then tap Bind" }
+  end:
+    line: { zh-CN: 完, en: The End }
+    hint: { zh-CN: 在哪里都可以盖一个爪印, en: Stamp a paw print anywhere }
+  back:
+    line: { zh-CN: 定价：一点点好奇心, en: "Price: a little curiosity" }
+    hint: { zh-CN: 扫一下条形码, en: Scan the barcode }
+
+ui:
+  prev: { zh-CN: 上一页, en: Previous page }
+  next: { zh-CN: 下一页, en: Next page }
+  sound_on: { zh-CN: 声音：开, en: "Sound: on" }
+  sound_off: { zh-CN: 声音：关, en: "Sound: off" }
+  name_ph: { zh-CN: 写下你的名字, en: your name }
+  name_of: { zh-CN: "{name} 的书", en: "{name}'s copy" }
+  ink: { zh-CN: 墨水, en: Ink }
+  red: { zh-CN: 朱砂, en: Red }
+  erase: { zh-CN: 橡皮, en: Eraser }
+  clear: { zh-CN: 擦掉, en: Clear }
+  bind: { zh-CN: 装订, en: Bind }
+  bound: { zh-CN: 已装订, en: Bound }
+  reread: { zh-CN: 从头再读, en: Read again }
+  scanned: { zh-CN: "已扫描：好奇心 ×{n}", en: "Scanned: curiosity ×{n}" }
+  zzz: { zh-CN: 呼……, en: zzz }
+  woke: { zh-CN: 嗯？, en: "Hm?" }
+  north: { zh-CN: 往北边……, en: "North…" }
+  toot: { zh-CN: 呜——, en: Toot! }
+  woof: { zh-CN: 就是这页！, en: "That's the one!" }
+  stamps: { zh-CN: "爪印 ×{n}", en: "Paw prints ×{n}" }
+  chapters: { zh-CN: 目录, en: Contents }
+  tabs:
+    - { zh-CN: 封面, en: Cover }
+    - { zh-CN: 一, en: I }
+    - { zh-CN: 二, en: II }
+    - { zh-CN: 三, en: III }
+    - { zh-CN: 四, en: IV }
+    - { zh-CN: 五, en: V }
+    - { zh-CN: 六, en: VI }
+    - { zh-CN: 完, en: End }

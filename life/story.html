@@ -1,0 +1,11 @@
+---
+layout: page
+ref: story
+back: life
+title: 故事手书
+description: Droit 与丢失的那一页
+permalink: /life/story/
+droit: false
+---
+{% include optional-page.html on=site.data.story.enabled to="life" %}
+{% if site.data.story.enabled != false %}{% include story/book.html %}{% endif %}
