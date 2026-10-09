@@ -51,6 +51,10 @@ zh-CN:
   weeks_stat_left: 大约还剩的周
   weeks_entry_now: "这是我人生的第 {n} 周"
   weeks_entry_sub: "共约 {total} 周，已走过 {p}%"
+  weeks_open: 打开链接
+  weeks_close: 关闭
+  weeks_tap: 点开看看
+  weeks_tap_link: 点击打开链接
   photos_title: 相册
   photos_entry_now: "{n} 张照片"
   photos_entry_sub: 光落下的地方。
@@ -109,6 +113,10 @@ en:
   weeks_stat_left: weeks left, roughly
   weeks_entry_now: "This is week {n} of my life"
   weeks_entry_sub: "of about {total} · {p}% lived"
+  weeks_open: Open the link
+  weeks_close: Close
+  weeks_tap: click to open
+  weeks_tap_link: click to follow the link
   photos_title: Album
   photos_entry_now: "{n} photographs"
   photos_entry_sub: Where the light fell.

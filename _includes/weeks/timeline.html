@@ -32,7 +32,9 @@
     {%- if e.private -%}
       <li class="wk-node pv{% if tt > w_today %} is-future{% else %} is-past{% endif %}" style="--p:{{ p }};--i:{{ i }}" data-d="{{ d }}"><span class="wk-dot"></span></li>
     {%- else -%}
-      <li class="wk-node{% if tt > w_today %} is-future{% else %} is-past{% endif %}{% if e.line %} mk{% endif %}{% if cur %} is-now{% endif %} {% assign side = j | modulo: 4 %}{% assign j = j | plus: 1 %}{% case side %}{% when 0 %}down{% when 1 %}up far{% when 2 %}down far{% else %}up{% endcase %}" style="--p:{{ p }};--i:{{ i }}" data-d="{{ d }}"><a class="wk-dot" href="#ev-{{ d }}" aria-label="{{ d }}"></a><span class="wk-cap"><time datetime="{{ d }}">{{ e.date | date: t.date_short }}</time><span>{% if e.emoji %}{{ e.emoji }} {% endif %}{% if L == "en" %}{{ e.en | default: e.zh }}{% else %}{{ e.zh | default: e.en }}{% endif %}</span></span></li>
+      <li class="wk-node{% if tt > w_today %} is-future{% else %} is-past{% endif %}{% if e.line %} mk{% endif %}{% if cur %} is-now{% endif %} {% assign side = j | modulo: 4 %}{% assign j = j | plus: 1 %}{% case side %}{% when 0 %}down{% when 1 %}up far{% when 2 %}down far{% else %}up{% endcase %}" style="--p:{{ p }};--i:{{ i }}" data-d="{{ d }}"><a class="wk-dot" href="#ev-{{ d }}" aria-label="{{ d }}"></a><span class="wk-cap"><time datetime="{{ d }}">{{ e.date | date: t.date_short }}</time>{%- if L == "en" -%}{%- assign u = e.url_en | default: e.url -%}{%- else -%}{%- assign u = e.url | default: e.url_en -%}{%- endif -%}
+      {%- capture lbl -%}{% if e.emoji %}{{ e.emoji }} {% endif %}{% if L == "en" %}{{ e.en | default: e.zh }}{% else %}{{ e.zh | default: e.en }}{% endif %}{%- endcapture -%}
+      {%- if u -%}<a class="wk-cap-a" href="{% include weeks/url.html u=u %}"{% if u contains "://" %} target="_blank" rel="noopener"{% endif %}>{{ lbl }}</a>{%- else -%}<span>{{ lbl }}</span>{%- endif -%}</span></li>
     {%- endif -%}
   {%- endfor -%}
   {%- unless now_done -%}

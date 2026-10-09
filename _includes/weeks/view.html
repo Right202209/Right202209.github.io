@@ -45,6 +45,12 @@
     {%- include weeks/grid.html -%}
   </div>
   {%- include weeks/timeline.html -%}
+  {%- include weeks/notes.html -%}
   <div class="wk-tip" role="tooltip" hidden></div>
+  <div class="wk-card" role="dialog" aria-modal="false" tabindex="-1" hidden data-open="{{ t.weeks_tap }}" data-go="{{ t.weeks_tap_link }}">
+    <button type="button" class="wk-card-x" aria-label="{{ t.weeks_close }}">×</button>
+    <p class="wk-card-meta"></p>
+    <div class="wk-card-body"></div>
+  </div>
 </div>
 {%- endif -%}

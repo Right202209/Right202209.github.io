@@ -31,8 +31,109 @@ places:
 # Milestones. Examples below — replace them with your own.
 #   private: true → a sealed week: hatched box + one ringed dot, no text, not searchable
 #   line: true    → a vertical marker on the timeline
+# Click any week and its card stays open (× / Esc / click elsewhere to close). An event can fill it:
+#   note / note_en   a few lines of Markdown; the week gets a folded corner
+#   image / images   one picture or a list: a URL, a /site/path, a file name in assets/img/photos/,
+#                    or { src: ..., alt: ..., caption: ... }
+#   url / url_en     the week becomes a link: underlined, with ↗. A click follows it; if the week
+#                    also has a note or pictures, the click opens the card and the link is its button.
 events:
-  - { date: 2019-06-20, emoji: "🎒", zh: 高中毕业, en: Finished high school }
-  - { date: 2026-06-30, emoji: "🎓", zh: 大学毕业, en: Graduated, line: true }
+  - { date: 2004-07-21, private: true, emoji: 👶 }
+
+  - date: 2010-09-01
+    emoji: "🎠"
+    zh: 开启求学生涯了😭
+    en: Started my educational journey😭
+
+  - date: 2012-12-21
+    emoji: "🌎"
+    zh: 世界末日?
+    en: The end of the world?
+
+  - date: 2015-01-21
+    emoji: "🐧"
+    zh: 开启互联网时光
+    en: Started my internet journey
+
+  - date: 2016-06-30
+    emoji: "🔔"
+    zh: 我小学毕业啦
+    en: Finished primary school
+
+  - date: 2016-09-01
+    emoji: "🎠"
+    zh: 初中
+    en: Started middle school
+
+  - date: 2019-06-20
+    emoji: "🏫"
+    zh: 初中毕业了
+    en: Finished middle school
+
+  - date: 2020-03-15
+    emoji: "🦠"
+    zh: 新冠疫情
+    en: Covid-19
+
+  - date: 2022-06-07
+    emoji: "🎒"
+    zh: 高中毕业
+    en: Finished high school
+    note: |
+      最后一节晚自习，没有人真的在写题。
+    note_en: |
+      The last evening study hall. Nobody was really doing the problems.
+
+  - { date: 2022-08-27, private: true, emoji: 🥰 }
+
+  - date: 2022-09-03
+    emoji: "😶‍🌫️"
+    zh: 前往大学
+    en: Went to college
+
+  - date: 2023-05-01
+    emoji: "🚄"
+    zh: 哈尔滨
+    en: China Harbin
+
+  - date: 2023-07-10
+    emoji: "🔗"
+    zh: 我的第一个网页
+    en: My first webpage
+
+  - date: 2024-07-03
+    emoji: "🚄"
+    zh: 威海
+    en: China WeiHai
+
+  - date: 2025-05-01
+    emoji: "🚄"
+    zh: 北京
+    en: China BeiJing
+
+  - date: 2026-06-30
+    emoji: "🎓"
+    zh: 大学毕业
+    en: Graduated
+    line: true
+    note: |
+      四年，换来一张纸和一屋子要搬走的书。**往前走。**
+    note_en: |
+      Four years, one diploma, and a room full of books to move. **Onward.**
+    image:
+      src: /assets/img/droit/05_life_flower.webp
+      caption: { zh: 生命如花，绽放。, en: life is a flower, bloom it. }
+
+
+  - date: 2026-07-05
+    emoji: "🚗"
+    zh: 驾照
+    en: Got driver license
+
   - { date: 2026-07-31, private: true, emoji: 🌧️ }
-  - { date: 2026-10-08, emoji: "📍", zh: 做了这一页, en: Made this page }
+
+  - date: 2026-10-08
+    emoji: "📍"
+    zh: 做了这一页
+    en: Made this page
+    url: https://right202209.github.io/life/weeks/

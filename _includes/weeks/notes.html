@@ -1,0 +1,36 @@
+{%- comment -%}
+  The pinned card's content, one <template> per public event, keyed like the grid ("ev-YYYY-MM-DD").
+  Templates are inert: their pictures don't load until a card is opened.
+  Per event in _data/weeks.yml (all optional):
+    note / note_en     a few lines of Markdown (falls back to the other language)
+    image / images     one picture or a list; each a URL, a /site/path or a bare file name from
+                       assets/img/photos/, or { src, alt, caption }
+    url / url_en       makes the week a link cell: a /site/path or a full URL
+{%- endcomment -%}
+<div class="wk-notes" hidden>
+{%- for e in w_events -%}
+  {%- if e.private -%}{%- continue -%}{%- endif -%}
+  {%- assign d = e.date | date: "%Y-%m-%d" -%}
+  {%- if L == "en" -%}
+    {%- assign lb = e.en | default: e.zh -%}{%- assign nt = e.note_en | default: e.note -%}{%- assign u = e.url_en | default: e.url -%}
+  {%- else -%}
+    {%- assign lb = e.zh | default: e.en -%}{%- assign nt = e.note | default: e.note_en -%}{%- assign u = e.url | default: e.url_en -%}
+  {%- endif -%}
+  {%- assign imgs = e.images | default: e.image -%}
+  {%- if imgs -%}{%- assign kind = imgs | jsonify | slice: 0 -%}{%- if kind != "[" -%}{%- assign one = imgs -%}{%- assign imgs = "" | split: "" | push: one -%}{%- endif -%}{%- endif -%}
+<template data-note="ev-{{ d }}"><article class="wk-note">
+  <h3 class="wk-note-title">{% if e.emoji %}<span class="wk-note-emoji">{{ e.emoji }}</span>{% endif %}{{ lb }}</h3>
+  {%- if nt %}<div class="wk-note-text">{{ nt | markdownify }}</div>{% endif -%}
+  {%- if imgs and imgs.size > 0 %}<div class="wk-note-imgs{% if imgs.size == 1 %} one{% endif %}">
+    {%- for im in imgs -%}
+      {%- if im.src -%}{%- assign s = im.src -%}{%- assign cap = im.caption -%}
+        {%- if cap.zh or cap.en -%}{%- if L == "en" -%}{%- assign cap = cap.en | default: cap.zh -%}{%- else -%}{%- assign cap = cap.zh | default: cap.en -%}{%- endif -%}{%- endif -%}
+        {%- assign alt = im.alt | default: cap | default: lb -%}{%- else -%}{%- assign s = im -%}{%- assign alt = lb -%}{%- assign cap = nil -%}{%- endif -%}
+      {%- capture src -%}{% include photos/src.html s=s %}{%- endcapture -%}
+      <figure><a href="{{ src }}" target="_blank" rel="noopener"><img src="{{ src }}" alt="{{ alt | escape }}" loading="lazy" decoding="async"></a>{% if cap %}<figcaption>{{ cap }}</figcaption>{% endif %}</figure>
+    {%- endfor -%}
+  </div>{% endif -%}
+  {%- if u %}<a class="wk-note-go" href="{% include weeks/url.html u=u %}"{% if u contains "://" %} target="_blank" rel="noopener"{% endif %}>{{ t.weeks_open }} <span aria-hidden="true">↗</span></a>{% endif %}
+</article></template>
+{%- endfor -%}
+</div>

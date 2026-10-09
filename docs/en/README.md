@@ -404,7 +404,8 @@ To remove it completely, delete `_data/weeks.yml`, `_includes/weeks/`, `_layouts
 - The fill shows the phase of life (`eras`); the border shows where you lived (`places`)
 - Season bands and boundary posts, split at the four "start of season" solar terms (see Season borders below)
 - This week is highlighted; future weeks are empty
-- Hover or tap a cell for "date · week of the calendar year · age (or Before birth) · phase, in place · event"
+- Hover a cell for "date · week of the calendar year · age (or Before birth) · phase, in place · event"
+- Click a cell and the same facts are pinned as a card that stays until you close it (×, Esc, or a click elsewhere). An event's card also carries its note, pictures and link, and the address bar becomes `#ev-DATE`, so the card can be shared
 - That year's events are listed at the end of the row
 
 **Timeline view.** A horizontal axis of a life, with nodes for birth, each event, now and life expectancy.
@@ -426,6 +427,25 @@ events:
   - { date: 2017-06-30, emoji: "🎓", zh: 大学毕业, en: Graduated, line: true }
   - { date: 2021-04-02, private: true }   # a solid dot only: no text, not searchable
 ```
+
+**Notes, pictures and links in the card** (after [Buster Benson's Life in Weeks](https://busterbenson.com/life-in-weeks)):
+
+```yaml
+events:
+  - date: 2026-06-30
+    emoji: "🎓"
+    en: Graduated
+    note_en: Four years, one diploma. **Onward.**   # a few lines of Markdown (note: for the Chinese page)
+    image: /assets/img/droit/05_life_flower.webp     # or images: [a.jpg, { src: ..., caption: ... }]
+  - date: 2026-10-08
+    en: Made this page
+    url: /blog/2026/on-beginning-again/              # the week becomes a link
+```
+
+- A week with a note or pictures gets a folded corner, like a page that has been written on
+- A week with a `url` is a link cell: underlined, with ↗ after it and a clay border. A click follows the link (new tab for other sites)
+- A week with both: the click opens the card, and the link is its "Open the link ↗" button
+- Pictures load only when the card opens. `url_en` gives the English page its own link; timeline labels link too
 
 `zh` is used on the Chinese pages and `en` on `/en/`; if one is missing, the other is used.
 
