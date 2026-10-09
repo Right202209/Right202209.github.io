@@ -162,10 +162,12 @@
     var show = function (c) {
       if (!c || c.tagName !== 'I' || !c.parentNode.classList.contains('wk-cells') || (c.classList.contains('f') && !c.dataset.ev)) { tip.hidden = true; return; }
       var row = c.closest('.wk-yr'), i = Array.prototype.indexOf.call(c.parentNode.children, c);
-      // Rows are ~20-week chunks that cross birthdays, so age and week-of-year come from the cell's own date.
-      var d = ymd(row.dataset.from) + i * WEEK, y = new Date(d).getUTCFullYear(), bd = Date.UTC(y, bm, bdd);
-      if (d < bd) { y--; bd = Date.UTC(y, bm, bdd); }
-      var age = y - by, wn = Math.floor((d - bd) / WEEK) + 1;
+      // Weeks start on January 1; age still follows the actual birthday (Feb 28 in non-leap years).
+      var d = ymd(row.dataset.from) + i * WEEK, y = new Date(d).getUTCFullYear();
+      var bd = Date.UTC(y, bm, Math.min(bdd, new Date(Date.UTC(y, bm + 1, 0)).getUTCDate()));
+      var age = y - by - (d < bd && !c.classList.contains('bd') ? 1 : 0);
+      var wn = Math.floor((d - Date.UTC(y, 0, 1)) / WEEK) + 1;
+      var ageText = age < 0 ? (zh ? '出生前' : 'Before birth') : (zh ? age + ' 岁' : 'age ' + age);
       var era = name('era', c.className), place = name('place', c.className);
       var where = [era, place && (zh ? '在' + place : 'in ' + place)].filter(Boolean).join(zh ? '，' : ', ');
       // Season (split at 立春 立夏 立秋 立冬); the week a season begins names its solar term.
@@ -173,7 +175,7 @@
       var season = c.dataset.st ? (zh ? SOLAR_ZH : SOLAR_EN)[st[0]] + ' ' + fmt(ymd(st[1]), zh).replace(/^\d{4}-/, '')
                  : q ? (zh ? SEASON_ZH : SEASON_EN)[q[1]] : '';
       var priv = c.classList.contains('pv') ? (zh ? '🔒 私密' : '🔒 Private') : '';
-      tip.textContent = [fmt(d, zh), zh ? age + ' 岁第 ' + wn + ' 周' : 'age ' + age + ', week ' + wn, season, where, c.dataset.ev || priv]
+      tip.textContent = [fmt(d, zh), zh ? y + ' 年第 ' + wn + ' 周' : 'week ' + wn + ' of ' + y, ageText, season, where, c.dataset.ev || priv]
         .filter(Boolean).join(' · ');
       tip.hidden = false;
       var r = c.getBoundingClientRect(), w = tip.offsetWidth, o = wk.getBoundingClientRect();
