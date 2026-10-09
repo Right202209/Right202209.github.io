@@ -45,21 +45,19 @@
 .wk-head { margin-bottom: 28px; }
 
 .weeks {
-  --wk-gap: 3px; --wk-w: 2.4rem; --wk-h: 1.9rem;
+  --wk-gap: 3px; --wk-w: 1.55rem; --wk-h: 1.7rem;
   // Season palette: 新绿 spring, 麦黄 summer, 陶土 autumn, 霜蓝 winter
   --spring: #8fbf88; --summer: #e2b04f; --autumn: #d97757; --winter: #8aaed3;
+  // How much of an era's colour a week box takes. Era colours are pale paper tints picked for the
+  // light theme; at 85% they turn into light-grey bricks on the dark page and swallow the light
+  // label text, so dark mode keeps only a hint of them over the surface.
+  --wk-tint: 85%; --wk-base: var(--bg);
   position: relative;
 }
+[data-theme="dark"] .weeks { --wk-tint: 16%; --wk-base: var(--surface); }
 
-// The grid and its intro share one wider stage on desktop, so the 53 weeks
-// per row can breathe instead of shrinking into confetti.
-@media (min-width: 721px) {
-  .weeks, .weeks-intro, .wk-head, .wk-coda {
-    width: min(1150px, calc(100vw - 72px));
-    max-width: none;
-    margin-inline: calc((100% - min(1150px, calc(100vw - 72px))) / 2);
-  }
-}
+// The page keeps the same column as every other page (.wrap); boxes are sized so a row
+// still holds about half a year at that width.
 
 // Three numbers and a life bar: weeks lived, % of a life, weeks left
 .wk-stats {
@@ -118,7 +116,7 @@
 // Legend
 .wk-legend { display: none; }
 .wk-key { display: inline-flex; align-items: center; gap: .4em; }
-.wk-key::before { content: ""; width: 11px; height: 11px; border-radius: 3px; background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg)); }
+.wk-key::before { content: ""; width: 11px; height: 11px; border-radius: 3px; background: color-mix(in srgb, var(--era, var(--surface)) var(--wk-tint, 85%), var(--wk-base, var(--bg))); }
 .wk-key-place::before { background: none; box-shadow: inset 0 0 0 1.5px var(--place); }
 .wk-key-season::before { display: none; }
 .wk-key-season i { position: relative; width: 4px; height: 11px; }
@@ -139,7 +137,7 @@
 .wk-cells i {
   position: relative; flex: 1 0 var(--wk-w); min-width: var(--wk-w); height: var(--wk-h); border-radius: 3px; cursor: var(--cursor-pointer);
   display: inline-flex; align-items: center; font: 500 .78rem/1 var(--sans); color: var(--ink); white-space: nowrap;
-  background: color-mix(in srgb, var(--era, var(--surface)) 85%, var(--bg));
+  background: color-mix(in srgb, var(--era, var(--surface)) var(--wk-tint), var(--wk-base));
   // Place = hairline frame; season = a 2px band along the bottom, so each row reads as a ribbon of seasons
   box-shadow: inset 0 -2px 0 var(--season-band, transparent), inset 0 0 0 1px var(--place, transparent);
   transition: transform .15s;
@@ -394,7 +392,7 @@
   .wk-card { animation: none; }
 }
 
-@media (min-width: 721px) and (max-width: 1000px) { .weeks { --wk-w: 2rem; --wk-h: 1.7rem; } }
+@media (min-width: 721px) and (max-width: 1000px) { .weeks { --wk-w: 1.35rem; --wk-h: 1.6rem; } }
 
 @media (max-width: 720px) {
   .wk-bar { flex-direction: column; align-items: flex-start; gap: .4rem; }
