@@ -871,6 +871,16 @@ Words come first, and each page shows exactly one illustration: a closing vignet
 - Keep photos under about 2000px on the long side, or give each a small `thumb`, so the grid loads fast.
 - The page is `life/photos.html`, the includes are in `_includes/photos/`, and the styles are in `_sass/_photos.scss`.
 
+## Storybook
+
+- Under the album card on the Life page there is a Storybook card: a little red book that tilts toward the pointer, whose dog watches the cursor, and whose cover swings open on hover. It links to `/en/life/story/` (`/life/story/` in Chinese).
+- The book, *Droit and the Missing Page*, has ten pages. Turn them by tapping or dragging the outer corner (the leaf follows the pointer), with arrow keys / Home / End, the chapter tabs on top, or the arrows below. Phones get one page at a time; swiping the words also turns.
+- Every page plays: tilting cover with sparkles; sign the endpaper (your name appears on the cover) and poke the rippling paw prints; drop the apple on sleeping Droit, shake the tree, tap the sun; chase a page that dodges, plant flowers; move the umbrella, thunder from the cloud, splash puddles; raise the ink sea, release fish, change the moon; join the stars; draw the missing page and bind it (it gets taped to the cover); stamp paw prints on The End; scan the barcode. Letters rise in one by one and jump when touched; dust around the book drifts away from the pointer.
+- Sound is off by default; the ♪ button turns it on. Every sound is synthesized in the browser.
+- A reader's name, drawing and stamps stay in their own localStorage.
+- Words live in `_data/story.yml` (`enabled: false` removes the module, `entry: false` hides only the Life card). Drawings and games: `assets/js/story.js`; styles: `_sass/_story.scss`. Reduced-motion turns the motion off.
+
+
 ## Transitions
 
 Page navigation, theme switching, ⌘K search, the life calendar week view, and the gallery lightbox now all have transitions. Unsupported browsers stay as they are, and everything is disabled when the system has “Reduce Motion” enabled.

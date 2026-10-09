@@ -338,3 +338,45 @@
   }, { passive: true });
   lb.addEventListener('touchcancel', function () { x0 = null; release(); }, { passive: true });
 })();
+
+// Storybook entry (故事手书) on the Life page: the card leans toward the pointer,
+// the dog on the little cover watches it, and the eyebrow letters hop on hover.
+(function () {
+  var card = document.querySelector('[data-sb-entry]');
+  if (!card) return;
+  var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hop = card.querySelector('[data-hop]');
+  if (hop) {
+    var txt = hop.textContent; hop.textContent = '';
+    hop.setAttribute('aria-label', txt);
+    txt.split('').forEach(function (c, i) {
+      var s = document.createElement('span'); s.className = 'ch'; s.style.setProperty('--i', i); s.textContent = c;
+      s.setAttribute('aria-hidden', 'true'); hop.appendChild(s);
+    });
+  }
+  var eye = card.querySelector('.sb-mini-eye');
+  var move = function (e) {
+    var r = card.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width - .5, ny = (e.clientY - r.top) / r.height - .5;
+    if (!still) { card.style.setProperty('--ry', (nx * 6).toFixed(2) + 'deg'); card.style.setProperty('--rx', (-ny * 6).toFixed(2) + 'deg'); }
+    if (eye) {
+      var er = eye.getBoundingClientRect(), a = Math.atan2(e.clientY - er.top, e.clientX - er.left);
+      eye.style.transform = 'translate(' + (Math.cos(a) * 1.3).toFixed(2) + 'px,' + (Math.sin(a) * 1.3).toFixed(2) + 'px)';
+    }
+  };
+  document.addEventListener('pointermove', function (e) {
+    var r = card.getBoundingClientRect();
+    if (e.clientY < r.top - 200 || e.clientY > r.bottom + 200) return;
+    if (eye) { var er = eye.getBoundingClientRect(), a = Math.atan2(e.clientY - er.top, e.clientX - er.left);
+      eye.style.transform = 'translate(' + (Math.cos(a) * 1.3).toFixed(2) + 'px,' + (Math.sin(a) * 1.3).toFixed(2) + 'px)'; }
+  }, { passive: true });
+  card.addEventListener('pointermove', move);
+  card.addEventListener('pointerleave', function () { card.style.removeProperty('--rx'); card.style.removeProperty('--ry'); });
+  // Once it scrolls into view, the cover lifts a little, as if something inside wants out.
+  if ('IntersectionObserver' in window && !still) {
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return; io.disconnect();
+      setTimeout(function () { card.classList.add('peek'); setTimeout(function () { card.classList.remove('peek'); }, 700); }, 400);
+    }, { threshold: .6 });
+    io.observe(card);
+  }
+})();
