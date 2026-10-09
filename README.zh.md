@@ -91,6 +91,17 @@
 
 可插拔模块：生活页 blockquote 下方那一行，左边是今天的日期，右边点进周历。周历有格子和横向时间轴两种视图（时间轴拉长走过的年份、未来只留终点；走过的比剩下的多时折叠早年；标签自动分层，不会重叠），带季节刻度和私密事件（只显示一个实心点），事件也能用 ⌘K 搜到。全部在构建时生成，不用任何库。开关和数据都在 `_data/weeks.yml`，详见教程。移植自 [Gina Trapani 的 My Life in Weeks](https://weeks.ginatrapani.org)。
 
+## 音乐播放器
+
+一个可插拔的小播放器：播放时转动的唱片（封面就是唱片的标签）、进度条，多首时附曲目列表。给人生周历的事件加上 `audio:`，点开格子后的浮窗里就有播放器，格子上会多一个 ♪。关掉浮窗音乐不会停，会收进右下角的小唱片栏，点它能回到那一周。文章和页面里也能用：
+
+```liquid
+{% include player.html tracks="song.mp3" title="歌名" artist="歌手" %}
+{% include player.html tracks=page.audio %}
+```
+
+`tracks` 可以是一个地址、一个 `{ src, title, artist, cover }`，或者它们的列表。地址可以是本仓库 `assets/audio/` 里的文件名、站内 `/路径`、任意在线 `https://` 文件、GitHub 文件页（`https://github.com/用户/仓库/blob/main/a.mp3`，自动转成 raw.githubusercontent.com），或 `gh:用户/仓库@main/a.mp3`（走 jsDelivr CDN）。整页共用一个 `<audio>`，支持锁屏/媒体键控制（Media Session）。放进仓库的音频尽量小（GitHub 超过 50 MB 会警告），128 kbps 的 m4a/mp3 就够了。
+
 ## 致谢
 
 没有一座房子是从虚无中建起的。这里的每一块砖，都曾属于别人。

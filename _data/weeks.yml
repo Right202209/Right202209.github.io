@@ -37,6 +37,15 @@ places:
 #                    or { src: ..., alt: ..., caption: ... }
 #   url / url_en     the week becomes a link: underlined, with ↗. A click follows it; if the week
 #                    also has a note or pictures, the click opens the card and the link is its button.
+#   audio            a music player in the card (the week gets a ♪). Keeps playing after the card closes,
+#                    in a small dock at the bottom corner. One address, { src, title, artist, cover },
+#                    or a list of either. An address can be:
+#                      song.mp3                                   a file in assets/audio/ of this repo
+#                      /assets/music/a.m4a                        any path on this site
+#                      https://example.com/a.mp3                  any online file
+#                      https://github.com/OWNER/REPO/blob/main/a.mp3   a file in any public GitHub repo
+#                      gh:OWNER/REPO@main/path/a.mp3              the same, served by jsDelivr's CDN
+#                    e.g.  audio: { src: graduation.mp3, title: 后来, artist: 刘若英, cover: grad.jpg }
 events:
   - { date: 2004-07-21, private: true, emoji: 👶 }
 
