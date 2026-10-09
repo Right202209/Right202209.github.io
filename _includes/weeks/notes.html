@@ -6,6 +6,8 @@
     image / images     one picture or a list; each a URL, a /site/path or a bare file name from
                        assets/img/photos/, or { src, alt, caption }
     url / url_en       makes the week a link cell: a /site/path or a full URL
+    audio              a music player in the card: one address, { src, title, artist, cover }, or a list
+                       (online URL, a file in this repo's assets/audio/, or one in any GitHub repo)
 {%- endcomment -%}
 <div class="wk-notes" hidden>
 {%- for e in w_events -%}
@@ -30,6 +32,7 @@
       <figure><a href="{{ src }}" target="_blank" rel="noopener"><img src="{{ src }}" alt="{{ alt | escape }}" loading="lazy" decoding="async"></a>{% if cap %}<figcaption>{{ cap }}</figcaption>{% endif %}</figure>
     {%- endfor -%}
   </div>{% endif -%}
+  {%- if e.audio %}{% assign evref = "ev-" | append: d %}{% include player.html tracks=e.audio title=lb ref=evref %}{% endif -%}
   {%- if u %}<a class="wk-note-go" href="{% include weeks/url.html u=u %}"{% if u contains "://" %} target="_blank" rel="noopener"{% endif %}>{{ t.weeks_open }} <span aria-hidden="true">↗</span></a>{% endif %}
 </article></template>
 {%- endfor -%}

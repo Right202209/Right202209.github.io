@@ -7,7 +7,7 @@
   Week index, era, place, season and events are all resolved here at build time.
   Cell classes: eN era · pN place · qN season border · sN first week of a season (0 winter, 1 spring, 2 summer, 3 autumn; split at 立春 立夏 立秋 立冬)
                 f future · now this week · ev event · pv private-only event · bd birthday
-                nt an event with a note or pictures (opens a card) · ln an event with a url (a link cell)
+                nt an event with a note, pictures or audio (opens a card) · au one with audio · ln an event with a url (a link cell)
 {%- endcomment -%}
 {%- assign ps = -1 -%}
 {%- assign ph_n = "{n}" -%}{%- assign ph_y = "{y}" -%}
@@ -65,7 +65,7 @@
         {%- if tts < ts or tts >= te -%}{%- assign term = "" -%}{%- endif -%}
       {%- endif -%}
     {%- endif -%}
-    {%- assign hasev = false -%}{%- assign elab = "" -%}{%- assign keys = "" -%}{%- assign idate = "" -%}{%- assign eurl = "" -%}{%- assign enote = false -%}
+    {%- assign hasev = false -%}{%- assign elab = "" -%}{%- assign keys = "" -%}{%- assign idate = "" -%}{%- assign eurl = "" -%}{%- assign enote = false -%}{%- assign eau = false -%}
     {%- for k in yev -%}
       {%- if k == "" -%}{%- continue -%}{%- endif -%}
       {%- assign ki = k | plus: 0 -%}
@@ -82,7 +82,8 @@
           {%- if idate == "" -%}{%- assign idate = d -%}{%- endif -%}
           {%- if L == "en" -%}{%- assign u = e.url_en | default: e.url -%}{%- else -%}{%- assign u = e.url | default: e.url_en -%}{%- endif -%}
           {%- if eurl == "" and u -%}{%- assign eurl = u -%}{%- endif -%}
-          {%- if e.note or e.note_en or e.image or e.images -%}{%- assign enote = true -%}{%- endif -%}
+          {%- if e.note or e.note_en or e.image or e.images or e.audio -%}{%- assign enote = true -%}{%- endif -%}
+          {%- if e.audio -%}{%- assign eau = true -%}{%- endif -%}
         {%- endunless -%}
       {%- endif -%}
     {%- endfor -%}
@@ -91,8 +92,8 @@
       {%- if age == 0 -%}{%- capture lab -%}🐣 {{ t.weeks_born }}{%- endcapture -%}
       {%- else -%}{%- assign lab = t.weeks_bday | replace: ph_n, age | replace: ph_y, y0 -%}{%- endif -%}
     {%- endif -%}
-    <i class="e{{ ei }} p{{ pi }} q{{ sn }}{% if tick %} s{{ sn }}{% endif %}{% if ts > w_today %} f{% elsif te > w_today %} now{% endif %}{% if hasev %} ev{% if elab == "" %} pv{% endif %}{% endif %}{% if is_bday %} bd{% endif %}{% if enote %} nt{% endif %}{% if eurl != "" %} ln{% endif %}"{% if term != "" %} data-st="{{ tn }} {{ term }}"{% endif %}{% if elab != "" %} id="ev-{{ idate }}" data-k="{{ keys }}" data-ev="{{ elab | escape }}"{% endif %}>
-    {%- if eurl != "" -%}<a class="wk-a" href="{% include weeks/url.html u=eurl %}"{% if eurl contains "://" %} target="_blank" rel="noopener"{% endif %}>{{ lab }}</a>{%- else -%}{{ lab }}{%- endif -%}</i>
+    <i class="e{{ ei }} p{{ pi }} q{{ sn }}{% if tick %} s{{ sn }}{% endif %}{% if ts > w_today %} f{% elsif te > w_today %} now{% endif %}{% if hasev %} ev{% if elab == "" %} pv{% endif %}{% endif %}{% if is_bday %} bd{% endif %}{% if enote %} nt{% endif %}{% if eau %} au{% endif %}{% if eurl != "" %} ln{% endif %}"{% if term != "" %} data-st="{{ tn }} {{ term }}"{% endif %}{% if elab != "" %} id="ev-{{ idate }}" data-k="{{ keys }}" data-ev="{{ elab | escape }}"{% endif %}>
+    {%- if eurl != "" -%}<a class="wk-a" href="{% include weeks/url.html u=eurl %}"{% if eurl contains "://" %} target="_blank" rel="noopener"{% endif %}>{{ lab }}</a>{%- else -%}{{ lab }}{%- endif -%}{%- if eau -%}<b class="wk-au" aria-hidden="true">♪</b>{%- endif -%}</i>
   {%- endfor -%}
   </span></div>
 {%- endfor -%}

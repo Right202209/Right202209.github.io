@@ -52,6 +52,17 @@ Or build locally and upload `_site/` anywhere.
 
 A pluggable module. Under the quote on the Life page is one row: today's date on the left, and on the right a link to your life in weeks. The weeks page has two views, a grid and a horizontal timeline (the lived years stretched across it, the future folded down to its end point, early years folded once more has been lived than is left, and labels stacked so they never overlap), with season ticks, private events (just a solid dot) and events you can find with ⌘K. All of it is built at compile time, with no libraries. The switches and the data live in `_data/weeks.yml`; see the tutorial. Ported from [Gina Trapani's My Life in Weeks](https://weeks.ginatrapani.org).
 
+## Music player
+
+A small pluggable player: a record that spins while it plays (the cover is its label), a seek bar, and a track list when there is more than one. Give a Life-in-Weeks event an `audio:` and its pinned card carries the player; the week gets a ♪. Closing the card doesn't stop the music: it moves to a dock in the bottom corner, which links back to its week. It works in posts and pages too:
+
+```liquid
+{% include player.html tracks="song.mp3" title="A title" artist="Someone" %}
+{% include player.html tracks=page.audio %}
+```
+
+`tracks` is one address, one `{ src, title, artist, cover }`, or a list of either. An address can be a bare file name from `assets/audio/` in this repo, any `/site/path`, any online `https://` file, a GitHub file page (`https://github.com/OWNER/REPO/blob/main/a.mp3`, served from raw.githubusercontent.com), or `gh:OWNER/REPO@main/a.mp3` (served by jsDelivr). One shared `<audio>` drives every player on the page, with lock-screen controls via the Media Session API. Keep files in the repo small (GitHub warns past 50 MB); m4a/mp3 at 128 kbps is plenty.
+
 ## Acknowledgements
 
 No house is built from nothing. Every brick here once belonged to someone else.
