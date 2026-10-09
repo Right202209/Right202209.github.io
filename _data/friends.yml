@@ -23,7 +23,7 @@ list:
     url: https://weeks.ginatrapani.org
     github: ginatrapani
     desc: { zh-CN: 人生周历的样式来自她。, en: Where the life-in-weeks grid comes from. }
-    hidden: true
+    hidden: false
   - name: ifuryst
     url: https://ifuryst.com
     desc: { zh-CN: 这个站的骨架，最早是照着它搭的。, en: The site this one first borrowed its bones from. }

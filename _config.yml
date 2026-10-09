@@ -5,7 +5,7 @@ title: Droit
 author: Droit
 email: right202601@gmail.com
 description: "A small place to think slowly."
-url: ""          # e.g. https://example.com
+url: "https://droite.me"          # e.g. https://example.com
 baseurl: ""      # e.g. /blog
 # Languages: the first is the default and lives at /, the others live at /<code>/.
 # Use a hyphen (zh-CN), never an underscore (zh_CN).
