@@ -10,6 +10,7 @@ view: grid # default view: grid | timeline (visitors can switch)
 hemisphere: north # season borders, split at 立春 立夏 立秋 立冬: north | south
 
 birthday: "2004-09-12" # ← your birthday (it is public on the site)
+# The grid starts on January 1 of the birth year; birthdays and age use the date above.
 life_expectancy: 80 # how many years to draw
 
 # Phases of life → box fill. Start with `age:` (years) or `start:` (a date).

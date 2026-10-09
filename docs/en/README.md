@@ -399,12 +399,12 @@ Two includes work on any page:
 
 To remove it completely, delete `_data/weeks.yml`, `_includes/weeks/`, `_layouts/weeks.html`, `_sass/_weeks.scss`, `life/weeks.md` and `en/life/weeks.md`, then drop `@import "weeks"` from `main.scss`.
 
-**Grid view.** One row per year of age, one cell per week (53 columns).
+**Grid view.** Starts on January 1 of the birth year, with one cell per week and 53 cells per calendar year (the last cell may cover fewer than seven days). Birthday markers stay in the week of the actual birthday; age, weeks lived and life progress still count from the actual birth date.
 
 - The fill shows the phase of life (`eras`); the border shows where you lived (`places`)
 - Season bands and boundary posts, split at the four "start of season" solar terms (see Season borders below)
 - This week is highlighted; future weeks are empty
-- Hover or tap a cell for "date · age, week · phase, in place · event"
+- Hover or tap a cell for "date · week of the calendar year · age (or Before birth) · phase, in place · event"
 - That year's events are listed at the end of the row
 
 **Timeline view.** A horizontal axis of a life, with nodes for birth, each event, now and life expectancy.

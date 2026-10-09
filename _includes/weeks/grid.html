@@ -1,8 +1,8 @@
 {%- comment -%}
   The grid, after weeks.ginatrapani.org: one continuous stream of week boxes per decade.
   Rows are NOT fixed at build time. Each decade is a wrapping flex box, so the boxes reflow with
-  the window: wide screens fit ~25 a row, phones ~14. Every year opens with a birthday box
-  (🐣 at birth, 🎂 age · year after that) and public events put their label inside their week.
+  the window: wide screens fit ~25 a row, phones ~14. Each calendar year starts on January 1;
+  birthdays (🐣 at birth, 🎂 age · year after that) and public events label their own week.
   A year is a .wk-yr (display: contents) carrying data-from, so JS can date any box by its index.
   Week index, era, place, season and events are all resolved here at build time.
   Cell classes: eN era · pN place · qN season border · sN first week of a season (0 winter, 1 spring, 2 summer, 3 autumn; split at 立春 立夏 立秋 立冬)
@@ -14,8 +14,16 @@
 {%- for age in (0..w_years) -%}
   {%- assign y0 = w_by | plus: age -%}
   {%- assign y1 = y0 | plus: 1 -%}
-  {%- assign from = y0 | append: "-" | append: w_md | date: "%s" | plus: 0 -%}
-  {%- assign to = y1 | append: "-" | append: w_md | date: "%s" | plus: 0 -%}
+  {%- assign from = y0 | append: "-01-01" | date: "%s" | plus: 0 -%}
+  {%- assign to = y1 | append: "-01-01" | date: "%s" | plus: 0 -%}
+  {%- assign bday_md = w_bd | slice: 5, 5 -%}
+  {%- if bday_md == "02-29" -%}
+    {%- assign leap4 = y0 | modulo: 4 -%}
+    {%- assign leap100 = y0 | modulo: 100 -%}
+    {%- assign leap400 = y0 | modulo: 400 -%}
+    {%- unless leap400 == 0 or leap4 == 0 and leap100 != 0 -%}{%- assign bday_md = "02-28" -%}{%- endunless -%}
+  {%- endif -%}
+  {%- assign bday = y0 | append: "-" | append: bday_md | date: "%s" | plus: 0 -%}
   {%- assign dec = age | modulo: 10 -%}
   {%- if dec == 0 and age != 0 -%}
     {%- if age == 10 -%}{%- assign dl = t.weeks_teens -%}{%- else -%}{%- assign dl = t.weeks_decade | replace: ph_n, age -%}{%- endif -%}
@@ -31,6 +39,7 @@
     {%- assign ts = i | times: WK | plus: from -%}
     {%- assign te = ts | plus: WK -%}
     {%- if te > to -%}{%- assign te = to -%}{%- endif -%}
+    {%- assign is_bday = false -%}{%- if bday >= ts and bday < te -%}{%- assign is_bday = true -%}{%- endif -%}
     {%- assign ei = 0 -%}{%- for s in w_era_ts -%}{%- assign tt = s | plus: 0 -%}{%- if tt <= ts -%}{%- assign ei = forloop.index0 -%}{%- endif -%}{%- endfor -%}
     {%- assign pi = 0 -%}{%- for s in w_pl_ts -%}{%- assign tt = s | plus: 0 -%}{%- if tt <= ts -%}{%- assign pi = forloop.index0 -%}{%- endif -%}{%- endfor -%}
     {%- comment -%} Season of the week's last day, split at 立春 立夏 立秋 立冬 (_data/solar_terms.yml). {%- endcomment -%}
@@ -74,11 +83,11 @@
       {%- endif -%}
     {%- endfor -%}
     {%- assign lab = elab -%}
-    {%- if i == 0 -%}
+    {%- if is_bday -%}
       {%- if age == 0 -%}{%- capture lab -%}🐣 {{ t.weeks_born }}{%- endcapture -%}
       {%- else -%}{%- assign lab = t.weeks_bday | replace: ph_n, age | replace: ph_y, y0 -%}{%- endif -%}
     {%- endif -%}
-    <i class="e{{ ei }} p{{ pi }} q{{ sn }}{% if tick %} s{{ sn }}{% endif %}{% if ts > w_today %} f{% elsif te > w_today %} now{% endif %}{% if hasev %} ev{% if elab == "" %} pv{% endif %}{% endif %}{% if i == 0 %} bd{% endif %}"{% if term != "" %} data-st="{{ tn }} {{ term }}"{% endif %}{% if elab != "" %} id="ev-{{ idate }}" data-k="{{ keys }}" data-ev="{{ elab | escape }}"{% endif %}>{{ lab }}</i>
+    <i class="e{{ ei }} p{{ pi }} q{{ sn }}{% if tick %} s{{ sn }}{% endif %}{% if ts > w_today %} f{% elsif te > w_today %} now{% endif %}{% if hasev %} ev{% if elab == "" %} pv{% endif %}{% endif %}{% if is_bday %} bd{% endif %}"{% if term != "" %} data-st="{{ tn }} {{ term }}"{% endif %}{% if elab != "" %} id="ev-{{ idate }}" data-k="{{ keys }}" data-ev="{{ elab | escape }}"{% endif %}>{{ lab }}</i>
   {%- endfor -%}
   </span></div>
 {%- endfor -%}
