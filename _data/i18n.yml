@@ -42,6 +42,9 @@ zh-CN:
   weeks_decade: "{n} 岁"
   weeks_now: 现在
   weeks_end: 预期寿命
+  weeks_tl_left: "还有约 {n} 年"
+  weeks_tl_fold: "{a}–{b} 岁 · 展开"
+  weeks_tl_unfold: "收起早年"
   weeks_bday: "🎂 {n} 岁 · {y}"
   weeks_seasons: 季节
   weeks_glance: "人生第 {n} 周 · 已走过 {p}% · 还剩约 {left} 周"
@@ -104,6 +107,9 @@ en:
   weeks_decade: "{n}s"
   weeks_now: Now
   weeks_end: Life expectancy
+  weeks_tl_left: "about {n} yrs to go"
+  weeks_tl_fold: "Ages {a}–{b} · expand"
+  weeks_tl_unfold: "Fold early years"
   weeks_bday: "🎂 {n} in {y}"
   weeks_seasons: Seasons
   weeks_glance: "Week {n} of a life · {p}% lived · about {left} to go"

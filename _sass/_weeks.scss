@@ -327,6 +327,62 @@
 .is-start:hover .wk-cap { transform: translateX(-12px) translateY(-2px); }
 .is-end:hover .wk-cap { transform: translateX(calc(-100% + 12px)) translateY(2px); }
 
+// Timeline, re-laid out by main.js (.tl-js): past stretched, future folded to its end point,
+// early years folded when more has been lived than is left, captions stacked into lanes.
+.tl-js { transition: height .3s ease; }
+.tl-js .wk-axis { right: calc(var(--tail, 0) * 1%); }
+.tl-js .wk-axis i { width: 100%; }
+.tl-js .wk-cap { max-width: 11em; }
+.tl-js .wk-cap { transform: translateX(calc(-50% + var(--sx, 0px))); }
+.tl-js .wk-node:hover .wk-cap { transform: translateX(calc(-50% + var(--sx, 0px))) translateY(var(--lift, -2px)); }
+.tl-js .is-start .wk-cap { transform: translateX(-12px); }
+.tl-js .is-end .wk-cap { transform: translateX(calc(-100% + 12px)); }
+.tl-js .is-start:hover .wk-cap { transform: translateX(-12px) translateY(-2px); }
+.tl-js .is-end:hover .wk-cap { transform: translateX(calc(-100% + 12px)) translateY(2px); }
+.tl-js .up .wk-cap, .tl-js .up.far .wk-cap { bottom: var(--off, 18px); top: auto; }
+.tl-js .down .wk-cap, .tl-js .down.far .wk-cap { top: var(--off, 26px); bottom: auto; }
+.tl-js .far .wk-cap::before { content: none; }
+.tl-js .lvl .wk-cap::before {   // a hairline back to the dot for captions in outer lanes
+  content: ""; position: absolute; left: calc(50% - var(--sx, 0px)); width: 1px; height: var(--lead); background: var(--line);
+}
+.tl-js .is-start.lvl .wk-cap::before { left: 12px; }
+.tl-js .is-end.lvl .wk-cap::before { left: auto; right: 12px; }
+.tl-js .up.lvl .wk-cap::before { top: 100%; margin-top: 2px; }
+.tl-js .down.lvl .wk-cap::before { bottom: 100%; margin-bottom: 2px; }
+.tl-js .mk::before { top: calc(var(--h, 260px) / -2 + 8px); height: calc(var(--h, 260px) - 16px); opacity: .35; }
+.tl-js .is-folded .wk-cap { display: none; }
+.tl-js .is-folded .wk-dot { width: 8px; height: 8px; left: -4px; top: -4px; opacity: .7; }
+
+// The future: a short dashed tail with only its end point and how much is left.
+.wk-tail {
+  position: absolute; top: 50%; left: calc((100 - var(--tail)) * 1%); right: 0; height: 0;
+  border-top: 2px dashed var(--line); margin-top: -1px; list-style: none;
+}
+.wk-tail span {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font: .66rem var(--sans); color: var(--muted); letter-spacing: .02em;
+}
+
+// Early years folded into a narrow stretch; the button unfolds them (and folds them back).
+.wk-fold { position: absolute; top: 50%; left: 0; width: calc(var(--fw, 0) * 1%); height: 0; list-style: none; }
+.wk-fold button {
+  position: absolute; top: 26px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font: .68rem var(--sans); color: var(--muted); background: var(--bg); cursor: var(--cursor-pointer);
+  border: 1px dashed var(--line); border-radius: 999px; padding: .15em .7em;
+  transition: color .2s, border-color .2s;
+}
+.wk-fold button:hover, .wk-fold button:focus-visible { color: var(--accent); border-color: var(--accent); outline: none; }
+.tl-folded .wk-fold::before {   // the folded stretch: a crimped band over the axis…
+  content: ""; position: absolute; left: 6px; right: 0; top: -4px; height: 8px; opacity: .55;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 2px, transparent 2px 5px);
+}
+.tl-folded .wk-fold::after {    // …ending in a break mark
+  content: "≈"; position: absolute; right: -6px; top: -13px; font: .9rem/1 var(--sans); color: var(--accent);
+  background: var(--bg); padding: 0 1px;
+}
+.tl-js:not(.tl-folded) .wk-fold { top: auto; bottom: 4px; }
+.tl-js:not(.tl-folded) .wk-fold button { top: auto; bottom: 0; left: 0; transform: none; }
+
 @keyframes wk-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 22%, transparent); } }
 @keyframes wk-hit { 50% { transform: scale(1.5); background: var(--accent); } }
 @keyframes wk-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
@@ -366,6 +422,7 @@
   .wk-cap, .up .wk-cap, .down .wk-cap, .far .wk-cap, .is-start .wk-cap, .is-end .wk-cap { position: static; transform: none; width: auto; max-width: none; align-items: flex-start; text-align: left; }
   .wk-node:hover .wk-cap, .is-start:hover .wk-cap, .is-end:hover .wk-cap { transform: translateX(3px); }
   .far .wk-cap::before { display: none; }
+  .wk-tail, .wk-fold { display: none !important; }
   .mk::before { left: -26px; top: auto; bottom: 0; height: 0; width: calc(100% + 26px); border-left: 0; border-top: 1px dashed var(--accent); }
 }
 

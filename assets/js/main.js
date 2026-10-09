@@ -127,6 +127,150 @@
     each('.wk-mini i', function (c, i) { c.className = i < v.age ? 'p' : i === v.age ? 'now' : ''; }, box);
   });
 
+  // ── Timeline layout. The Liquid build draws a plain linear axis; here it is re-scaled:
+  //    · the lived part is stretched over most of the width and the future folds into a short
+  //      dashed tail that only shows its end point (life expectancy);
+  //    · once more has been lived than is left, the early years fold into a narrow stretch at the
+  //      start (click it to unfold) and only the recent years are stretched;
+  //    · captions are stacked into lanes above and below the axis so no two overlap.
+  //    Phones get the vertical list from CSS, so nothing is done below 721px.
+  function layoutTimeline(tl, born, end) {
+    var YEAR = 365.2425 * DAY, TAIL = 8, FOLD = 11, GAP = 10, MIN_RECENT = 10;
+    var tr = function (s, o) { return s.replace(/\{(\w+)\}/g, function (m, k) { return o[k]; }); };
+    var nodes = Array.prototype.slice.call(tl.querySelectorAll('.wk-node'));
+    var axis = tl.querySelector('.wk-axis');
+    var mq = window.matchMedia('(max-width: 720px)');
+    var unfolded = false;
+
+    var tail = document.createElement('li'); tail.className = 'wk-tail'; tail.setAttribute('aria-hidden', 'true');
+    tail.innerHTML = '<span></span>';
+    var fold = document.createElement('li'); fold.className = 'wk-fold';
+    fold.innerHTML = '<button type="button"></button>';
+    tl.appendChild(tail); tl.appendChild(fold);
+    fold.querySelector('button').addEventListener('click', function () { unfolded = !unfolded; run(); });
+
+    var timeOf = function (n) {
+      if (n.classList.contains('is-start')) return born;
+      if (n.classList.contains('is-end')) return end;
+      if (n.classList.contains('wk-today') || (!n.dataset.d && n.classList.contains('is-now'))) return today;
+      return n.dataset.d ? ymd(n.dataset.d) : today;
+    };
+
+    var clear = function () {
+      tl.classList.remove('tl-js', 'tl-folded');
+      tl.style.height = '';
+      nodes.forEach(function (n) { n.style.removeProperty('--off'); n.style.removeProperty('--lead'); n.style.removeProperty('--sx'); n.classList.remove('is-folded', 'lvl'); });
+      each('.wk-tick.js', function (k) { k.remove(); }, tl);
+    };
+
+    function run() {
+      if (mq.matches || !tl.clientWidth) { clear(); return; }
+      var W = tl.clientWidth, now = Math.min(Math.max(today, born), end);
+      var lived = now - born, left = end - now, NOWP = 100 - TAIL;
+      var canFold = lived > left && lived > MIN_RECENT * YEAR * 1.5;
+      var folded = canFold && !unfolded;
+      var cut = folded ? now - Math.max(left, MIN_RECENT * YEAR) : born;
+      var start = folded ? FOLD : 0;
+      var pos = function (t) {
+        if (t >= end) return 100;
+        if (t > now) return NOWP + Math.min(.85, (t - now) / left) * TAIL;   // future events sit in the tail
+        if (t < cut) return (t - born) / (cut - born) * FOLD;
+        return start + (t - cut) / Math.max(1, now - cut) * (NOWP - start);
+      };
+
+      tl.classList.add('tl-js'); tl.classList.toggle('tl-folded', folded);
+      tl.style.setProperty('--now', NOWP);
+      tl.style.setProperty('--tail', TAIL);
+      tail.querySelector('span').textContent = tr(tl.dataset.left || '', { n: Math.round(left / YEAR) });
+      tail.style.display = left > 0 ? '' : 'none';
+
+      // Fold control: a narrow stretch at the start when folded, a small "fold" link when opened.
+      fold.style.display = canFold ? '' : 'none';
+      var cutAge = Math.floor((cut - born) / YEAR);
+      fold.style.setProperty('--fw', folded ? FOLD : 0);
+      fold.querySelector('button').textContent = folded ? tr(tl.dataset.fold || '', { a: 0, b: cutAge }) : (tl.dataset.unfold || '');
+
+      // Ticks: ages along the stretched part only, spaced so labels never crowd.
+      each('.wk-tick', function (k) { if (k.classList.contains('js')) k.remove(); else k.style.display = 'none'; }, tl);
+      var pxYear = W * (NOWP - start) / 100 / Math.max(1e-9, (now - cut) / YEAR);
+      var step = [1, 2, 5, 10, 20].filter(function (s) { return s * pxYear >= 46; })[0] || 20;
+      for (var a = Math.ceil((cut - born) / YEAR / step) * step; a * YEAR < lived; a += step) {
+        if (a === 0) continue;
+        var tk = document.createElement('li'); tk.className = 'wk-tick js'; tk.setAttribute('aria-hidden', 'true');
+        tk.style.setProperty('--p', pos(born + a * YEAR).toFixed(2)); tk.innerHTML = '<span>' + a + '</span>';
+        tl.insertBefore(tk, axis.nextSibling);
+      }
+
+      // Place every node, then gather the captions that need room.
+      var items = [];
+      nodes.forEach(function (n) {
+        var t = timeOf(n), pp = pos(t);
+        n.style.setProperty('--p', pp.toFixed(3));
+        var isFold = folded && t < cut && !n.classList.contains('is-start');
+        n.classList.toggle('is-folded', isFold);
+        var cap = n.querySelector('.wk-cap');
+        if (isFold) { var tm = cap && cap.textContent.replace(/\s+/g, ' ').trim(); var dot = n.querySelector('.wk-dot'); if (dot && tm) dot.title = tm; }
+        n.style.removeProperty('--sx');
+        if (!cap || isFold) return;
+        var w = cap.offsetWidth, h = cap.offsetHeight, x = pp / 100 * W, l, r;
+        if (n.classList.contains('is-start')) { l = x - 12; r = l + w; }
+        else if (n.classList.contains('is-end')) { r = x + 12; l = r - w; }
+        else {
+          l = x - w / 2; r = x + w / 2;
+          var sx = l < -12 ? -12 - l : r > W + 12 ? W + 12 - r : 0;   // keep it inside the box
+          if (sx) { l += sx; r += sx; n.style.setProperty('--sx', sx.toFixed(1) + 'px'); }
+        }
+        items.push({ n: n, l: l, r: r, h: h, x: x, pin: n.classList.contains('is-end') ? 'down' : n.classList.contains('is-start') ? 'up' : '' });
+      });
+      // The fold button and the tail label take room on the axis too.
+      var blocks = { up: [[]], down: [[]] };
+      var put = function (side, lv, l, r) { while (blocks[side].length <= lv) blocks[side].push([]); blocks[side][lv].push([l, r]); };
+      var free = function (side, lv, l, r) { return !(blocks[side][lv] || []).some(function (s) { return l < s[1] + GAP && r + GAP > s[0]; }); };
+      if (canFold && folded) put('down', 0, 0, FOLD / 100 * W + 4);
+      if (left > 0) put('up', 0, NOWP / 100 * W + 8, W - 4);
+
+      // Greedy lanes, left to right: the first free slot nearest the axis, alternating sides
+      // so neighbours fall on opposite sides when both are free.
+      items.sort(function (a, c) { return a.x - c.x; });
+      var last = 'down', sides = { up: [], down: [] };
+      items.forEach(function (it) {
+        var order = it.pin ? [it.pin] : (last === 'up' ? ['down', 'up'] : ['up', 'down']);
+        for (var lv = 0; ; lv++) {
+          var s = order.filter(function (sd) { return free(sd, lv, it.l, it.r); })[0];
+          if (s) { it.side = s; it.lv = lv; put(s, lv, it.l, it.r); break; }
+          if (lv > 12) { it.side = order[0]; it.lv = lv; break; }
+        }
+        last = it.side;
+        (sides[it.side][it.lv] = sides[it.side][it.lv] || []).push(it);
+      });
+
+      // Each lane is as tall as its tallest caption; lanes stack outward from the axis.
+      var BASE = { up: 18, down: 26 }, ext = { up: 0, down: 0 };
+      ['up', 'down'].forEach(function (sd) {
+        var off = BASE[sd];
+        for (var lv = 0; lv < sides[sd].length; lv++) {
+          var lane = sides[sd][lv] || [], hmax = 0;
+          lane.forEach(function (it) {
+            hmax = Math.max(hmax, it.h);
+            it.n.classList.remove('up', 'down', 'far'); it.n.classList.add(sd);
+            it.n.classList.toggle('lvl', lv > 0);
+            it.n.style.setProperty('--off', off + 'px');
+            it.n.style.setProperty('--lead', Math.max(0, off - 12) + 'px');
+          });
+          if (lane.length) { ext[sd] = off + hmax; off += hmax + 10; }
+        }
+      });
+      var half = Math.max(ext.up, ext.down, 90) + 28;
+      tl.style.height = half * 2 + 'px'; tl.style.setProperty('--h', half * 2 + 'px');
+    }
+
+    var raf = 0, sched = function () { cancelAnimationFrame(raf); raf = requestAnimationFrame(run); };
+    if (window.ResizeObserver) new ResizeObserver(sched).observe(tl); else window.addEventListener('resize', sched);
+    if (mq.addEventListener) mq.addEventListener('change', sched);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sched);
+    sched();
+  }
+
   var wk = document.querySelector('[data-weeks]');
   if (wk) {
     var zh = wk.dataset.lang.indexOf('zh') === 0, tip = wk.querySelector('.wk-tip');
@@ -150,10 +294,11 @@
     });
     var tl = wk.querySelector('.wk-tl');
     if (tl) {
-      var b = ymd(tl.dataset.born), p = Math.max(0, Math.min(100, (today - b) / (ymd(tl.dataset.end) - b) * 100)).toFixed(2);
+      var b = ymd(tl.dataset.born), tEnd = ymd(tl.dataset.end), p = Math.max(0, Math.min(100, (today - b) / (tEnd - b) * 100)).toFixed(2);
       tl.style.setProperty('--now', p);
       each('.wk-today', function (n) { n.style.setProperty('--p', p); var t = n.querySelector('time'); t.textContent = fmt(today, zh); t.dateTime = fmt(today, true); }, tl);
       each('.wk-node[data-d]', function (n) { var f = ymd(n.dataset.d) > today; n.classList.toggle('is-future', f); n.classList.toggle('is-past', !f); }, tl);
+      layoutTimeline(tl, b, tEnd);
     }
 
     // Hover: a light tooltip. Click: the same facts pinned as a card that stays until closed,
