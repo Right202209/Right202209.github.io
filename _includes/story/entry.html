@@ -1,0 +1,33 @@
+{%- comment -%}
+  Pluggable: {% include story/entry.html %} puts the storybook card on any page (the Life page has it
+  under the album card). Hidden when the module or `entry` is off. The little book opens on hover,
+  tilts with the pointer, and the dog on its cover watches you (main.js, "Storybook entry").
+{%- endcomment -%}
+{%- include lang.html -%}
+{%- assign sb = site.data.story -%}
+{%- assign _sp = site.pages | where: "ref", "story" | where: "lang", L | first -%}
+{%- if sb and sb.enabled != false and sb.entry != false and _sp -%}
+<a class="sb-entry" href="{{ _sp.url | relative_url }}" data-sb-entry>
+  <span class="sb-mini" aria-hidden="true">
+    <span class="sb-mini-back"></span>
+    <span class="sb-mini-leaf" style="--l:3"></span><span class="sb-mini-leaf" style="--l:2"></span><span class="sb-mini-leaf" style="--l:1"></span>
+    <span class="sb-mini-cover">
+      <svg viewBox="0 0 100 100" class="sb-mini-dog">
+        <path class="sb-mini-tail" d="M24 70 C 12 64, 10 52, 16 44" fill="none" stroke="#faf6ee" stroke-width="5" stroke-linecap="round"/>
+        <path d="M22 70 C 22 58, 36 54, 52 56 C 64 57, 70 62, 70 70 C 70 78, 60 82, 46 82 C 32 82, 22 78, 22 70 Z" fill="#faf6ee"/>
+        <path d="M64 62 C 68 50, 74 44, 80 44 C 86 44, 94 49, 98 52 C 99 54, 97 56, 95 56 C 88 56, 82 56, 78 60 C 74 64, 70 68, 68 70 Z" fill="#faf6ee"/>
+        <path d="M77 46 C 74 50, 73 56, 76 60 C 78 56, 79 51, 77 46 Z" fill="#1f1d1a"/>
+        <circle class="sb-mini-eye" cx="85" cy="49" r="1.9" fill="#1f1d1a"/>
+        <path d="M64 60 C 68 66, 74 66, 78 62 L 76 70 L 70 74 Z" fill="#e0532f"/>
+      </svg>
+      <span class="sb-mini-title">{{ sb.title[L] }}</span>
+    </span>
+  </span>
+  <span class="sb-entry-text">
+    <span class="eyebrow" data-hop>{{ sb.title[L] }}</span>
+    <span class="sb-entry-now">{% if L == "zh-CN" %}《{{ sb.book[L] }}》{% else %}<i>{{ sb.book[L] }}</i>{% endif %}</span>
+    <span class="sb-entry-sub">{{ sb.entry_sub[L] }}</span>
+  </span>
+  <span class="wk-entry-go" aria-hidden="true">→</span>
+</a>
+{%- endif -%}

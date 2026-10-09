@@ -14,3 +14,4 @@ description: 屏幕熄灭后，留下的那些。
 
 {% include weeks/entry.html %}
 {% include photos/entry.html %}
+{% include story/entry.html %}
