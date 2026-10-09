@@ -89,7 +89,7 @@
 
 ## 人生周历
 
-可插拔模块：生活页 blockquote 下方那一行，左边是今天的日期，右边点进周历。周历有格子和横向时间轴两种视图，带季节刻度和私密事件（只显示一个实心点），事件也能用 ⌘K 搜到。全部在构建时生成，不用任何库。开关和数据都在 `_data/weeks.yml`，详见教程。移植自 [Gina Trapani 的 My Life in Weeks](https://weeks.ginatrapani.org)。
+可插拔模块：生活页 blockquote 下方那一行，左边是今天的日期，右边点进周历。周历有格子和横向时间轴两种视图（时间轴拉长走过的年份、未来只留终点；走过的比剩下的多时折叠早年；标签自动分层，不会重叠），带季节刻度和私密事件（只显示一个实心点），事件也能用 ⌘K 搜到。全部在构建时生成，不用任何库。开关和数据都在 `_data/weeks.yml`，详见教程。移植自 [Gina Trapani 的 My Life in Weeks](https://weeks.ginatrapani.org)。
 
 ## 致谢
 

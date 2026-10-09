@@ -1,13 +1,15 @@
 {%- comment -%}
   Horizontal timeline: birth, every event, now, life expectancy. --p is the position along
-  the life (0–100), --i the stagger index for the fade-in. Built here; main.js only nudges "now".
+  the life (0–100), --i the stagger index for the fade-in. Built here as a plain linear axis (the no-JS fallback);
+  main.js re-lays it out: the past stretched, the future folded to its end point, early years
+  folded once more has been lived than is left, and captions stacked into lanes so none overlap.
 {%- endcomment -%}
 {%- assign now_p = w_today | minus: w_born | times: 100.0 | divided_by: w_span | round: 2 -%}
 {%- if now_p > 100 -%}{%- assign now_p = 100 -%}{%- endif -%}
 {%- assign i = 0 -%}{%- assign j = 0 -%}
 {%- assign now_done = false -%}
 <div class="wk-tlwrap">
-<ol class="wk-tl" style="--now:{{ now_p }}" data-born="{{ w_bd }}" data-end="{{ w_end | date: '%Y-%m-%d' }}">
+<ol class="wk-tl" style="--now:{{ now_p }}" data-born="{{ w_bd }}" data-end="{{ w_end | date: '%Y-%m-%d' }}" data-left="{{ t.weeks_tl_left }}" data-fold="{{ t.weeks_tl_fold }}" data-unfold="{{ t.weeks_tl_unfold }}">
   <li class="wk-axis" aria-hidden="true"><i></i></li>
   {%- assign ticks = w_years | divided_by: 10 | floor -%}
   {%- for d in (1..ticks) -%}

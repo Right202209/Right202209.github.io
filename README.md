@@ -50,7 +50,7 @@ Or build locally and upload `_site/` anywhere.
 
 ## Life in Weeks
 
-A pluggable module. Under the quote on the Life page is one row: today's date on the left, and on the right a link to your life in weeks. The weeks page has two views, a grid and a horizontal timeline, with season ticks, private events (just a solid dot) and events you can find with ⌘K. All of it is built at compile time, with no libraries. The switches and the data live in `_data/weeks.yml`; see the tutorial. Ported from [Gina Trapani's My Life in Weeks](https://weeks.ginatrapani.org).
+A pluggable module. Under the quote on the Life page is one row: today's date on the left, and on the right a link to your life in weeks. The weeks page has two views, a grid and a horizontal timeline (the lived years stretched across it, the future folded down to its end point, early years folded once more has been lived than is left, and labels stacked so they never overlap), with season ticks, private events (just a solid dot) and events you can find with ⌘K. All of it is built at compile time, with no libraries. The switches and the data live in `_data/weeks.yml`; see the tutorial. Ported from [Gina Trapani's My Life in Weeks](https://weeks.ginatrapani.org).
 
 ## Acknowledgements
 
