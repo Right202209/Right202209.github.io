@@ -1,0 +1,4 @@
+{%- comment -%} An event link: a full URL as is, a /site/path through relative_url. {%- endcomment -%}
+{%- assign _u = include.u | strip -%}
+{%- assign _c0 = _u | slice: 0 -%}
+{%- if _c0 == "/" -%}{{ _u | relative_url }}{%- else -%}{{ _u }}{%- endif -%}

@@ -156,11 +156,17 @@
       each('.wk-node[data-d]', function (n) { var f = ymd(n.dataset.d) > today; n.classList.toggle('is-future', f); n.classList.toggle('is-past', !f); }, tl);
     }
 
-    // Tooltip: date · age & week · season · era, place · event
+    // Hover: a light tooltip. Click: the same facts pinned as a card that stays until closed,
+    // with the week's note, pictures and link (from the <template>s in weeks/notes.html).
+    // Weeks whose event has a url are link cells: a click follows the link, unless the week also
+    // has a note, in which case the card opens and carries the link as a button.
     var SEASON_ZH = ['冬', '春', '夏', '秋'], SEASON_EN = ['Winter', 'Spring', 'Summer', 'Autumn'];
     var SOLAR_ZH = ['立冬', '立春', '立夏', '立秋'], SOLAR_EN = ['Start of Winter', 'Start of Spring', 'Start of Summer', 'Start of Autumn'];
-    var show = function (c) {
-      if (!c || c.tagName !== 'I' || !c.parentNode.classList.contains('wk-cells') || (c.classList.contains('f') && !c.dataset.ev)) { tip.hidden = true; return; }
+    var card = wk.querySelector('.wk-card'), cardMeta = card && card.querySelector('.wk-card-meta'), cardBody = card && card.querySelector('.wk-card-body');
+    var pinned = null;
+    var cellOf = function (t) { var c = t && t.closest ? t.closest('.wk-cells > i') : null; return c && wk.contains(c) ? c : null; };
+    var live = function (c) { return c && !(c.classList.contains('f') && !c.dataset.ev); };
+    var facts = function (c) {
       var row = c.closest('.wk-yr'), i = Array.prototype.indexOf.call(c.parentNode.children, c);
       // Weeks start on January 1; age still follows the actual birthday (Feb 28 in non-leap years).
       var d = ymd(row.dataset.from) + i * WEEK, y = new Date(d).getUTCFullYear();
@@ -174,22 +180,91 @@
       var q = /(?:^| )q(\d)/.exec(c.className), st = (c.dataset.st || '').split(' ');
       var season = c.dataset.st ? (zh ? SOLAR_ZH : SOLAR_EN)[st[0]] + ' ' + fmt(ymd(st[1]), zh).replace(/^\d{4}-/, '')
                  : q ? (zh ? SEASON_ZH : SEASON_EN)[q[1]] : '';
-      var priv = c.classList.contains('pv') ? (zh ? '🔒 私密' : '🔒 Private') : '';
-      tip.textContent = [fmt(d, zh), zh ? y + ' 年第 ' + wn + ' 周' : 'week ' + wn + ' of ' + y, ageText, season, where, c.dataset.ev || priv]
-        .filter(Boolean).join(' · ');
+      return [fmt(d, zh), zh ? y + ' 年第 ' + wn + ' 周' : 'week ' + wn + ' of ' + y, ageText, season, where];
+    };
+    var priv = function (c) { return c.classList.contains('pv') ? (zh ? '🔒 私密' : '🔒 Private') : ''; };
+    // Keep a floating box inside the viewport, under the cell (or above it when there's no room).
+    var place = function (box, c, gap) {
+      var r = c.getBoundingClientRect(), o = wk.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight;
+      var lo = Math.max(8, o.left), hi = Math.min(document.documentElement.clientWidth - 8, o.right);
+      var x = Math.max(lo, Math.min(r.left + r.width / 2 - w / 2, hi - w));
+      var below = r.bottom + gap + h <= window.innerHeight - 8 || r.top - gap - h < 8;
+      box.style.left = x - o.left + 'px';
+      box.style.top = (below ? r.bottom + gap : r.top - gap - h) - o.top + 'px';
+      box.dataset.side = below ? 'below' : 'above';
+    };
+    var show = function (c) {
+      if (!live(c) || c === pinned) { tip.hidden = true; return; }
+      var hint = c.classList.contains('nt') ? card && card.dataset.open : c.classList.contains('ln') ? card && card.dataset.go : '';
+      tip.textContent = facts(c).concat([c.dataset.ev || priv(c)]).filter(Boolean).join(' · ') + (hint ? ' — ' + hint + (c.classList.contains('nt') ? '' : ' ↗') : '');
       tip.hidden = false;
-      var r = c.getBoundingClientRect(), w = tip.offsetWidth, o = wk.getBoundingClientRect();
-      tip.style.left = Math.max(0, Math.min(r.left + r.width / 2 - w / 2, document.documentElement.clientWidth - w - 8) - o.left) + 'px';
-      tip.style.top = r.bottom - o.top + 8 + 'px';
+      place(tip, c, 8);
+    };
+    var unpin = function (keepFocus) {
+      if (!pinned) return;
+      var c = pinned; pinned = null;
+      c.classList.remove('pin'); c.removeAttribute('aria-expanded');
+      card.hidden = true; cardBody.textContent = '';
+      if (location.hash.indexOf('#ev-') === 0) history.replaceState(null, '', location.pathname + location.search);
+      if (keepFocus) (c.querySelector('a') || c).focus({ preventScroll: true });
+    };
+    var pin = function (c, focus) {
+      if (!card || !live(c)) return;
+      if (pinned === c) { unpin(focus); return; }
+      unpin();
+      pinned = c; tip.hidden = true;
+      c.classList.add('pin'); c.setAttribute('aria-expanded', 'true');
+      var meta = facts(c);
+      if (!c.dataset.k && c.classList.contains('pv')) meta.push(priv(c));
+      cardMeta.textContent = meta.filter(Boolean).join(' · ');
+      cardBody.textContent = '';
+      (c.dataset.k || '').split(' ').forEach(function (k) {
+        if (!k) return;
+        each('template[data-note="' + k + '"]', function (tp) { cardBody.appendChild(document.importNode(tp.content, true)); }, wk);
+      });
+      // A birthday or a week with no note still gets its own line.
+      if (!cardBody.firstChild && c.textContent.trim() && !c.classList.contains('pv')) {
+        var h = document.createElement('h3'); h.className = 'wk-note-title'; h.textContent = c.textContent.trim();
+        var a = document.createElement('article'); a.className = 'wk-note'; a.appendChild(h); cardBody.appendChild(a);
+      }
+      card.classList.toggle('bare', !cardBody.firstChild);
+      card.setAttribute('aria-label', cardMeta.textContent);
+      card.hidden = false;
+      card.scrollTop = 0;
+      place(card, c, 12);
+      each('img', function (im) { if (!im.complete) im.addEventListener('load', function () { if (pinned === c) place(card, c, 12); }); }, cardBody);
+      if (c.id) history.replaceState(null, '', '#' + c.id);
+      if (focus) card.focus({ preventScroll: true });
     };
     var grid = wk.querySelector('.wk-grid');
-    grid.addEventListener('mouseover', function (e) { if (matchMedia('(hover: hover)').matches) show(e.target); });
+    // Event weeks take keyboard focus (link cells already do, through their link).
+    each('.wk-cells > i[data-ev]:not(.ln)', function (c) { c.tabIndex = 0; c.setAttribute('role', 'button'); }, grid);
+    grid.addEventListener('mouseover', function (e) { if (matchMedia('(hover: hover)').matches) show(cellOf(e.target)); });
     grid.addEventListener('mouseleave', function () { tip.hidden = true; });
-    grid.addEventListener('click', function (e) { show(e.target); });
+    grid.addEventListener('click', function (e) {
+      var c = cellOf(e.target); if (!c) return;
+      var link = e.target.closest('a.wk-a');
+      if (link) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // new tab etc.: let the browser do it
+        if (!c.classList.contains('nt')) { tip.hidden = true; return; }  // a plain link cell is just a link
+        e.preventDefault();
+      }
+      pin(c, e.detail === 0);
+    });
+    grid.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.wk-cells > i[data-ev]')) { e.preventDefault(); pin(e.target, true); }
+    });
+    if (card) {
+      card.querySelector('.wk-card-x').addEventListener('click', function () { unpin(true); });
+      document.addEventListener('click', function (e) { if (pinned && !card.contains(e.target) && !cellOf(e.target)) unpin(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && pinned) unpin(true); });
+      window.addEventListener('resize', function () { if (pinned) place(card, pinned, 12); });
+    }
     document.addEventListener('click', function (e) { if (!grid.contains(e.target)) tip.hidden = true; });
 
     // Grid / timeline switch, remembered per browser
     var setView = function (v) {
+      if (v !== 'grid') unpin();
       wk.dataset.view = v;
       each('.wk-switch button', function (btn) { btn.setAttribute('aria-pressed', btn.dataset.v === v); }, wk);
     };
@@ -224,7 +299,8 @@
       setView('grid');
       var cell = wk.querySelector('[data-k~="' + h + '"]'); if (!cell) return;
       cell.classList.remove('hit'); void cell.offsetWidth; cell.classList.add('hit');
-      setTimeout(function () { cell.scrollIntoView({ block: 'center', behavior: 'smooth' }); show(cell); }, 60);
+      setTimeout(function () { cell.scrollIntoView({ block: 'center', behavior: 'smooth' }); if (pinned !== cell) pin(cell);
+        setTimeout(function () { if (pinned === cell) place(card, cell, 12); }, 700); }, 60);
     };
     window.addEventListener('hashchange', jump); jump();
   }

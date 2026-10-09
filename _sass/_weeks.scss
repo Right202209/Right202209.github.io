@@ -193,6 +193,86 @@
 }
 .wk-tip[hidden] { display: none; }
 
+// ── Week cells that hold something ───────────────────────────
+// nt: a week with a note or pictures → a dog-eared corner, like a page with writing on it.
+// ln: a week that links somewhere → the label is a real link: underlined, with a ↗ after it.
+.wk-cells i.nt {
+  background-image: linear-gradient(225deg, var(--bg) 0 5px, color-mix(in srgb, var(--ink) 30%, transparent) 5px 7px, transparent 7px);
+}
+.wk-cells i.ln { color: var(--ink); }
+.wk-cells i.ln > .wk-a {
+  color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  cursor: var(--cursor-pointer); outline: none;
+}
+.wk-cells i.ln > .wk-a::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }   // the whole box is the link
+.wk-cells i.ln::after {
+  content: "↗"; margin-left: .3em; font-size: .85em; line-height: 1; color: var(--accent); transition: transform .2s;
+}
+.wk-cells i.ln:not(.nt) { box-shadow: inset 0 -2px 0 var(--season-band, transparent), inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent); }
+.wk-cells i.ln:hover, .wk-cells i.ln:focus-within { color: var(--bg); }
+.wk-cells i.ln:hover > .wk-a, .wk-cells i.ln:focus-within > .wk-a { text-decoration-color: currentColor; }
+.wk-cells i.ln:hover::after, .wk-cells i.ln:focus-within::after { color: var(--bg); transform: translate(1px, -1px); }
+.wk-cells i.ln:focus-within, .wk-cells i[tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; z-index: 3; }
+.wk-cells i.now.ln > .wk-a { text-decoration-color: currentColor; }
+.wk-cells i.now.ln::after { color: inherit; }
+// The week whose card is open
+.wk-cells i.pin { z-index: 4; transform: scale(1.04); background-color: var(--accent); color: var(--bg); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--accent); }
+.wk-cells i.pin::after { color: var(--bg); }
+.wk-cells i.pin:not(.bd):not(.ev) { transform: scale(1.25); }
+
+// ── The pinned card ──────────────────────────────────────────
+.wk-card {
+  position: absolute; z-index: 21; width: min(360px, calc(100vw - 16px)); max-height: min(70vh, 560px); overflow: auto;
+  padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--surface); color: var(--ink);
+  box-shadow: 0 22px 50px -18px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.06);
+  animation: wk-card-in .22s cubic-bezier(.2,.7,.2,1);
+  overscroll-behavior: contain; outline: none;
+}
+.wk-card[hidden] { display: none; }
+.wk-card[data-side="above"] { animation-name: wk-card-up; }
+.wk-card-x {
+  position: sticky; top: 0; float: right; margin: -6px -8px 0 8px; width: 28px; height: 28px; border-radius: 50%;
+  border: 0; background: color-mix(in srgb, var(--surface) 80%, transparent); color: var(--muted);
+  font: 400 1.25rem/1 var(--sans); cursor: var(--cursor-pointer); transition: color .2s, background .2s;
+}
+.wk-card-x:hover, .wk-card-x:focus-visible { color: var(--ink); background: var(--line); outline: none; }
+.wk-card-meta { margin: 0; padding-right: 4px; font: 500 .74rem/1.5 var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; }
+.wk-card-body:empty { display: none; }
+.wk-note { margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--line); }
+.wk-note + .wk-note { margin-top: 1rem; }
+.wk-note-title { margin: 0; font: 500 1.08rem/1.35 var(--serif); letter-spacing: -.005em; }
+.wk-note-emoji { margin-right: .35em; }
+.wk-note-text { margin-top: .45rem; font: .88rem/1.7 var(--sans); color: color-mix(in srgb, var(--ink) 85%, var(--muted)); }
+.wk-note-text > :first-child { margin-top: 0; }
+.wk-note-text > :last-child { margin-bottom: 0; }
+.wk-note-text p { margin: 0 0 .6em; }
+.wk-note-text a { color: var(--accent); }
+.wk-note-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: .75rem; }
+.wk-note-imgs.one { grid-template-columns: 1fr; }
+.wk-note-imgs figure { margin: 0; }
+.wk-note-imgs a { display: block; border-radius: 8px; overflow: hidden; background: var(--line); }
+.wk-note-imgs img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.wk-note-imgs.one img { aspect-ratio: auto; max-height: 260px; }
+.wk-note-imgs a:hover img { transform: scale(1.03); }
+.wk-note-imgs figcaption { margin-top: .3rem; font: .72rem/1.4 var(--sans); color: var(--muted); }
+.wk-note-go {
+  display: inline-flex; align-items: center; gap: .35em; margin-top: .85rem; padding: .42em 1em;
+  border: 1px solid var(--accent); border-radius: 999px; color: var(--accent); text-decoration: none;
+  font: 500 .8rem/1.2 var(--sans); transition: background .2s, color .2s;
+}
+.wk-note-go:hover, .wk-note-go:focus-visible { background: var(--accent); color: var(--bg); outline: none; }
+.wk-note-go span { transition: transform .2s; }
+.wk-note-go:hover span { transform: translate(2px, -2px); }
+// Timeline captions that link somewhere
+.wk-cap-a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+.wk-cap-a::after { content: " ↗"; color: var(--accent); }
+.wk-cap-a:hover { color: var(--accent); }
+
+@keyframes wk-card-in { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
+@keyframes wk-card-up { from { opacity: 0; transform: translateY(6px) scale(.98); } }
+
 // Timeline
 .wk-tlwrap { overflow-x: auto; padding: 0 0 .5rem; }
 .wk-tl { position: relative; list-style: none; margin: 0 16px; padding: 0; height: 330px; min-width: 760px; }
@@ -255,6 +335,7 @@
   .wk-node, .wk-axis i, .wk-life i, .wk-mini i.now, .wk-cells i.now, .is-now .wk-dot, .wk-cells i.hit { animation: none; opacity: 1; }
   .wk-entry, .wk-mini i { transition: none; }
   .wk-progress i { transition: none; }
+  .wk-card { animation: none; }
 }
 
 @media (min-width: 721px) and (max-width: 1000px) { .weeks { --wk-w: 2rem; --wk-h: 1.7rem; } }
