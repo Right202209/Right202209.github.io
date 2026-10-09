@@ -1,0 +1,39 @@
+{%- comment -%}
+  Music player (a pluggable widget). assets/js/player.js drives every .mp on the page with one
+  shared <audio>, so a track keeps playing after its card closes (it moves to a small dock).
+    {% include player.html tracks=page.audio %}
+    {% include player.html tracks="song.mp3" title="A title" artist="Someone" %}
+  tracks: one address, one { src, title, artist, cover }, or a list of either (addresses: see audio/src.html).
+  title / artist / cover: defaults for tracks that don't set their own. ref: an element id the dock links back to.
+{%- endcomment -%}
+{%- assign L = page.lang | default: site.lang -%}
+{%- assign t = site.data.i18n[L] | default: site.data.i18n[site.lang] -%}
+{%- assign _tr = include.tracks -%}
+{%- assign _k = _tr | jsonify | slice: 0 -%}
+{%- if _k != "[" -%}{%- assign _one = _tr -%}{%- assign _tr = "" | split: "" | push: _one -%}{%- endif -%}
+{%- if _tr.size > 0 -%}
+<div class="mp{% if _tr.size > 1 %} many{% endif %}" data-mp{% if include.ref %} data-ref="{{ include.ref }}"{% endif %}>
+  <div class="mp-main">
+    <button type="button" class="mp-disc mp-play" aria-label="{{ t.mp_play }}" data-play="{{ t.mp_play }}" data-pause="{{ t.mp_pause }}">
+      <span class="mp-cover"></span>
+      <svg class="mp-i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+      <svg class="mp-i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+    </button>
+    <div class="mp-info">
+      <p class="mp-now"><b class="mp-title"></b> <span class="mp-artist"></span></p>
+      <div class="mp-bar" role="slider" tabindex="0" aria-label="{{ t.mp_seek }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+      <p class="mp-time"><span class="mp-cur">0:00</span>{% if _tr.size > 1 %}<span class="mp-skip"><button type="button" class="mp-prev" aria-label="{{ t.mp_prev }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM19 5.5v13L9.5 12z"/></svg></button><button type="button" class="mp-next" aria-label="{{ t.mp_next }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM5 5.5v13l9.5-6.5z"/></svg></button></span>{% endif %}<span class="mp-dur">--:--</span></p>
+    </div>
+  </div>
+  <ol class="mp-list"{% if _tr.size < 2 %} hidden{% endif %} data-err="{{ t.mp_error }}">
+  {%- for x in _tr -%}
+    {%- if x.src -%}{%- assign _src = x.src -%}{%- assign _ti = x.title -%}{%- assign _ar = x.artist -%}{%- assign _co = x.cover -%}
+    {%- else -%}{%- assign _src = x -%}{%- assign _ti = nil -%}{%- assign _ar = nil -%}{%- assign _co = nil -%}{%- endif -%}
+    {%- if _ti.zh or _ti.en -%}{%- if L == "en" -%}{%- assign _ti = _ti.en | default: _ti.zh -%}{%- else -%}{%- assign _ti = _ti.zh | default: _ti.en -%}{%- endif -%}{%- endif -%}
+    {%- unless _ti -%}{%- if _tr.size == 1 and include.title -%}{%- assign _ti = include.title -%}{%- else -%}{%- assign _ti = _src | split: "/" | last | split: "?" | first | split: "." | first | url_decode -%}{%- endif -%}{%- endunless -%}
+    {%- assign _ar = _ar | default: include.artist -%}{%- assign _co = _co | default: include.cover -%}
+    <li><button type="button" data-src="{% include audio/src.html s=_src %}" data-title="{{ _ti | strip_html | escape }}"{% if _ar %} data-artist="{{ _ar | escape }}"{% endif %}{% if _co %} data-cover="{% include photos/src.html s=_co %}"{% endif %}><span class="mp-n">{{ forloop.index }}</span><span class="mp-t">{{ _ti | strip_html | escape }}</span>{% if _ar %}<span class="mp-a">{{ _ar | escape }}</span>{% endif %}</button></li>
+  {%- endfor -%}
+  </ol>
+</div>
+{%- endif -%}

@@ -1,0 +1,16 @@
+{%- comment -%}
+  Resolve an audio address (include.s):
+    https://…                                         as is (any online file)
+    https://github.com/OWNER/REPO/blob/BRANCH/PATH     → raw.githubusercontent.com (a file in any public repo)
+    gh:OWNER/REPO@BRANCH/PATH                          → cdn.jsdelivr.net/gh/… (proper audio type, CDN, range requests)
+    /path/to/file.mp3                                  a file in this site, via relative_url
+    song.mp3                                           a bare name from assets/audio/ in this repo
+{%- endcomment -%}
+{%- assign _s = include.s | strip -%}
+{%- assign _c0 = _s | slice: 0 -%}
+{%- assign _p3 = _s | slice: 0, 3 -%}
+{%- if _p3 == "gh:" -%}{{ _s | replace_first: "gh:", "https://cdn.jsdelivr.net/gh/" }}
+{%- elsif _s contains "://github.com/" and _s contains "/blob/" -%}{{ _s | replace_first: "://github.com/", "://raw.githubusercontent.com/" | replace_first: "/blob/", "/" }}
+{%- elsif _s contains "://" -%}{{ _s }}
+{%- elsif _c0 == "/" -%}{{ _s | relative_url }}
+{%- else -%}{{ "/assets/audio/" | append: _s | relative_url }}{%- endif -%}

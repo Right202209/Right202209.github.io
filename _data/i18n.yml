@@ -42,6 +42,12 @@ zh-CN:
   weeks_decade: "{n} 岁"
   weeks_now: 现在
   weeks_end: 预期寿命
+  mp_play: 播放
+  mp_pause: 暂停
+  mp_prev: 上一首
+  mp_next: 下一首
+  mp_seek: 播放进度
+  mp_error: 这段音频暂时放不了
   weeks_tl_left: "还有约 {n} 年"
   weeks_tl_fold: "{a}–{b} 岁 · 展开"
   weeks_tl_unfold: "收起早年"
@@ -107,6 +113,12 @@ en:
   weeks_decade: "{n}s"
   weeks_now: Now
   weeks_end: Life expectancy
+  mp_play: Play
+  mp_pause: Pause
+  mp_prev: Previous
+  mp_next: Next
+  mp_seek: Seek
+  mp_error: This audio can’t be played right now
   weeks_tl_left: "about {n} yrs to go"
   weeks_tl_fold: "Ages {a}–{b} · expand"
   weeks_tl_unfold: "Fold early years"
