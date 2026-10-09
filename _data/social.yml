@@ -18,24 +18,25 @@
 
 - name: X
   icon: x
-  handle: "@your-x"
-  url: https://x.com/your-x
+  handle: "@droit000"
+  url: https://x.com/droit000
   note: { zh-CN: 偶尔的碎念。, en: Occasional fragments. }
-
-- name: Instagram
-  icon: instagram
-  handle: "@your-ins"
-  url: https://instagram.com/your-ins
-  note: { zh-CN: 看见过的光。, en: Light, as I found it. }
-
-- name: 小红书
-  icon: xiaohongshu
-  handle: your-id
-  url: https://www.xiaohongshu.com/user/profile/your-id
-  hidden: true
 
 - name: RSS
   icon: rss
   handle: feed.xml
   url: /feed.xml
   note: { zh-CN: 不打扰的订阅。, en: Subscribe without being disturbed. }
+
+- name: Instagram
+  icon: instagram
+  handle: "@your-ins"
+  url: https://instagram.com/your-ins
+  note: { zh-CN: 看见过的光。, en: Light, as I found it. }
+  hidden: true
+
+- name: 小红书
+  icon: xiaohongshu
+  handle: your-id
+  url: https://www.xiaohongshu.com/user/profile/your-id
+  hidden: true

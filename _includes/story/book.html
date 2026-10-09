@@ -1,0 +1,78 @@
+{%- comment -%}
+  The storybook (故事手书). Words come from _data/story.yml; the drawings are built by assets/js/story.js
+  into each [data-scene]. Without JavaScript the pages still read top to bottom as a short story.
+{%- endcomment -%}
+{%- include lang.html -%}
+{%- assign sb = site.data.story -%}
+{%- assign _order = "cover,endpaper,tree,wind,rain,sea,stars,draw,end,back" | split: "," -%}
+<div class="sb" data-story data-lang="{{ L }}">
+  <div class="sb-stage" data-stage>
+    <canvas class="sb-dust" aria-hidden="true"></canvas>
+    <nav class="sb-tabs" aria-label="{{ sb.ui.chapters[L] }}">
+      {%- assign _tp = "0,2,3,4,5,6,7,8" | split: "," -%}
+      {%- for tb in sb.ui.tabs -%}
+      <button type="button" class="sb-tab" data-go="{{ _tp[forloop.index0] }}" style="--i:{{ forloop.index0 }}">{{ tb[L] | default: tb }}</button>
+      {%- endfor -%}
+    </nav>
+    <div class="sb-book" data-book tabindex="0" aria-roledescription="book" aria-label="{{ sb.book[L] }}">
+      {%- for key in _order -%}
+      {%- assign pg = sb.pages[key] -%}
+      <section class="sb-page sb-p-{{ key }}" data-page="{{ forloop.index0 }}" data-key="{{ key }}" aria-label="{{ forloop.index0 }}">
+        <div class="sb-paper">
+          {%- if key == "cover" -%}
+          <div class="sb-scene" data-scene="cover"></div>
+          <div class="sb-cover-text">
+            <p class="sb-cover-kicker" data-chars>{{ sb.title[L] }}</p>
+            <h2 class="sb-cover-title" data-chars>{{ sb.book[L] }}</h2>
+            <p class="sb-cover-owner" data-owner hidden></p>
+          </div>
+          {%- elsif key == "endpaper" -%}
+          <div class="sb-scene" data-scene="endpaper"></div>
+          <div class="sb-owner">
+            <p class="sb-line" data-chars>{{ pg.line[L] }}</p>
+            <label class="sb-name"><span class="sr-only">{{ sb.ui.name_ph[L] }}</span><input type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="{{ sb.ui.name_ph[L] }}" data-name></label>
+            <p class="sb-after" data-chars>{{ pg.after[L] }}</p>
+          </div>
+          {%- elsif key == "end" -%}
+          <div class="sb-scene" data-scene="end"></div>
+          <div class="sb-text sb-text-end">
+            <p class="sb-line sb-fin" data-chars>{{ pg.line[L] }}</p>
+            <p class="sb-stamps" data-stamps></p>
+            <button type="button" class="sb-btn" data-go="0">↺ {{ sb.ui.reread[L] }}</button>
+          </div>
+          {%- elsif key == "back" -%}
+          <div class="sb-scene" data-scene="back"></div>
+          <div class="sb-text sb-text-back">
+            <p class="sb-line" data-chars>{{ pg.line[L] }}</p>
+            <p class="sb-scanned" data-scanned></p>
+          </div>
+          {%- else -%}
+          <div class="sb-scene" data-scene="{{ key }}"></div>
+          <div class="sb-text">
+            <p class="sb-line" data-chars>{{ pg.line[L] }}</p>
+            {%- if pg.after -%}<p class="sb-after" data-chars>{{ pg.after[L] }}</p>{%- endif -%}
+          </div>
+          {%- endif -%}
+          {%- if pg.hint -%}<p class="sb-hint">✎ {{ pg.hint[L] }}</p>{%- endif -%}
+          {%- unless key == "cover" or key == "back" -%}<span class="sb-num" aria-hidden="true">{{ forloop.index0 }}</span>{%- endunless -%}
+        </div>
+      </section>
+      {%- endfor -%}
+    </div>
+  </div>
+  <div class="sb-bar">
+    <button type="button" class="sb-round" data-prev aria-label="{{ sb.ui.prev[L] }}">←</button>
+    <span class="sb-count" aria-live="polite"><b data-now>0</b> / <span data-total>9</span></span>
+    <button type="button" class="sb-round" data-next aria-label="{{ sb.ui.next[L] }}">→</button>
+    <button type="button" class="sb-sound" data-sound aria-pressed="false">♪ <span data-sound-label>{{ sb.ui.sound_off[L] }}</span></button>
+  </div>
+  <svg class="sb-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="sb-wob" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1" data-seed/>
+      <feDisplacementMap in="SourceGraphic" scale="3.2"/>
+    </filter>
+    <filter id="sb-glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </svg>
+  <script type="application/json" data-story-i18n>{ {%- for u in sb.ui -%}{%- unless u[0] == "tabs" -%}"{{ u[0] }}": {{ u[1][L] | default: u[1] | jsonify }},{%- endunless -%}{%- endfor -%}"hints": { {%- for p in sb.pages -%}"{{ p[0] }}": {{ p[1].hint[L] | default: "" | jsonify }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%} } }</script>
+</div>
+<script src="{{ '/assets/js/story.js' | relative_url }}" defer></script>

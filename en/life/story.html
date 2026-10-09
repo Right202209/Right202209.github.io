@@ -1,0 +1,11 @@
+---
+layout: page
+ref: story
+back: life
+title: Storybook
+description: Droit and the Missing Page
+permalink: /en/life/story/
+droit: false
+---
+{% include optional-page.html on=site.data.story.enabled to="life" %}
+{% if site.data.story.enabled != false %}{% include story/book.html %}{% endif %}
