@@ -2,22 +2,22 @@
 title: How to Do Great Work
 author: Paul Graham
 date: 2026-10-10
-description: Curiosity itself is a map, only it refuses to unfold all at once.
+description: Curiosity itself is a map, though it refuses to unfold all at once.
 source: https://paulgraham.com/greatwork.html
 ref: how-to-do-great-work
 issue: 2
 translated: auto
-source_hash: ae66f4d7cffbbbe6
+source_hash: 71014a1160907d10
 ---
 
-> If you went to ask the oracle what the secret to doing great work is, and it would only answer in one word, I'd bet that word is "curiosity."
+> If you were to ask an oracle for the secret to doing great work, and it would give you only one word, I’d bet that word is “curiosity.”
 
-In the summer of 2023, Paul Graham did something painstaking: he gathered together the experiences of "how to make good things" from various fields, to see what their intersection looked like. The result was not a point labeled "hard work," but a shape with clear form.
+In the summer of 2023, Paul Graham did some painstaking work: he gathered insights from various fields on “how to make good things” and looked at what their overlap might look like. The overlap turned out not to be a single dot labeled “hard work,” but a shape with clear contours.
 
-He compressed it into four steps: choose a field, learn enough to reach the frontier of knowledge, notice the gaps there, then explore the most promising ones. Easy to say; the hard part is the first step. Most of us can only know what we like and what we're good at by doing, so he says: when in doubt, optimize for interesting.
+He distilled it into four steps: choose a field, learn enough to reach the frontier of knowledge, notice the gaps there, and then explore the most promising ones. It sounds simple, but the first step is the hard part. Most of us can only discover what we like and are good at by doing. So he says: when in doubt, optimize in the direction of what interests you.
 
-There are many sentences in the essay worth copying down. For example, starting is harder than continuing, so it's fine to tell yourself a little lie: "I'll just take a look at where I left off yesterday." For example, procrastination measured in years is the most dangerous, because it often disguises itself as diligence. Or again, an idea that seems both new and obvious is most likely a good one.
+There are many sentences in the piece worth writing down. For instance, starting is harder than persisting, so it’s fine to tell yourself a little white lie: “I’ll just see where I left off yesterday.” Procrastination measured in years is the most dangerous, because it often disguises itself as diligence. And an idea that seems both new and obvious is likely a good one.
 
-What moved me most was his regard for questions: people think great ideas are answers, but true insight often lies in the questions. A good question grows as it is answered; you pull at a loose thread, and it gets longer and longer.
+What moved me most was his emphasis on questions. People think great ideas are answers, but real insight often lies in the questions themselves. A good question grows as you work on it; you pull one thread, and it keeps getting longer.
 
-The essay is long, and he himself said he had tried to keep it short. But the length itself is a filter: those who read to the end have probably all thought about the same question. He asked it directly: do you actually want to do great work?
+The article is long, and he admits he tried to make it as short as possible. But its length itself acts as a filter: those who read to the end have probably all asked themselves the same question. He asks it directly: Do you really want to do great work?
