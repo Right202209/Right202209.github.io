@@ -1,5 +1,5 @@
 """Shared helpers: front matter, slugs, and the translation API (OpenAI-compatible)."""
-import hashlib, json, os, re, urllib.request
+import hashlib, json, os, re, urllib.error, urllib.request
 
 import yaml
 
@@ -65,8 +65,12 @@ def chat_json(payload, instruction):
         }).encode("utf-8"),
         headers={"Authorization": f"Bearer {os.environ['TRANSLATE_API_KEY']}", "Content-Type": "application/json"},
     )
-    with urllib.request.urlopen(req, timeout=180) as r:
-        content = json.load(r)["choices"][0]["message"]["content"]
+    try:
+        with urllib.request.urlopen(req, timeout=180) as r:
+            content = json.load(r)["choices"][0]["message"]["content"]
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", "replace")[:300]
+        raise RuntimeError(f"HTTP {e.code} from {base} (model {model}): {detail}") from e
     content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip())
     return json.loads(content)
 
