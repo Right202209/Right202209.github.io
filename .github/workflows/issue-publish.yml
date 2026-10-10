@@ -3,7 +3,7 @@ name: Publish from issue
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened, edited, labeled]
 
 permissions:
   contents: write
@@ -18,7 +18,8 @@ jobs:
   publish:
     if: >-
       github.event.issue.user.login == github.repository_owner &&
-      (contains(github.event.issue.labels.*.name, 'post') || contains(github.event.issue.labels.*.name, 'reading'))
+      (contains(github.event.issue.labels.*.name, 'post') || contains(github.event.issue.labels.*.name, 'reading')) &&
+      (github.event.action != 'labeled' || github.event.label.name == 'post' || github.event.label.name == 'reading')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,7 +68,7 @@ jobs:
       - name: Reply and close
         run: |
           SITE="https://${{ github.repository_owner }}.github.io"
-          gh issue comment "${{ github.event.issue.number }}" --body "${{ github.event.action == 'opened' && '已发布' || '已更新' }} → ${SITE}${{ steps.md.outputs.url }}
+          gh issue comment "${{ github.event.issue.number }}" --body "${{ github.event.action == 'edited' && '已更新' || '已发布' }} → ${SITE}${{ steps.md.outputs.url }}
 
           文件：\`${{ steps.md.outputs.path }}\`。几分钟后部署完成即可访问；再编辑这个 Issue，文章会同步更新。"
           gh issue close "${{ github.event.issue.number }}" --reason completed
