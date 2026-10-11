@@ -22,6 +22,12 @@ zh-CN:
   archive_sum: "共 {n} 篇，从 {y} 年写起。"
   tags_sum: "{n} 个标签。"
   friends: 友链
+  projects_works: 作品
+  projects_code: 代码
+  projects_open_tab: 在新标签页打开
+  projects_close: 关闭
+  projects_soon: 链接待补
+  projects_blank_hint: 一片空白？有些网站不允许被嵌入。
   friends_count: "{n} 位朋友，点进去看看"
   friends_apply: 交换友链
   friends_apply_note: "想互相链接的话，把你的站点信息发到我的邮箱。我这边的信息是："
@@ -93,6 +99,12 @@ en:
   archive_sum: "{n} posts, written since {y}."
   tags_sum: "{n} tags."
   friends: Friends
+  projects_works: Works
+  projects_code: Code
+  projects_open_tab: Open in new tab
+  projects_close: Close
+  projects_soon: Link coming
+  projects_blank_hint: Blank? Some sites refuse to be embedded.
   friends_count: "{n} friends, come and see"
   friends_apply: Swap links
   friends_apply_note: "To link to each other, email me your site details. Here are mine:"

@@ -1,0 +1,58 @@
+{%- comment -%}
+  The Projects page: web projects as cards that open in an in-page peek (after oooo.so),
+  GitHub repositories as GitHub-style pins. Data: _data/projects.yml.
+{%- endcomment -%}
+{%- include lang.html -%}
+{%- assign _pd = site.data.projects -%}
+{%- assign _pl = _pd.list | where_exp: "p", "p.hidden != true" -%}
+{%- assign _intro = _pd.intro[L] | default: _pd.intro[site.lang] -%}
+{%- if _intro %}<p class="archive-sum">{{ _intro }}</p>{% endif %}
+{%- assign _webs = "" -%}{%- assign _pins = "" -%}
+{%- for p in _pl -%}
+  {%- assign _u = p.url | default: "" | strip -%}
+  {%- assign _repo = "" -%}
+  {%- if p.repo -%}{%- assign _repo = p.repo -%}
+  {%- else -%}
+    {%- assign _path = _u | remove_first: "https://" | remove_first: "http://" | remove_first: "www." -%}
+    {%- assign _gh = _path | slice: 0, 11 -%}
+    {%- if _gh == "github.com/" -%}
+      {%- assign _bits = _path | remove_first: "github.com/" | split: "?" | first | split: "#" | first | split: "/" -%}
+      {%- if _bits.size == 2 -%}{%- assign _repo = _bits | join: "/" | remove: ".git" -%}{%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- if _repo != "" -%}
+    {%- capture _one -%}{% include projects/pin.html p=p repo=_repo %}{%- endcapture -%}
+    {%- assign _pins = _pins | append: _one -%}
+  {%- else -%}
+    {%- capture _one -%}{% include projects/card.html p=p url=_u %}{%- endcapture -%}
+    {%- assign _webs = _webs | append: _one -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if _webs != "" %}
+<section class="pj-sec">
+  <h2 class="eyebrow">{{ t.projects_works }}</h2>
+  <ul class="pj-grid">{{ _webs }}</ul>
+</section>
+{%- endif -%}
+{%- if _pins != "" %}
+<section class="pj-sec">
+  <h2 class="eyebrow">{{ t.projects_code }}</h2>
+  <ul class="pj-pins">{{ _pins }}</ul>
+</section>
+{%- endif %}
+<div class="pj-peek" id="pj-peek" hidden>
+  <div class="pj-clip" role="dialog" aria-modal="true" aria-labelledby="pj-peek-title">
+    <div class="pj-peek-bar">
+      <span class="pj-peek-title" id="pj-peek-title"></span>
+      <button class="pj-peek-x" type="button" aria-label="{{ t.projects_close }}">
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="pj-frames"></div>
+  </div>
+  <div class="pj-peek-foot">
+    <a class="pj-peek-open" href="#" target="_blank" rel="noopener">{{ t.projects_open_tab }} <span aria-hidden="true">↗</span></a>
+    <span class="pj-peek-hint">{{ t.projects_blank_hint }}</span>
+  </div>
+</div>
+<script src="{{ '/assets/js/projects.js' | relative_url }}" defer></script>

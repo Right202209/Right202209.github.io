@@ -63,6 +63,15 @@ A small pluggable player: a record that spins while it plays (the cover is its l
 
 `tracks` is one address, one `{ src, title, artist, cover }`, or a list of either. An address can be a bare file name from `assets/audio/` in this repo, any `/site/path`, any online `https://` file, a GitHub file page (`https://github.com/OWNER/REPO/blob/main/a.mp3`, served from raw.githubusercontent.com), or `gh:OWNER/REPO@main/a.mp3` (served by jsDelivr). One shared `<audio>` drives every player on the page, with lock-screen controls via the Media Session API. Keep files in the repo small (GitHub warns past 50 MB); m4a/mp3 at 128 kbps is plenty.
 
+## Projects
+
+A pluggable module: the Projects tab after Social. Data lives in `_data/projects.yml`; each entry needs only a `url`, and the page decides how to show it:
+
+- **A web page** becomes a card (a live thumbnail of the page by default, or a `thumb:` image). Clicking grows it into a window on the current page, after [oooo.so](https://oooo.so), with an "Open in new tab" button; Esc, the backdrop or × closes it.
+- **A GitHub repository** (`https://github.com/owner/repo`) becomes a GitHub-style pin. Description, language, stars and forks come from the GitHub API in the visitor's browser (cached for 6 hours), falling back to your own `desc` / `lang`.
+
+`url: ""` leaves a placeholder slot. Sites that refuse to be embedded (a blank window) take `embed: false` and open in a new tab. Turn the module off with `enabled: false`.
+
 ## Acknowledgements
 
 No house is built from nothing. Every brick here once belonged to someone else.
@@ -70,6 +79,7 @@ Thank you for leaving the door open.
 
 - [al-folio](https://github.com/alshedivat/al-folio): A model for academic homepages. The skeleton for the About, Posts, and News sections was all learned from here.
 - [ifuryst.com](https://www.ifuryst.com/): Showed me that a personal blog can be both a body of work and a life.
+- [oooo.so](https://oooo.so): The Projects window was modeled on it. A card grows into a window, and you can browse on without leaving the page.
 - [Jekyll](https://jekyllrb.com/): Lets words just be words.
 - [Simple Icons](https://simpleicons.org/)、[Newsreader](https://fonts.google.com/specimen/Newsreader)、[Inter](https://rsms.me/inter/)、[JetBrains Mono](https://www.jetbrains.com/lp/mono/)、[Unsplash](https://unsplash.com/)：The invisible things that hold everything up.
 

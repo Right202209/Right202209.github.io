@@ -102,6 +102,15 @@
 
 `tracks` 可以是一个地址、一个 `{ src, title, artist, cover }`，或者它们的列表。地址可以是本仓库 `assets/audio/` 里的文件名、站内 `/路径`、任意在线 `https://` 文件、GitHub 文件页（`https://github.com/用户/仓库/blob/main/a.mp3`，自动转成 raw.githubusercontent.com），或 `gh:用户/仓库@main/a.mp3`（走 jsDelivr CDN）。整页共用一个 `<audio>`，支持锁屏/媒体键控制（Media Session）。放进仓库的音频尽量小（GitHub 超过 50 MB 会警告），128 kbps 的 m4a/mp3 就够了。
 
+## 项目栏
+
+可插拔模块：顶栏“社交”后面的“项目”。数据在 `_data/projects.yml`，每项只要一个 `url`，自动判断怎么显示：
+
+- **网页**：作品卡片（封面默认是网页本身的实时缩略图，也可以用 `thumb:` 换成图片）。点击后卡片放大成当前页里的浮窗，直接在里面浏览，底部可以“在新标签页打开”；Esc、点空白处或 × 关闭。参考 [oooo.so](https://oooo.so)。
+- **GitHub 仓库**（`https://github.com/用户/仓库`）：渲染成 GitHub 主页 pin 的样子，描述、语言、Star、Fork 由访客浏览器从 GitHub API 读取并缓存 6 小时；读不到时用你写的 `desc` / `lang`。
+
+`url: ""` 是占位格子，显示“链接待补”。有些网站禁止被嵌入（浮窗一片空白），给它加 `embed: false`，点击就直接新标签页打开。关掉整个模块：`enabled: false`。
+
 ## 致谢
 
 没有一座房子是从虚无中建起的。这里的每一块砖，都曾属于别人。
@@ -109,6 +118,7 @@
 
 - [al-folio](https://github.com/alshedivat/al-folio)：学术主页的典范。About、Posts 和 News 部分的骨架都是从它这里学来的。
 - [ifuryst.com](https://www.ifuryst.com/)：让我看到，个人博客既可以是作品集，也可以是一种生活。
+- [oooo.so](https://oooo.so)：项目栏的浮窗参考了它。卡片放大成窗口,不离开页面也能继续浏览。
 - [Jekyll](https://jekyllrb.com/)：让文字只是文字。
 - [Simple Icons](https://simpleicons.org/)、[Newsreader](https://fonts.google.com/specimen/Newsreader)、[Inter](https://rsms.me/inter/)、[JetBrains Mono](https://www.jetbrains.com/lp/mono/)、[Unsplash](https://unsplash.com/)：支撑起一切的隐形之物。
 

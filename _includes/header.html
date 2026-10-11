@@ -13,6 +13,14 @@
         {% elsif page.url contains item.url %}{% assign active = true %}{% endif %}
         <a href="{{ item.url | relative_url }}"{% if active %} class="active" aria-current="page"{% endif %}>{{ item.title }}{% if active %}<span class="nav-ind" aria-hidden="true"></span>{% endif %}</a>
       {% endfor %}
+      {%- comment -%} Pluggable: the Projects tab follows Social while _data/projects.yml has enabled: true. {%- endcomment -%}
+      {%- if site.data.projects and site.data.projects.enabled != false -%}
+      {%- assign _pjp = site.pages | where: "ref", "projects" | where: "lang", L | first -%}
+      {%- if _pjp %}
+        {% assign active = false %}{% if page.url contains _pjp.url %}{% assign active = true %}{% endif %}
+        <a href="{{ _pjp.url | relative_url }}"{% if active %} class="active" aria-current="page"{% endif %}>{{ _pjp.title }}{% if active %}<span class="nav-ind" aria-hidden="true"></span>{% endif %}</a>
+      {%- endif -%}
+      {%- endif %}
       </div>
       <div class="nav-tools">
       <button class="icon-btn" id="search-open" aria-label="Search"><kbd>⌘K</kbd></button>

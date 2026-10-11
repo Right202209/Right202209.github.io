@@ -1,0 +1,38 @@
+{%- comment -%} One web project card. include.p is the entry, include.url its link ("" = a placeholder slot). {%- endcomment -%}
+{%- assign _p = include.p -%}
+{%- assign _u = include.url -%}
+{%- assign _d = _p.desc[L] | default: _p.desc[site.lang] | default: _p.desc -%}
+{%- assign _host = _u | remove_first: "https://" | remove_first: "http://" | split: "/" | first -%}
+{%- assign _name = _p.name | default: _host -%}
+{%- capture _thumb -%}{%- if _p.thumb -%}{%- assign _c = _p.thumb | slice: 0 -%}{%- assign _h = _p.thumb | slice: 0, 4 -%}{%- if _h == "http" or _h == "data" -%}{{ _p.thumb }}{%- elsif _c == "/" -%}{{ _p.thumb | relative_url }}{%- else -%}{{ '/assets/img/projects/' | append: _p.thumb | relative_url }}{%- endif -%}{%- endif -%}{%- endcapture -%}
+{%- capture _thumbd -%}{%- if _p.thumb_dark -%}{%- assign _c = _p.thumb_dark | slice: 0 -%}{%- assign _h = _p.thumb_dark | slice: 0, 4 -%}{%- if _h == "http" or _h == "data" -%}{{ _p.thumb_dark }}{%- elsif _c == "/" -%}{{ _p.thumb_dark | relative_url }}{%- else -%}{{ '/assets/img/projects/' | append: _p.thumb_dark | relative_url }}{%- endif -%}{%- endif -%}{%- endcapture -%}
+{%- if _u == "" %}
+<li class="pj-item pj-empty">
+  <div class="pj-thumb"><span class="pj-soon"><b>+</b>{{ t.projects_soon }}</span></div>
+  <div class="pj-meta"><h3 class="pj-name">{{ _p.name | default: t.projects_soon }}</h3></div>
+</li>
+{%- else %}
+<li class="pj-item">
+  <a class="pj-card" href="{{ _u }}" target="_blank" rel="noopener" data-no-prerender{% unless _p.embed == false %} data-peek="{{ _u }}"{% endunless %} data-title="{{ _name | escape }}">
+    <span class="pj-thumb">
+      {%- if _thumb != "" -%}
+        <img class="pj-img{% if _thumbd != '' %} pj-light{% endif %}" src="{{ _thumb }}" alt="" loading="lazy" draggable="false">
+        {%- if _thumbd != "" %}<img class="pj-img pj-dark" src="{{ _thumbd }}" alt="" loading="lazy" draggable="false">{% endif -%}
+      {%- elsif _p.preview == false -%}
+        <span class="pj-letter" aria-hidden="true">{{ _name | slice: 0 | upcase }}</span>
+      {%- else -%}
+        <span class="pj-letter" aria-hidden="true">{{ _name | slice: 0 | upcase }}</span>
+        <span class="pj-live" data-src="{{ _u }}" aria-hidden="true"></span>
+      {%- endif -%}
+    </span>
+  </a>
+  <div class="pj-meta">
+    <h3 class="pj-name">{{ _name }}</h3>
+    <span class="pj-links">
+      {%- if _p.github %}<a href="{{ _p.github }}" target="_blank" rel="noopener" aria-label="GitHub · {{ _name | escape }}"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>{% endif -%}
+      <a href="{{ _u }}" target="_blank" rel="noopener" aria-label="{{ t.projects_open_tab }} · {{ _name | escape }}"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M6 3H3.5A1.5 1.5 0 002 4.5v8A1.5 1.5 0 003.5 14h8a1.5 1.5 0 001.5-1.5V10M9 2h5v5M14 2L7.5 8.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </span>
+  </div>
+  {%- if _d %}<p class="pj-desc">{{ _d }}</p>{% endif %}
+</li>
+{%- endif -%}

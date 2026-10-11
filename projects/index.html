@@ -1,0 +1,8 @@
+---
+layout: page
+title: 项目
+ref: projects
+description: 动手做出来的东西。
+---
+{% include optional-page.html on=site.data.projects.enabled %}
+{% if site.data.projects.enabled != false %}{% include projects/list.html %}{% endif %}

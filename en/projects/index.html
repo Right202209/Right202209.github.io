@@ -1,0 +1,8 @@
+---
+layout: page
+title: Projects
+ref: projects
+description: Things I built with my hands.
+---
+{% include optional-page.html on=site.data.projects.enabled %}
+{% if site.data.projects.enabled != false %}{% include projects/list.html %}{% endif %}

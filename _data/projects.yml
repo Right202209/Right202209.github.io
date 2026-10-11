@@ -1,0 +1,55 @@
+# ------------------------------------------------------------
+#  项目 / Projects —— 可插拔模块
+#  · enabled: false  → 顶栏的“项目”消失，/projects/ 退回文章页
+#  · 每一项只要一个 url，自动判断怎么显示：
+#      GitHub 仓库地址（https://github.com/用户/仓库）→ 渲染成 GitHub pin 卡片，
+#          描述、语言、Star、Fork 打开页面时从 GitHub 读取（读不到就用下面写的 desc）
+#      其他网页 → 作品卡片，点击后在当前页弹窗里打开（参考 oooo.so），
+#          弹窗底部可以“在新标签页打开”
+#  · 可选字段：
+#      name        显示的名字；仓库默认用仓库名，网页默认用域名
+#      desc        一句话介绍，按语言写：{ zh-CN: ..., en: ... }（也可以只写一种）
+#      thumb       网页卡片的封面：完整 URL，站内路径（/assets/...），
+#                  或只写文件名（放在 assets/img/projects/ 下）
+#      thumb_dark  暗色模式用的封面（可选）
+#      github      网页卡片右下角的 GitHub 图标链接
+#      lang        仓库的主要语言（可选）；GitHub 读不到时（未登录访客每小时 60 次上限）也能显示
+#      embed: false  这个网站不允许被嵌入（弹窗一片空白）时加上，点击直接新标签页打开
+#      hidden: true  暂时藏起来
+#  · url 留空（""）= 占位格子，显示“链接待补”，填上就生效。
+#    没有 thumb 的网页卡片会显示网页本身的实时缩略图。
+# ------------------------------------------------------------
+enabled: true
+
+intro:
+  zh-CN: 做过的一些小东西。网页点开就能玩，仓库点进去看代码。
+  en: Small things I've made. Web pages open right here; repos lead to the code.
+
+list:
+  # 网页：点击在当前页打开
+  - name: About
+    url: https://right202209.github.io/About/
+    github: https://github.com/Right202209/About
+    desc: { zh-CN: MacOS 风格的桌面。, en: A MacOS-style desktop. }
+  - name: ccset
+    url: https://right202209.github.io/ccset/
+    github: https://github.com/Right202209/ccset
+  - name: Contact
+    url: https://right202209.github.io/Contact/
+    github: https://github.com/Right202209/Contact
+  - name: 2048
+    url: https://right202209.github.io/2048/
+    github: https://github.com/Right202209/2048
+  - name: 下一个作品
+    url: ""
+
+  # GitHub 仓库：渲染成 pin 卡片
+  - url: https://github.com/Right202209/AskAnswer
+    lang: Python
+  - url: https://github.com/Right202209/AskFlow
+    lang: Python
+  - url: https://github.com/Right202209/gh-readme-lightbox
+    lang: JavaScript
+    desc: { zh-CN: GitHub README 图片灯箱预览。, en: Lightbox preview for images in GitHub READMEs. }
+  - url: https://github.com/Right202209/StockSight
+    lang: JavaScript
