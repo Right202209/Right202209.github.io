@@ -27,9 +27,9 @@ intro:
 
 list:
   # 网页：点击在当前页打开
-  - name: About
-    url: https://right202209.github.io/About/
-    github: https://github.com/Right202209/About
+  - name: Desktop
+    url: https://right202209.github.io/Desktop/
+    github: https://github.com/Right202209/Desktop
     desc: { zh-CN: MacOS 风格的桌面。, en: A MacOS-style desktop. }
   - name: ccset
     url: https://right202209.github.io/ccset/
@@ -40,6 +40,8 @@ list:
   - name: 2048
     url: https://right202209.github.io/2048/
     github: https://github.com/Right202209/2048
+    desc: { zh-CN: 2048 游戏。, en: 2048 game. }
+   
   - name: 下一个作品
     url: ""
 
